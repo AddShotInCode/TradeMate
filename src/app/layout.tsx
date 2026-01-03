@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "TradeMate",
-  description: "Stock trading training platform focused on principles.",
+  description: "원칙 중심의 주식 매매 훈련 플랫폼",
 };
 
 export default function RootLayout({
