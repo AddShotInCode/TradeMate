@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: TradeMateBackend
+
+  # 1. 데이터베이스 설정
+  datasource:
+    url: jdbc:mysql://localhost:3306/trademate_db?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # .env 파일에서 읽어옴
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  # 2. JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  # 3. MVC 설정
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+# 4. KIS API 설정
+api:
+  kis:
+    # .env 파일에서 읽어옴
+    app-key: ${KIS_APP_KEY}
+    app-secret: ${KIS_APP_SECRET}
+    account-number: ${KIS_ACCOUNT_NUMBER}
+    base-url: https://openapi.koreainvestment.com:29443
+
+logging:
+  level:
+    root: INFO
+    com.trademate: DEBUG
