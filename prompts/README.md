@@ -10,8 +10,8 @@
 
 ## 2. 디렉토리 및 파일 구조
 
-- **경로**: `prompts/{n}주차/{YY_MM_DD}/{기능_또는_주제}.md`
-- **예시**: `prompts/1주차/25_12_24/로그인_API_구현.md`
+- **경로**: `prompts/week{n}/{YY_MM_DD}/{기능_또는_주제}.md`
+- **예시**: `prompts/week1/25_12_24/로그인_API_구현.md`
 
 ## 3. 파일 명명 규칙 (Naming Convention)
 
