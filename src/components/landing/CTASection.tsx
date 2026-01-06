@@ -12,7 +12,7 @@ export default function CTASection() {
         </p>
         <div className="flex flex-col w-full sm:w-auto gap-4 sm:flex-row">
           <Link
-            href="/dashboard"
+            href="/login"
             className="flex h-14 w-full sm:w-auto min-w-[200px] items-center justify-center rounded-lg bg-[#137fec] px-8 text-lg font-bold text-white hover:bg-blue-600 transition-all shadow-lg hover:shadow-[#137fec]/25"
           >
             지금 시작하기

@@ -18,24 +18,24 @@ export default function LandingNavigation() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          <Link href="#features" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
-            주요 기능
-          </Link>
           <Link href="#about" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
             서비스 소개
+          </Link>
+          <Link href="#features" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
+            주요 기능
           </Link>
         </div>
 
         {/* Action Buttons */}
         <div className="flex gap-3">
           <Link
-            href="/dashboard"
+            href="/login"
             className="hidden sm:flex h-9 items-center justify-center rounded-lg bg-[#1c2127] border border-[#283039] px-4 text-sm font-bold text-white hover:bg-[#283039] transition-colors"
           >
             로그인
           </Link>
           <Link
-            href="/dashboard"
+            href="/login"
             className="flex h-9 items-center justify-center rounded-lg bg-[#137fec] px-4 text-sm font-bold text-white hover:bg-blue-600 transition-colors shadow-[0_0_15px_rgba(19,127,236,0.4)]"
           >
             시작하기
@@ -55,14 +55,14 @@ export default function LandingNavigation() {
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-[#283039] bg-[#101922] px-4 py-4">
           <div className="flex flex-col gap-4">
-            <Link href="#features" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
-              주요 기능
-            </Link>
             <Link href="#about" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
               서비스 소개
             </Link>
+            <Link href="#features" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
+              주요 기능
+            </Link>
             <Link
-              href="/dashboard"
+              href="/login"
               className="flex h-9 items-center justify-center rounded-lg bg-[#1c2127] border border-[#283039] px-4 text-sm font-bold text-white hover:bg-[#283039] transition-colors"
             >
               로그인

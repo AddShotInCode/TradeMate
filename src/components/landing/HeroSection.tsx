@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="relative flex flex-col items-center justify-center overflow-hidden py-16 md:py-24">
+    <section id="about" className="relative flex flex-col items-center justify-center overflow-hidden py-16 md:py-24">
       {/* Background Gradient Effect */}
       <div className="absolute inset-0 z-0">
         <div className="absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#137fec]/20 blur-[100px]"></div>
@@ -31,7 +31,7 @@ export default function HeroSection() {
             {/* CTA Buttons */}
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
-                href="/dashboard"
+                href="/login"
                 className="flex h-12 min-w-[160px] items-center justify-center rounded-lg bg-[#137fec] px-6 text-base font-bold text-white hover:bg-blue-600 transition-all hover:scale-105"
               >
                 체험하기
