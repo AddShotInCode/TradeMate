@@ -1,4 +1,4 @@
-import { Play } from "lucide-react";
+
 import Link from "next/link";
 
 export default function HeroSection() {
@@ -36,10 +36,7 @@ export default function HeroSection() {
               >
                 체험하기
               </Link>
-              <button className="flex h-12 min-w-[160px] items-center justify-center gap-2 rounded-lg border border-[#283039] bg-transparent px-6 text-base font-bold text-white hover:bg-[#1c2127] transition-colors">
-                <Play className="size-5" />
-                <span>데모 영상 보기</span>
-              </button>
+
             </div>
           </div>
 
