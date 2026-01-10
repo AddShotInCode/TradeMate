@@ -1,5 +1,4 @@
 import { CandlestickChart } from "lucide-react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {

@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import LandingNavigation from "@/components/landing/LandingNavigation";
-import LandingFooter from "@/components/landing/LandingFooter";
+import Sidebar from "@/components/layout/Sidebar";
 import PropensityAssessment from "@/components/propensity/PropensityAssessment";
-import StrategyTemplates from "@/components/propensity/StrategyTemplates";
 import PrinciplesCustomizer from "@/components/propensity/PrinciplesCustomizer";
 import ActionBar from "@/components/propensity/ActionBar";
 
@@ -23,43 +21,49 @@ interface Principle {
 
 const defaultPrinciples: Principle[] = [
   {
-    id: "max-risk",
+    id: "score-compliance",
     icon: "pie",
-    title: "거래당 최대 위험",
-    description: "연속 손실 시 계좌 보호를 위한 설정입니다.",
+    title: "원칙 준수 (Compliance) 비중",
+    description: "SL/TP 이탈 여부 및 편차에 따른 감점을 반영합니다.",
     hasInput: true,
-    inputValue: "2.0",
+    inputValue: "40",
     inputUnit: "%",
     enabled: true,
     hasTooltip: true,
-    tooltipText: "단일 거래에 투자되는 계좌 자산의 비율입니다.",
+    tooltipText: "SL/TP 준수 여부를 점수에 얼마나 반영할지 결정합니다.",
   },
   {
-    id: "no-news-trading",
+    id: "score-validity",
     icon: "newspaper",
-    title: "중요 뉴스 발표 시 거래 금지",
-    description: "예측 불가능한 변동성 급등을 피합니다.",
+    title: "가설 적중 (Validity) 비중",
+    description: "진입 후 지표가 가설대로 움직였는지 평가합니다.",
+    hasInput: true,
+    inputValue: "40",
+    inputUnit: "%",
     enabled: true,
   },
   {
-    id: "max-positions",
+    id: "score-performance",
     icon: "layers",
-    title: "최대 동시 보유 포지션",
-    description: "시장에 대한 노출을 제한합니다.",
+    title: "성과 (Performance) 비중",
+    description: "실제 수익률과 예상 상승률(Expected ROI)의 일치도를 평가합니다.",
     hasInput: true,
-    inputValue: "3",
-    enabled: false,
+    inputValue: "20",
+    inputUnit: "%",
+    enabled: true,
   },
 ];
 
 export default function PropensityPage() {
-  // Propensity Assessment State
-  const [tradingStyle, setTradingStyle] = useState("daytrading");
-  const [riskAppetite, setRiskAppetite] = useState(65);
-  const [maxLoss, setMaxLoss] = useState("");
-
-  // Strategy Template State
-  const [selectedTemplate, setSelectedTemplate] = useState("trend-follower");
+  // Strategy inputs for scoring
+  const [stopLossPct, setStopLossPct] = useState("2.0");
+  const [takeProfitPct, setTakeProfitPct] = useState("4.0");
+  const [expectedRoiPct, setExpectedRoiPct] = useState("3.0");
+  const [indicators, setIndicators] = useState([
+    { name: "RSI", weight: "40" },
+    { name: "Volume", weight: "30" },
+    { name: "MA", weight: "30" },
+  ]);
 
   // Principles State
   const [principles, setPrinciples] = useState(defaultPrinciples);
@@ -83,10 +87,10 @@ export default function PropensityPage() {
   const handleSaveDraft = () => {
     // TODO: Implement save draft logic
     console.log("Saving draft...", {
-      tradingStyle,
-      riskAppetite,
-      maxLoss,
-      selectedTemplate,
+      stopLossPct,
+      takeProfitPct,
+      expectedRoiPct,
+      indicators,
       principles,
     });
   };
@@ -94,10 +98,10 @@ export default function PropensityPage() {
   const handleSaveAndStart = () => {
     // TODO: Implement save and start training logic
     console.log("Saving and starting training...", {
-      tradingStyle,
-      riskAppetite,
-      maxLoss,
-      selectedTemplate,
+      stopLossPct,
+      takeProfitPct,
+      expectedRoiPct,
+      indicators,
       principles,
     });
   };
@@ -105,19 +109,17 @@ export default function PropensityPage() {
   const activePrinciplesCount = principles.filter((p) => p.enabled).length;
 
   return (
-    <div className="min-h-screen bg-[#101922] text-white font-sans flex flex-col">
-      {/* Navigation */}
-      <LandingNavigation />
+    <div className="relative flex h-screen w-full bg-[#f6f7f8] dark:bg-[#101922] overflow-hidden">
+      <Sidebar />
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center w-full px-4 sm:px-10 py-8">
-        <div className="w-full max-w-[1024px] flex flex-col gap-8">
+      <main className="flex-1 h-full overflow-y-auto w-full">
+        <div className="max-w-[1200px] mx-auto px-6 py-8 flex flex-col gap-8">
           {/* Page Heading */}
           <div className="flex flex-col gap-2">
-            <h1 className="text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">
+            <h1 className="text-slate-900 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">
               나만의 투자 스타일 정의하기
             </h1>
-            <p className="text-[#9dabb9] text-base sm:text-lg font-normal leading-normal max-w-2xl">
+            <p className="text-slate-600 dark:text-[#9dabb9] text-base sm:text-lg font-normal leading-normal max-w-2xl">
               투자 스타일에 맞는 템플릿을 선택하고, 나만의 규칙으로 조정하세요.
               이를 통해 맞춤형 훈련 환경을 제공해 드립니다.
             </p>
@@ -128,21 +130,21 @@ export default function PropensityPage() {
             {/* Left Column: Assessment (Span 5) */}
             <div className="lg:col-span-5 flex flex-col gap-6">
               <PropensityAssessment
-                tradingStyle={tradingStyle}
-                onTradingStyleChange={setTradingStyle}
-                riskAppetite={riskAppetite}
-                onRiskAppetiteChange={setRiskAppetite}
-                maxLoss={maxLoss}
-                onMaxLossChange={setMaxLoss}
+                stopLossPct={stopLossPct}
+                onStopLossPctChange={setStopLossPct}
+                takeProfitPct={takeProfitPct}
+                onTakeProfitPctChange={setTakeProfitPct}
+                expectedRoiPct={expectedRoiPct}
+                onExpectedRoiPctChange={setExpectedRoiPct}
+                indicators={indicators}
+                onIndicatorChange={(index, next) =>
+                  setIndicators((prev) => prev.map((item, i) => (i === index ? next : item)))
+                }
               />
             </div>
 
             {/* Right Column: Templates & Rules (Span 7) */}
             <div className="lg:col-span-7 flex flex-col gap-6">
-              <StrategyTemplates
-                selectedTemplate={selectedTemplate}
-                onSelectTemplate={setSelectedTemplate}
-              />
               <PrinciplesCustomizer
                 principles={principles}
                 onTogglePrinciple={handleTogglePrinciple}
@@ -160,9 +162,6 @@ export default function PropensityPage() {
           />
         </div>
       </main>
-
-      {/* Footer */}
-      <LandingFooter />
     </div>
   );
 }

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import LandingNavigation from "@/components/landing/LandingNavigation";
-import LandingFooter from "@/components/landing/LandingFooter";
+import Sidebar from "@/components/layout/Sidebar";
 import WatchlistSidebar from "@/components/inquiry/WatchlistSidebar";
 import StockDetailView from "@/components/inquiry/StockDetailView";
 
@@ -11,12 +10,11 @@ export default function InquiryPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#101922] text-white font-sans flex flex-col">
-      {/* Navigation */}
-      <LandingNavigation />
-      
-      {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden relative">
+    <div className="relative flex h-screen w-full bg-[#f6f7f8] dark:bg-[#101922] overflow-hidden">
+      <Sidebar />
+
+      <main className="flex-1 h-full overflow-hidden w-full">
+        <div className="flex h-full overflow-hidden relative">
         {/* Mobile Sidebar Toggle */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -53,10 +51,8 @@ export default function InquiryPage() {
 
         {/* Main Detail View */}
         <StockDetailView symbol={selectedStock} />
-      </div>
-      
-      {/* Footer */}
-      <LandingFooter />
+        </div>
+      </main>
     </div>
   );
 }

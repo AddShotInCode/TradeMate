@@ -24,12 +24,6 @@ export default function LandingNavigation() {
           <Link href="/#features" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
             주요 기능
           </Link>
-          <Link href="/inquiry" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
-            주식 조회
-          </Link>
-          <Link href="/propensity" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
-            원칙 설정
-          </Link>
         </div>
 
         {/* Action Buttons */}
@@ -66,12 +60,6 @@ export default function LandingNavigation() {
             </Link>
             <Link href="/#features" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
               주요 기능
-            </Link>
-            <Link href="/inquiry" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
-              주식 조회
-            </Link>
-            <Link href="/propensity" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
-              원칙 설정
             </Link>
             <Link
               href="/login"
