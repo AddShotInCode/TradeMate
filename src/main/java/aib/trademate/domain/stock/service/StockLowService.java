@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,7 +23,7 @@ public class StockLowService {
     // 종목 저장
     @Transactional
     public Stock saveStock(Stock stock) {
-        return stockRepository.save(stock);
+        return stockRepository.save(Objects.requireNonNull(stock));
     }
 
     // 종목 코드로 조회 (Optional 반환)
@@ -40,7 +41,7 @@ public class StockLowService {
     // 시세 데이터 대량 저장 (1년치 데이터 저장용)
     @Transactional
     public void saveDailyPrices(List<DailyPrice> dailyPrices) {
-        dailyPriceRepository.saveAll(dailyPrices);
+        dailyPriceRepository.saveAll(Objects.requireNonNull(dailyPrices));
     }
 
     // 오래된 데이터 삭제 (1년 지난 데이터)
