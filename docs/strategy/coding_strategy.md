@@ -2,7 +2,7 @@
 
 ## 1) 네이밍(Naming)
 
-- **패키지**: 전부 소문자, 단수형. `kakao.trademate.user.service`
+- **패키지**: 전부 소문자, 단수형. `aib.trademate.user.service`
 - **클래스/인터페이스/Enum**: `PascalCase`. `UserService`, `TradeType`
 - **메서드/필드/변수**: `camelCase`. `findByEmail`, `createdAt`
 - **상수**: `UPPER_SNAKE_CASE`. `MAX_RETRY`
