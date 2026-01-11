@@ -93,6 +93,7 @@ public class StockService {
      * [스케줄러] 매일 장 마감 후 당일 데이터 업데이트
      * 평일 오후 4시 30분 실행 (장 마감 및 데이터 집계 시간 고려)
      */
+    @Transactional
     @Scheduled(cron = "0 30 16 * * *") // 초 분 시 일 월 요일
     public void updateTodayStockData() {
         log.info("Start updating today's stock data.");
@@ -122,6 +123,7 @@ public class StockService {
      * [스케줄러] 오래된 데이터 삭제 (1년 지난 데이터)
      * 매일 자정 실행
      */
+    @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void deleteExpiredData() {
         LocalDate oneYearAgo = LocalDate.now().minusYears(1);

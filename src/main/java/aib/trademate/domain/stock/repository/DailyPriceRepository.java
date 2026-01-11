@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
     
     // 1년 지난 데이터 삭제 (벌크 연산)
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("DELETE FROM DailyPrice d WHERE d.date < :date")
     void deleteByDateBefore(@Param("date") LocalDate date);
 }
