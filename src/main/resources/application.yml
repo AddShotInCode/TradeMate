@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: trademate
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update # 개발 초기에는 update, 운영 시에는 validate/none 권장
+    properties:
+      hibernate:
+        format_sql: true # 쿼리 가독성 향상
+        default_batch_fetch_size: 100 # N+1 문제 완화를 위한 배치 사이즈 설정
+    # 코딩 전략: LAZY 로딩이 기본이므로, 필요시 쿼리 확인을 위해 열어둡니다.
+    open-in-view: false 
+
+# 코딩 전략: 로깅 레벨 설정 (TRACE > DEBUG > INFO > WARN > ERROR)
+logging:
+  level:
+    root: INFO
+    aib.trademate: DEBUG # 우리 프로젝트의 로그는 자세히(DEBUG) 봄
+    org.hibernate.SQL: DEBUG # 실행되는 SQL 확인
+    org.hibernate.orm.jdbc.bind: TRACE # SQL 바인딩 파라미터 값 확인
+
+# OpenAPI
+open-api:
+  url: ${OPENAPI_URL}
+  service-key: ${OPENAPI_SERVICE_KEY}
