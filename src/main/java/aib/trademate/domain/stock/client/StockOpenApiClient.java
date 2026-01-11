@@ -12,6 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -38,7 +39,7 @@ public class StockOpenApiClient {
     public List<StockApiDto.Item> getStockHistory(String stockCode, String startDate, String endDate) {
         try {
             // URL 생성 (인코딩 주의: serviceKey는 이미 인코딩된 상태로 yml에 넣을 예정)
-            URI uri = UriComponentsBuilder.fromHttpUrl(apiUrl)
+            URI uri = UriComponentsBuilder.fromUriString(Objects.requireNonNull(apiUrl))
                     .queryParam("serviceKey", serviceKey)
                     .queryParam("numOfRows", 1000) // 넉넉하게 1년치(약 250~365일) 조회
                     .queryParam("pageNo", 1)
@@ -50,7 +51,7 @@ public class StockOpenApiClient {
                     .toUri();
 
             log.info("Request OpenAPI: stockCode={}, period={}~{}", stockCode, startDate, endDate);
-            log.info("요청 URL: {}", uri);
+            // log.info("요청 URL: {}", uri);
 
             // [변경점 1] 응답을 일단 String(문자열)으로 받습니다.
             String responseString = restTemplate.getForObject(uri, String.class);
