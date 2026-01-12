@@ -3,10 +3,15 @@ package aib.trademate.domain.stock.service;
 import aib.trademate.domain.stock.client.StockOpenApiClient;
 import aib.trademate.domain.stock.config.StockProperties;
 import aib.trademate.domain.stock.dto.StockApiDto;
+import aib.trademate.domain.stock.dto.StockPriceResponseDto;
 import aib.trademate.domain.stock.entity.DailyPrice;
 import aib.trademate.domain.stock.entity.Stock;
+import aib.trademate.global.exception.StockNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -174,7 +179,72 @@ public class StockService {
         stockLowService.deleteOldDailyPrices(oneYearAgo);
     }
 
+    // --- Query Methods ---
+
+    /**
+     * [조회] 특정 종목의 기간별 가격 데이터 조회
+     * @param stockCode 종목 코드
+     * @param startDate 시작일
+     * @param endDate 종료일
+     * @param page 페이지 번호 (1부터 시작)
+     * @param pageSize 페이지 크기
+     * @return 가격 정보 응답 DTO
+     */
+    @Transactional(readOnly = true)
+    public StockPriceResponseDto.Response getStockPrices(
+            String stockCode,
+            LocalDate startDate,
+            LocalDate endDate,
+            int page,
+            int pageSize
+    ) {
+        // 1. 종목 정보 조회
+        Stock stock = stockLowService.findStockByCode(stockCode)
+                .orElseThrow(() -> new StockNotFoundException(stockCode));
+
+        // 2. 페이징 조회 (page는 0부터 시작하므로 -1)
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        Page<DailyPrice> pricePage = stockLowService.findDailyPricesByStockCodeAndDateRange(
+                stockCode, startDate, endDate, pageable
+        );
+
+        // 3. Entity -> DTO 변환
+        List<StockPriceResponseDto.PriceItem> items = pricePage.getContent().stream()
+                .map(this::convertToPriceItem)
+                .toList();
+
+        // 4. 응답 DTO 구성
+        return StockPriceResponseDto.Response.builder()
+                .stock(StockPriceResponseDto.StockInfo.builder()
+                        .code(stock.getCode())
+                        .name(stock.getName())
+                        .market(stock.getMarketType())
+                        .build())
+                .pagination(StockPriceResponseDto.Pagination.builder()
+                        .page(page)
+                        .pageSize(pageSize)
+                        .totalElements(pricePage.getTotalElements())
+                        .totalPages(pricePage.getTotalPages())
+                        .build())
+                .items(items)
+                .build();
+    }
+
     // --- Helper Methods ---
+
+    // Entity -> Response DTO 변환
+    private StockPriceResponseDto.PriceItem convertToPriceItem(DailyPrice dailyPrice) {
+        return StockPriceResponseDto.PriceItem.builder()
+                .date(dailyPrice.getDate())
+                .open(dailyPrice.getOpenPrice())
+                .high(dailyPrice.getHighPrice())
+                .low(dailyPrice.getLowPrice())
+                .close(dailyPrice.getClosePrice())
+                .volume(dailyPrice.getVolume())
+                .changeAmount(dailyPrice.getChangeAmount())
+                .changeRate(dailyPrice.getChangeRate())
+                .build();
+    }
 
     // DTO -> Entity 변환 로직
     private DailyPrice convertToEntity(StockApiDto.Item item, Stock stock) {

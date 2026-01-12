@@ -5,6 +5,8 @@ import aib.trademate.domain.stock.entity.Stock;
 import aib.trademate.domain.stock.repository.DailyPriceRepository;
 import aib.trademate.domain.stock.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,5 +50,18 @@ public class StockLowService {
     @Transactional
     public void deleteOldDailyPrices(LocalDate standardDate) {
         dailyPriceRepository.deleteByDateBefore(standardDate);
+    }
+
+    // 특정 종목의 기간별 가격 데이터 조회 (페이징)
+    @Transactional(readOnly = true)
+    public Page<DailyPrice> findDailyPricesByStockCodeAndDateRange(
+            String stockCode,
+            LocalDate startDate,
+            LocalDate endDate,
+            Pageable pageable
+    ) {
+        return dailyPriceRepository.findByStockCodeAndDateBetweenOrderByDateAsc(
+                stockCode, startDate, endDate, pageable
+        );
     }
 }
