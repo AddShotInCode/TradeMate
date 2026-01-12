@@ -50,16 +50,12 @@ public class StockOpenApiClient {
                     .build(true) // true: 인코딩 된 serviceKey를 그대로 사용하기 위함
                     .toUri();
 
-            log.info("Request OpenAPI: stockCode={}, period={}~{}", stockCode, startDate, endDate);
-            // log.info("요청 URL: {}", uri);
-
             // [변경점 1] 응답을 일단 String(문자열)으로 받습니다.
             String responseString = restTemplate.getForObject(uri, String.class);
 
-            // [변경점 2] 로그에 응답 내용을 그대로 찍습니다. (여기를 확인하세요!)
-            log.info("================ API 응답 시작 ================");
-            log.info(responseString);
-            log.info("================ API 응답 끝 ================");
+            // [변경점 2] 로그에 응답 내용을 그대로 찍습니다. (TRACE 레벨 - 필요시 확인)
+            log.trace("[OpenAPI] Request: stock={}, period={}~{}", stockCode, startDate, endDate);
+            log.trace("[OpenAPI] Raw response: {}", responseString);
 
             // [변경점 3] 문자열을 DTO로 수동 변환 (파싱 실패 시 catch로 이동)
             if (responseString != null) {
@@ -71,23 +67,15 @@ public class StockOpenApiClient {
                         && response.getResponse().getBody().getItems() != null
                         && response.getResponse().getBody().getItems().getItem() != null) {
                     List<StockApiDto.Item> items = response.getResponse().getBody().getItems().getItem();
-                    log.info("Fetched {} items for stock {}", items.size(), stockCode);
+                    log.trace("[OpenAPI] Response: stock={}, {} items received", stockCode, items.size());
                     return items;
                 }
             }
 
-            // // API 호출
-            // StockApiDto.Response response = restTemplate.getForObject(uri, StockApiDto.Response.class);
-
-            // // 결과 검증 및 반환
-            // if (response != null && response.getBody() != null && response.getBody().getItems() != null) {
-            //     List<StockApiDto.Item> items = response.getBody().getItems().getItem();
-            //     log.info("Fetched {} items for stock {}", items.size(), stockCode);
-            //     return items;
-            // }
+            log.trace("[OpenAPI] Response: stock={}, no data", stockCode);
 
         } catch (Exception e) {
-            log.error("OpenAPI 호출 실패: {}", e.getMessage(), e);
+            log.error("[OpenAPI] Request failed: stock={}, error={}", stockCode, e.getMessage());
         }
 
         return Collections.emptyList();

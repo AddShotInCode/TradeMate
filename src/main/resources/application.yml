@@ -2,6 +2,9 @@ spring:
   application:
     name: trademate
 
+  config:
+    import: classpath:stock-codes.yml  # 종목 코드 설정 파일
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -23,8 +26,8 @@ logging:
   level:
     root: INFO
     aib.trademate: DEBUG # 우리 프로젝트의 로그는 자세히(DEBUG) 봄
-    org.hibernate.SQL: DEBUG # 실행되는 SQL 확인
-    org.hibernate.orm.jdbc.bind: TRACE # SQL 바인딩 파라미터 값 확인
+    # org.hibernate.SQL: DEBUG # 실행되는 SQL 확인 (필요시 주석 해제)
+    # org.hibernate.orm.jdbc.bind: TRACE # SQL 바인딩 파라미터 값 확인 (필요시 주석 해제)
 
 # OpenAPI
 open-api:
