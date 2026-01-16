@@ -97,7 +97,7 @@ export default function LoginPage() {
           <CardFooter className="justify-center pb-6">
             <p className="text-sm text-gray-500 dark:text-[#9dabb9]">
               계정이 없으신가요?{" "}
-              <Link className="font-medium text-[#137fec] hover:text-[#137fec]/80 hover:underline transition-colors" href="#">회원가입</Link>
+              <Link className="font-medium text-[#137fec] hover:text-[#137fec]/80 hover:underline transition-colors" href="/register">회원가입</Link>
             </p>
           </CardFooter>
         </Card>
