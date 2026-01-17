@@ -6,7 +6,7 @@ import aib.trademate.domain.stock.dto.StockApiDto;
 import aib.trademate.domain.stock.dto.StockPriceResponseDto;
 import aib.trademate.domain.stock.entity.DailyPrice;
 import aib.trademate.domain.stock.entity.Stock;
-import aib.trademate.global.exception.StockNotFoundException;
+import aib.trademate.global.exception.NotFoundEntityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -200,7 +200,7 @@ public class StockService {
     ) {
         // 1. 종목 정보 조회
         Stock stock = stockLowService.findStockByCode(stockCode)
-                .orElseThrow(() -> new StockNotFoundException(stockCode));
+                .orElseThrow(() -> new NotFoundEntityException("Stock not found: " + stockCode));
 
         // 2. 페이징 조회 (page는 0부터 시작하므로 -1)
         Pageable pageable = PageRequest.of(page - 1, pageSize);

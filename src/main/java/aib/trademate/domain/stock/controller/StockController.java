@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @RestController
-@RequestMapping("/api/stock")
+@RequestMapping("/api/stocks")
 @RequiredArgsConstructor
 public class StockController {
 
