@@ -28,16 +28,7 @@ export default function HeroSection() {
               </p>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/login"
-                className="flex h-12 min-w-[160px] items-center justify-center rounded-lg bg-[#137fec] px-6 text-base font-bold text-white hover:bg-blue-600 transition-all hover:scale-105"
-              >
-                체험하기
-              </Link>
 
-            </div>
           </div>
 
           {/* Hero Image */}
