@@ -4,17 +4,7 @@ import { Button } from "@/components/ui/button";
 export default function QuickActions() {
   return (
     <div className="flex flex-col gap-6">
-      {/* CTA Card */}
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-b from-primary to-blue-600 p-6 shadow-lg shadow-blue-500/20 text-white">
-        {/* Decorative circle */}
-        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
-        <h2 className="relative text-2xl font-black leading-tight mb-2">훈련 준비 되셨나요?</h2>
-        <p className="relative text-blue-100 text-sm mb-6">새로운 시뮬레이션을 시작하여 전략을 테스트해보세요.</p>
-        <Button className="relative w-full gap-2 bg-white text-primary font-bold hover:bg-blue-50 shadow-sm">
-          <Play className="w-5 h-5 fill-current" />
-          시뮬레이션 시작
-        </Button>
-      </div>
+
 
       {/* Secondary Actions */}
       <div className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-[#3b4754] bg-white dark:bg-[#1c2127] p-5">
@@ -54,13 +44,13 @@ export default function QuickActions() {
           <span className="text-xs text-green-500 font-medium">+12%</span>
         </div>
         <div className="flex-1 w-full bg-slate-50 dark:bg-[#252b32] rounded-lg relative overflow-hidden flex items-end px-2 pb-2 gap-1 min-h-[120px]">
-          {/* Fake bars using Tailwind heights to mimic the design */}
-          <div className="bg-primary/30 w-1/6 h-[30%] rounded-sm"></div>
-          <div className="bg-primary/40 w-1/6 h-[50%] rounded-sm"></div>
-          <div className="bg-primary/30 w-1/6 h-[40%] rounded-sm"></div>
-          <div className="bg-primary/50 w-1/6 h-[65%] rounded-sm"></div>
-          <div className="bg-primary/70 w-1/6 h-[55%] rounded-sm"></div>
-          <div className="bg-primary w-1/6 h-[80%] rounded-sm"></div>
+          {/* Fake bars with dark mode adjustment */}
+          <div className="bg-primary/30 dark:bg-primary/20 w-1/6 h-[30%] rounded-sm"></div>
+          <div className="bg-primary/40 dark:bg-primary/30 w-1/6 h-[50%] rounded-sm"></div>
+          <div className="bg-primary/30 dark:bg-primary/20 w-1/6 h-[40%] rounded-sm"></div>
+          <div className="bg-primary/50 dark:bg-primary/40 w-1/6 h-[65%] rounded-sm"></div>
+          <div className="bg-primary/70 dark:bg-primary/60 w-1/6 h-[55%] rounded-sm"></div>
+          <div className="bg-primary dark:bg-primary/80 w-1/6 h-[80%] rounded-sm"></div>
         </div>
       </div>
     </div>
