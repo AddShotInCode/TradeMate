@@ -1,7 +1,6 @@
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/dashboard/Header";
 import StatsGrid from "@/components/dashboard/StatsGrid";
-import CoreFocus from "@/components/dashboard/CoreFocus";
 import RecentSessions from "@/components/dashboard/RecentSessions";
 import QuickActions from "@/components/dashboard/QuickActions";
 
@@ -21,7 +20,6 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Focus Column (Left 2/3) */}
             <div className="lg:col-span-2 flex flex-col gap-6">
-              <CoreFocus />
               <RecentSessions />
             </div>
 
