@@ -12,12 +12,27 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
+
+function subscribeToLocalStorage(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  return () => window.removeEventListener("storage", onStoreChange);
+}
+
+function getUserNameSnapshot() {
+  return localStorage.getItem("tm_userName") ?? "";
+}
+
+function getUserNameServerSnapshot() {
+  return "";
+}
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
+
+  const userName = useSyncExternalStore(subscribeToLocalStorage, getUserNameSnapshot, getUserNameServerSnapshot);
 
   const navItems = [
     { icon: LayoutDashboard, label: "대시보드", href: "/dashboard" },
@@ -102,6 +117,25 @@ export default function Sidebar() {
             );
           })}
         </nav>
+
+        {/* Bottom user button */}
+        <div className="mt-auto">
+          <button
+            type="button"
+            className={cn(
+              "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors group hover:bg-slate-50 dark:hover:bg-[#283039]",
+              isCollapsed && "justify-center"
+            )}
+            title={userName ? userName : "사용자"}
+          >
+            <User className="w-6 h-6 shrink-0 text-slate-500 dark:text-white group-hover:text-primary transition-colors" />
+            {!isCollapsed && (
+              <p className="text-sm font-medium leading-normal whitespace-nowrap overflow-hidden text-slate-700 dark:text-white group-hover:text-primary transition-colors">
+                {userName ? userName : "사용자"}
+              </p>
+            )}
+          </button>
+        </div>
       </div>
     </aside>
   );
