@@ -6,7 +6,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, PencilLine, Phone, ShieldCheck, Upload, UserRound, KeyRound, LockKeyhole } from "lucide-react";
+import { Mail, PencilLine, Phone, ShieldCheck, KeyRound, LockKeyhole } from "lucide-react";
 
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 
@@ -144,38 +144,6 @@ export default function AccountPage() {
             </CardHeader>
 
             <CardContent className="flex flex-col gap-10">
-              {/* 프로필 사진 */}
-              <section className="flex flex-col gap-4">
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">프로필 사진</h2>
-
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-gray-50 dark:bg-[#111418] p-6 rounded-xl border border-gray-200 dark:border-[#283039]">
-                  <div className="relative">
-                    <div className="size-24 sm:size-28 rounded-full bg-gradient-to-br from-[#137fec] to-blue-700 p-1">
-                      <div className="w-full h-full rounded-full bg-white dark:bg-[#1c2127] flex items-center justify-center">
-                        <UserRound className="size-10 text-gray-400 dark:text-[#9dabb9]" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 text-center sm:text-left">
-                    <div className="flex flex-col gap-1 mb-4">
-                      <h3 className="text-gray-900 dark:text-white font-semibold">아바타 변경</h3>
-                      <p className="text-sm text-gray-500 dark:text-[#9dabb9]">JPG, JPEG 또는 PNG (최대 800KB)</p>
-                    </div>
-
-                    <div className="flex items-center justify-center sm:justify-start gap-3">
-                      <Button type="button" className="gap-2 bg-[#137fec] hover:bg-blue-600 text-white">
-                        <Upload className="size-4" />
-                        사진 업로드
-                      </Button>
-                      <Button type="button" variant="outline" className="border-gray-200 dark:border-[#3b4754] bg-white dark:bg-[#1c2127] text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-[#252b33]">
-                        삭제
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
               {/* 개인 정보 */}
               <section className="flex flex-col gap-6">
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white">개인 정보</h2>
