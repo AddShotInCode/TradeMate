@@ -136,13 +136,14 @@ export default function Sidebar() {
 
         {/* Bottom user button */}
         <div className="mt-auto">
-          <button
-            type="button"
+          <Link
+            href="/account"
             className={cn(
               "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors group hover:bg-slate-50 dark:hover:bg-[#283039]",
               isCollapsed && "justify-center",
             )}
             title={userName ? userName : "사용자"}
+            aria-label={userName ? `${userName} 회원정보로 이동` : "회원정보로 이동"}
           >
             <User className="w-6 h-6 shrink-0 text-slate-500 dark:text-white group-hover:text-primary transition-colors" />
             {!isCollapsed && (
@@ -150,7 +151,7 @@ export default function Sidebar() {
                 {userName ? userName : "사용자"}
               </p>
             )}
-          </button>
+          </Link>
         </div>
       </div>
     </aside>
