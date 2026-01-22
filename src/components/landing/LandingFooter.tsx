@@ -3,18 +3,11 @@ import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 
 const footerLinks = {
-  product: [
-    { label: "주요 기능", href: "#features" },
-    { label: "업데이트", href: "#" },
-  ],
-  company: [
-    { label: "서비스 소개", href: "#about" },
-    { label: "블로그", href: "#" },
-    { label: "채용", href: "#" },
-  ],
+
+
   legal: [
-    { label: "개인정보처리방침", href: "#" },
-    { label: "이용약관", href: "#" },
+    { label: "개인정보처리방침", href: "/policy/privacy" },
+    { label: "이용약관", href: "/policy/terms" },
   ],
 };
 
@@ -34,23 +27,9 @@ export default function LandingFooter() {
           </div>
 
           {/* Footer Links */}
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 sm:gap-16">
-            <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-bold text-white">제품</h4>
-              {footerLinks.product.map((link) => (
-                <Link key={link.label} href={link.href} className="text-sm text-[#9dabb9] hover:text-white">
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-            <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-bold text-white">팀</h4>
-              {footerLinks.company.map((link) => (
-                <Link key={link.label} href={link.href} className="text-sm text-[#9dabb9] hover:text-white">
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+          <div className="flex gap-10">
+
+
             <div className="flex flex-col gap-4">
               <h4 className="text-sm font-bold text-white">법적 고지</h4>
               {footerLinks.legal.map((link) => (
