@@ -2,18 +2,26 @@
 
 import { Rewind, Play, Pause } from "lucide-react";
 import { useSimulationStore } from "@/store/simulationStore";
+import { useState } from "react";
 
 export default function ChartControls() {
   const { currentPrice, nextCandle, prevCandle } = useSimulationStore();
+  const intervals = ['1D', '1W', '1M', '3M', '1Y'];
+  const [selectedInterval, setSelectedInterval] = useState('1D'); // Local state for UI only
 
   return (
     <div className="flex items-center justify-between mb-4 z-10">
       <div className="flex items-center gap-2">
         <div className="flex bg-[#283039] rounded-lg p-1">
-          <button className="px-3 py-1 text-xs font-medium text-slate-400 hover:text-white rounded">1분</button>
-          <button className="px-3 py-1 text-xs font-medium text-white bg-[#101922] shadow-sm rounded">5분</button>
-          <button className="px-3 py-1 text-xs font-medium text-slate-400 hover:text-white rounded">15분</button>
-          <button className="px-3 py-1 text-xs font-medium text-slate-400 hover:text-white rounded">1시간</button>
+          {intervals.map((interval) => (
+             <button 
+                key={interval}
+                onClick={() => setSelectedInterval(interval)}
+                className={`px-3 py-1 text-xs font-medium rounded transition-colors ${interval === selectedInterval ? 'text-white bg-[#101922] shadow-sm' : 'text-slate-400 hover:text-white'}`}
+             >
+                {interval}
+             </button>
+          ))}
         </div>
         <div className="h-6 w-px bg-[#3b4754] mx-2"></div>
         <div className="flex items-center gap-2 text-white">

@@ -60,17 +60,18 @@ export default function SimulationChart() {
         });
     }
 
-    // Resize Observer
-    const handleResize = () => {
-      if (chartContainerRef.current) {
-        chart.applyOptions({ width: chartContainerRef.current.clientWidth });
-      }
-    };
+    // Resize Observer to handle container size changes (e.g. TradeLog resize)
+    const resizeObserver = new ResizeObserver((entries) => {
+        if (!chartContainerRef.current || !chartRef.current) return;
+        
+        const { width, height } = entries[0].contentRect;
+        chartRef.current.applyOptions({ width, height });
+    });
 
-    window.addEventListener('resize', handleResize);
+    resizeObserver.observe(chartContainerRef.current);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
       chart.remove();
     };
   }, []);

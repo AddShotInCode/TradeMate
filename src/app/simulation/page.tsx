@@ -22,7 +22,7 @@ export default function SimulationPage() {
             <StatsBar />
 
             {/* Chart Area */}
-            <div className="flex-1 relative bg-[#1c252e] p-4 flex flex-col">
+            <div className="flex-1 relative bg-[#1c252e] p-4 flex flex-col min-h-0">
               <ChartControls />
               <SimulationChart />
             </div>

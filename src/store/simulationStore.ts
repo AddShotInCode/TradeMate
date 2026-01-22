@@ -10,6 +10,7 @@ export interface TradeLog {
   slippage: number;
   fee: number;
   pnl: number;
+  entryReason?: string; // Add optional entry reason
 }
 
 export interface Position {
@@ -19,6 +20,7 @@ export interface Position {
   qty: number;
   sl?: number;
   tp?: number;
+  entryReason?: string; // Add optional entry reason
 }
 
 interface SimulationState {
@@ -33,7 +35,9 @@ interface SimulationState {
   currentPrice: number;
 
   // Actions
-  placeOrder: (side: 'BUY' | 'SELL', qty: number, price: number, sl?: number, tp?: number) => void;
+  placeOrder: (side: 'BUY' | 'SELL', qty: number, price: number, sl?: number, tp?: number, entryReason?: string) => void;
+  closePosition: (positionIndices: number[]) => void;
+  sellPosition: (qty: number) => void; // Partial close for long positions
   nextCandle: () => void;
   prevCandle: () => void;
   setCurrentPrice: (price: number) => void;
@@ -66,20 +70,20 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
   maxTimeIndex: 100, 
   currentPrice: 152400, 
 
-  placeOrder: (side, qty, price, sl, tp) => set((state) => {
+  placeOrder: (side, qty, price, sl, tp, entryReason) => set((state) => {
     const fee = 2000; 
-    const slippage = side === 'BUY' ? 50 : -50; 
-    const executePrice = price + slippage;
+    const slippage = 0; // Removed slippage as per user request
+    const executePrice = price;
     
     // Create new position logic
-    // For simplicity, we just add it. In real app, might average down if same symbol.
     const newPosition: Position = {
         symbol: 'AAPL',
         side,
         entryPrice: executePrice,
         qty,
-        sl,
-        tp
+        sl: sl && sl > 0 ? sl : undefined,
+        tp: tp && tp > 0 ? tp : undefined,
+        entryReason // Store entry reason
     };
 
     // Log the OPEN trade
@@ -92,13 +96,135 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
         qty,
         slippage,
         fee,
-        pnl: 0 // No realized PnL on open
+        pnl: 0, // No realized PnL on open,
+        entryReason // Store entry reason
     };
 
     return {
         balance: state.balance - fee, // Deduct fee on open
         tradeLogs: [newLog, ...state.tradeLogs],
         positions: [...state.positions, newPosition] 
+    };
+  }),
+
+  closePosition: (positionIndices) => set((state) => {
+    const positionsToClose = positionIndices.map(idx => state.positions[idx]).filter(Boolean);
+    if (positionsToClose.length === 0) return state;
+
+    const remainingPositions = state.positions.filter((_, idx) => !positionIndices.includes(idx));
+    let newBalance = state.balance;
+    const newLogs = [...state.tradeLogs];
+    const currentPrice = state.currentPrice;
+
+    positionsToClose.forEach(pos => {
+        const fee = 2000;
+        const slippage = 0; // Removed slippage as per user request
+        const closePrice = currentPrice;
+        
+        // Calculate PnL
+        // Long: (Close - Entry) * Qty
+        // Short: (Entry - Close) * Qty
+        const pnl = pos.side === 'BUY' 
+            ? (closePrice - pos.entryPrice) * pos.qty 
+            : (pos.entryPrice - closePrice) * pos.qty;
+
+        newBalance += pnl - fee;
+
+        newLogs.unshift({
+            id: Math.random().toString(36).substr(2, 9),
+            time: new Date().toLocaleTimeString('ko-KR', { hour12: false }), // Or simulation time
+            symbol: pos.symbol,
+            side: pos.side === 'BUY' ? 'SELL' : 'BUY',
+            price: closePrice,
+            qty: pos.qty,
+            slippage,
+            fee,
+            pnl,
+            entryReason: pos.entryReason // Pass entry reason to close log
+        });
+    });
+
+    return {
+        balance: newBalance,
+        positions: remainingPositions,
+        tradeLogs: newLogs
+    };
+  }),
+
+  // Partial Close for Long Positions (FIFO)
+  sellPosition: (qty) => set((state) => {
+    let remainingQtyToSell = qty;
+    let newBalance = state.balance;
+    const newLogs = [...state.tradeLogs];
+    const currentPrice = state.currentPrice;
+    
+    // Process positions - Creates a new array to avoid mutating state directly in loop
+    const newPositions = [...state.positions];
+    // Filter for LONG positions to sell
+    const longIndices = newPositions
+        .map((p, i) => ({ ...p, originalIndex: i }))
+        .filter(p => p.side === 'BUY');
+        
+    // FIFO: We iterate through existing Long positions
+    // Note: In a real FIFO, we should sort by timestamp. Assuming array order is insertion order.
+    
+    for (let i = 0; i < newPositions.length; i++) {
+        if (remainingQtyToSell <= 0) break;
+        
+        const pos = newPositions[i];
+        if (pos.side !== 'BUY') continue; // Only close Longs for 'Sell' action
+        
+        const closeQty = Math.min(pos.qty, remainingQtyToSell);
+        const fee = 2000; // Flat fee per trade chunk? simulating simplified fee
+        const slippage = 0;
+        const closePrice = currentPrice;
+        
+        const pnl = (closePrice - pos.entryPrice) * closeQty;
+        newBalance += pnl; // Add PnL to balance? 
+        // Wait, balance update logic in closePosition was: newBalance += pnl - fee
+        // Usually, Balance = Initial + Realized PnL - Fees.
+        // Original close logic: newBalance += pnl - fee. (This assumes entry cost was NOT deducted from balance?
+        // Let's check placeOrder: balance: state.balance - fee.
+        // It seems 'balance' is "Cash".
+        // When buying, we usually deduct (Price * Qty) + Fee?
+        // The current store implementation is simplified:
+        // placeOrder -> Deduct Fee ONLY.
+        // This implies Margin Trading where Margin is locked but not deducted?
+        // Or specific logic.
+        // closePosition -> Add (PnL - Fee).
+        // If I buy 1 BTC at 1000, Fee 10. Balance - 10.
+        // Price goes to 1100. PnL = 100.
+        // Close -> Balance + 100 - 10 = Balance + 90.
+        // Net = -10 + 90 = +80. Correct.
+        // So here:
+        newBalance += pnl - fee;
+
+        // Log
+        newLogs.unshift({
+            id: Math.random().toString(36).substr(2, 9),
+            time: new Date().toLocaleTimeString('ko-KR', { hour12: false }),
+            symbol: pos.symbol,
+            side: 'SELL',
+            price: closePrice,
+            qty: closeQty,
+            slippage,
+            fee,
+            pnl,
+            entryReason: pos.entryReason
+        });
+        
+        // Update Position
+        newPositions[i] = { ...pos, qty: pos.qty - closeQty };
+        remainingQtyToSell -= closeQty;
+    }
+
+    // Filter out fully closed positions (qty <= 0)
+    const finalPositions = newPositions.filter(p => p.qty > 0);
+
+    return {
+        balance: newBalance,
+        positions: finalPositions,
+        tradeLogs: newLogs
     };
   }),
 
@@ -117,34 +243,50 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
         let isClosed = false;
         let closeReason = '';
 
-        // Check SL (Long)
-        if (pos.side === 'BUY' && pos.sl && nextCandleData.low <= pos.sl) {
-            closePrice = pos.sl; // Slippage could apply here too
-            isClosed = true;
-            closeReason = 'SL';
+        // Check SL/TP for Long
+        if (pos.side === 'BUY') {
+            if (pos.sl && pos.sl > 0 && nextCandleData.low <= pos.sl) {
+                closePrice = pos.sl; 
+                isClosed = true;
+                closeReason = 'SL';
+            } else if (pos.tp && pos.tp > 0 && nextCandleData.high >= pos.tp) {
+                closePrice = pos.tp;
+                isClosed = true;
+                closeReason = 'TP';
+            }
         }
-        // Check TP (Long)
-        else if (pos.side === 'BUY' && pos.tp && nextCandleData.high >= pos.tp) {
-            closePrice = pos.tp;
-            isClosed = true;
-            closeReason = 'TP';
+        // Check SL/TP for Short
+        else if (pos.side === 'SELL') {
+             if (pos.sl && pos.sl > 0 && nextCandleData.high >= pos.sl) {
+                closePrice = pos.sl; // Hit upper SL
+                isClosed = true;
+                closeReason = 'SL';
+            } else if (pos.tp && pos.tp > 0 && nextCandleData.low <= pos.tp) {
+                closePrice = pos.tp; // Hit lower TP
+                isClosed = true;
+                closeReason = 'TP';
+            }
         }
 
         if (isClosed) {
             const fee = 2000;
-            const pnl = (closePrice - pos.entryPrice) * pos.qty;
+            const pnl = pos.side === 'BUY' 
+                ? (closePrice - pos.entryPrice) * pos.qty
+                : (pos.entryPrice - closePrice) * pos.qty;
+
             newBalance += pnl - fee;
 
             newTradeLogs.unshift({
                 id: Math.random().toString(36).substr(2, 9),
-                time: nextCandleData.time, // Use candle time or sim time
+                time: nextCandleData.time,
                 symbol: pos.symbol,
                 side: pos.side === 'BUY' ? 'SELL' : 'BUY', // Closing side
                 price: closePrice,
                 qty: pos.qty,
-                slippage: 0, // Simplified
+                slippage: 0, // Simplified for SL/TP
                 fee,
-                pnl
+                pnl,
+                entryReason: pos.entryReason // Pass entry reason to close log
             });
         } else {
             activePositions.push(pos);
