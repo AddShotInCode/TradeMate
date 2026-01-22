@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -23,10 +22,10 @@ public class GlobalExceptionHandler {
         private String message;
     }
 
-    // 엔티티를 찾을 수 없는 경우 404 반환
-    @ExceptionHandler(NotFoundEntityException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundEntityException(NotFoundEntityException e) {
-        log.warn("Entity not found: {}", e.getMessage());
+    // 종목을 찾을 수 없는 경우 404 반환
+    @ExceptionHandler(StockNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleStockNotFoundException(StockNotFoundException e) {
+        log.warn("Stock not found: {}", e.getMessage());
         
         ErrorResponse response = ErrorResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
@@ -77,11 +76,5 @@ public class GlobalExceptionHandler {
                 .build();
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<String> handleMissingParams(MissingServletRequestParameterException e) {
-        String name = e.getParameterName();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(name + " 파라미터가 누락되었습니다.");
     }
 }
