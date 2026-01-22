@@ -21,11 +21,12 @@ export default function TradeLog() {
       if (!isResizing.current) return;
       
       // Calculate delta: moving UP (negative delta) should INCREASE height
-      // distinct from movementY which is delta per frame
       const deltaY = e.clientY - startY.current;
       const newHeight = startHeight.current - deltaY; // moving up (lower Y) -> increase height
       
-      setHeight(Math.max(150, Math.min(800, newHeight)));
+      requestAnimationFrame(() => {
+          setHeight(Math.max(150, Math.min(800, newHeight)));
+      });
     };
 
     const handleMouseUp = () => {
@@ -121,13 +122,13 @@ export default function TradeLog() {
                     >
                         <td className="px-4 py-2 font-mono text-slate-500">{log.time}</td>
                         <td className="px-4 py-2 font-bold text-white">{log.symbol}</td>
-                        <td className={`px-4 py-2 ${log.side === 'BUY' ? 'text-green-500' : 'text-red-500'}`}>
+                        <td className={`px-4 py-2 ${log.side === 'BUY' ? 'text-red-500' : 'text-blue-500'}`}>
                         {log.side}
                         </td>
                         <td className="px-4 py-2 font-mono">{log.price.toLocaleString('ko-KR')}</td>
                         <td className="px-4 py-2 font-mono">{log.qty}</td>
                         <td className="px-4 py-2 text-slate-500 text-xs">₩{log.fee.toLocaleString('ko-KR')}</td>
-                        <td className={`px-4 py-2 text-right font-mono font-bold ${log.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        <td className={`px-4 py-2 text-right font-mono font-bold ${log.pnl >= 0 ? 'text-red-500' : 'text-blue-500'}`}>
                         {log.pnl !== 0 ? `${log.pnl > 0 ? '+' : ''}₩${Math.round(log.pnl).toLocaleString('ko-KR')}` : '-'}
                         </td>
                     </tr>
@@ -196,7 +197,7 @@ function OpenPositionsTable() {
                     return (
                         <tr key={idx} className="hover:bg-[#283039]/50">
                             <td className="px-4 py-2 font-bold text-white">{pos.symbol}</td>
-                            <td className={`px-4 py-2 ${pos.side === 'BUY' ? 'text-green-500' : 'text-red-500'}`}>
+                            <td className={`px-4 py-2 ${pos.side === 'BUY' ? 'text-red-500' : 'text-blue-500'}`}>
                                 {pos.side}
                                 <span className="text-[10px] text-slate-500 ml-1 font-mono">
                                     {pos.side === 'BUY' ? 'LONG' : 'SHORT'}
@@ -205,7 +206,7 @@ function OpenPositionsTable() {
                             <td className="px-4 py-2 font-mono">₩{pos.entryPrice.toLocaleString('ko-KR')}</td>
                             <td className="px-4 py-2 font-mono text-slate-400">₩{currentPrice.toLocaleString('ko-KR')}</td>
                             <td className="px-4 py-2 font-mono">{pos.qty}</td>
-                            <td className={`px-4 py-2 font-mono font-bold ${pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            <td className={`px-4 py-2 font-mono font-bold ${pnl >= 0 ? 'text-red-500' : 'text-blue-500'}`}>
                                 {pnl > 0 ? '+' : ''}₩{Math.round(pnl).toLocaleString('ko-KR')}
                                 <span className="text-xs opacity-70 ml-1">({pnlPercent.toFixed(2)}%)</span>
                             </td>

@@ -29,7 +29,7 @@ export default function StatsBar() {
       <div className="flex flex-col gap-1">
         <p className="text-slate-500 text-xs font-medium uppercase tracking-wider">평가 손익 (Unrealized P&L)</p>
         <div className="flex items-center gap-2">
-          <p className={`${isProfit ? 'text-green-500' : 'text-red-500'} text-lg font-bold font-mono`}>
+          <p className={`${isProfit ? 'text-red-500' : 'text-blue-500'} text-lg font-bold font-mono`}>
             {isProfit ? '+' : ''}₩{Math.abs(Math.round(unrealizedPnl)).toLocaleString('ko-KR')}
           </p>
         </div>

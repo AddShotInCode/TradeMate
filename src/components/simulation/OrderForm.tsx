@@ -112,7 +112,7 @@ export default function OrderForm() {
             onClick={() => setActiveTab('BUY')}
             className={`flex-1 py-4 text-sm font-bold transition-colors border-b-2 ${
                 activeTab === 'BUY' 
-                ? 'border-green-500 text-green-500 bg-green-500/5' 
+                ? 'border-red-500 text-red-500 bg-red-500/5' 
                 : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}
         >
@@ -122,7 +122,7 @@ export default function OrderForm() {
             onClick={() => setActiveTab('SELL')}
             className={`flex-1 py-4 text-sm font-bold transition-colors border-b-2 ${
                 activeTab === 'SELL' 
-                ? 'border-red-500 text-red-500 bg-red-500/5' 
+                ? 'border-blue-500 text-blue-500 bg-blue-500/5' 
                 : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}
         >
@@ -149,7 +149,7 @@ export default function OrderForm() {
                 <HelpCircle className="w-4 h-4 text-slate-600 cursor-help" />
                 </label>
                 <textarea 
-                className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg p-3 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600 resize-none h-24" 
+                className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg p-3 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600 resize-none h-24" 
                 placeholder="매수 진입 근거를 입력하세요..."
                 value={entryReason}
                 onChange={(e) => setEntryReason(e.target.value)}
@@ -164,7 +164,7 @@ export default function OrderForm() {
                 <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₩</span>
                     <input 
-                    className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg py-2.5 pl-7 pr-3 text-sm font-mono text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all" 
+                    className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg py-2.5 pl-7 pr-3 text-sm font-mono text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" 
                     placeholder="0" 
                     type="number" 
                     min="0"
@@ -180,7 +180,7 @@ export default function OrderForm() {
                 <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₩</span>
                     <input 
-                    className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg py-2.5 pl-7 pr-3 text-sm font-mono text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500/50 focus:border-green-500 outline-none transition-all" 
+                    className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg py-2.5 pl-7 pr-3 text-sm font-mono text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all" 
                     placeholder="0" 
                     type="number"
                     min="0"
@@ -195,13 +195,13 @@ export default function OrderForm() {
             <div className="bg-slate-50 dark:bg-[#1c252e] rounded-lg p-4 border border-slate-200 dark:border-[#3b4754]">
                 <div className="flex justify-between items-center mb-2">
                     <span className="text-xs font-medium text-slate-500 uppercase">예상 손실 (Est. Loss)</span>
-                    <span className="text-sm font-bold text-red-500">
+                    <span className="text-sm font-bold text-blue-500">
                         {estimatedLoss !== 0 ? `₩${Math.round(estimatedLoss).toLocaleString('ko-KR')}` : '-'}
                     </span>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-xs font-medium text-slate-500 uppercase">예상 수익 (Est. Profit)</span>
-                    <span className="text-sm font-bold text-green-500">
+                    <span className="text-sm font-bold text-red-500">
                         {estimatedProfit !== 0 ? `+₩${Math.round(estimatedProfit).toLocaleString('ko-KR')}` : '-'}
                     </span>
                 </div>
@@ -212,7 +212,7 @@ export default function OrderForm() {
         {/* SELL MODE UI */}
         {activeTab === 'SELL' && (
             <div className="space-y-5">
-                <div className="bg-red-500/5 rounded-lg p-6 text-center border border-red-500/10">
+                <div className="bg-blue-500/5 rounded-lg p-6 text-center border border-blue-500/10">
                     <p className="text-slate-500 text-xs uppercase font-bold mb-1">총 보유 수량 (Total Holdings)</p>
                     <p className="text-3xl font-mono font-bold text-slate-900 dark:text-white">
                         {maxQty.toLocaleString()} <span className="text-sm text-slate-400">Qty</span>
@@ -245,7 +245,7 @@ export default function OrderForm() {
                 max={maxQty} 
                 value={qty} 
                 onChange={(e) => setQty(Number(e.target.value))}
-                className={`w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 ${activeTab === 'BUY' ? 'accent-green-500' : 'accent-red-500'}`}
+                className={`w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 ${activeTab === 'BUY' ? 'accent-red-500' : 'accent-blue-500'}`}
                />
             </div>
 
@@ -281,7 +281,7 @@ export default function OrderForm() {
             {activeTab === 'BUY' ? (
                 <button 
                 onClick={handleOrder}
-                className="w-full group relative flex flex-col items-center justify-center py-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-sm transition-all active:scale-[0.98]"
+                className="w-full group relative flex flex-col items-center justify-center py-4 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-sm transition-all active:scale-[0.98]"
                 >
                 <span className="text-lg font-bold">매수</span>
                 <span className="text-xs opacity-80 mt-1">₩{currentPrice.toLocaleString()}에 진입</span>
@@ -289,7 +289,7 @@ export default function OrderForm() {
             ) : (
                 <button 
                 onClick={handleOrder}
-                className="w-full group relative flex flex-col items-center justify-center py-4 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-sm transition-all active:scale-[0.98]"
+                className="w-full group relative flex flex-col items-center justify-center py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm transition-all active:scale-[0.98]"
                 disabled={maxQty === 0}
                 >
                 <span className="text-lg font-bold">매도</span>

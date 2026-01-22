@@ -1,5 +1,6 @@
 import { History } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import NewSessionModal from "./NewSessionModal";
 
 export default function Header() {
   return (
@@ -13,9 +14,7 @@ export default function Header() {
         </p>
       </div>
       <div className="flex gap-3">
-        <Button className="h-12 px-8 text-lg font-bold bg-white text-black hover:bg-slate-100 shadow-md">
-            새 세션
-        </Button>
+        <NewSessionModal />
       </div>
     </header>
   );
