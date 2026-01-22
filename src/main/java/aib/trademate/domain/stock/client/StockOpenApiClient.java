@@ -23,10 +23,10 @@ public class StockOpenApiClient {
     private final ObjectMapper objectMapper; // Spring이 자동으로 주입해줍니다.
 
     // application.yml에서 값을 가져옴
-    @Value("${stock-api.service-key}")
+    @Value("${open-api.service-key}")
     private String serviceKey;
 
-    @Value("${stock-api.url}")
+    @Value("${open-api.url}")
     private String apiUrl;
 
     /**
