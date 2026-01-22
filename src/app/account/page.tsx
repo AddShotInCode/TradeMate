@@ -391,7 +391,7 @@ export default function AccountPage() {
           </Card>
 
           <footer className="mt-2 text-center text-slate-500 dark:text-[#9dabb9] text-xs pb-4">
-            © 2024 TradeMate. 모든 매매에는 위험이 따릅니다.
+            © 2026 TradeMate. 모든 매매에는 위험이 따릅니다.
           </footer>
         </div>
       </main>
