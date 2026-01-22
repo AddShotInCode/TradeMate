@@ -2,7 +2,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/dashboard/Header";
 import StatsGrid from "@/components/dashboard/StatsGrid";
 import RecentSessions from "@/components/dashboard/RecentSessions";
-import QuickActions from "@/components/dashboard/QuickActions";
+
 
 export default function DashboardPage() {
   return (
@@ -16,18 +16,8 @@ export default function DashboardPage() {
           <Header />
           
           <StatsGrid />
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main Focus Column (Left 2/3) */}
-            <div className="lg:col-span-2 flex flex-col gap-6">
-              <RecentSessions />
-            </div>
-
-            {/* Right Side Column (Right 1/3) */}
-            <div className="flex flex-col h-full">
-              <QuickActions />
-            </div>
-          </div>
+          
+          <RecentSessions />
           
           <footer className="mt-8 text-center text-slate-500 dark:text-[#9dabb9] text-xs pb-4">
             © 2024 TradeMate. 모든 매매에는 위험이 따릅니다.

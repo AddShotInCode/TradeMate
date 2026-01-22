@@ -37,22 +37,6 @@ export default function QuickActions() {
         </button>
       </div>
 
-      {/* Chart Placeholder (Equity Curve) */}
-      <div className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-[#3b4754] bg-white dark:bg-[#1c2127] p-5 h-full">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-slate-900 dark:text-white font-bold text-sm">자산 곡선</h3>
-          <span className="text-xs text-green-500 font-medium">+12%</span>
-        </div>
-        <div className="flex-1 w-full bg-slate-50 dark:bg-[#252b32] rounded-lg relative overflow-hidden flex items-end px-2 pb-2 gap-1 min-h-[120px]">
-          {/* Fake bars with dark mode adjustment */}
-          <div className="bg-primary/30 dark:bg-primary/20 w-1/6 h-[30%] rounded-sm"></div>
-          <div className="bg-primary/40 dark:bg-primary/30 w-1/6 h-[50%] rounded-sm"></div>
-          <div className="bg-primary/30 dark:bg-primary/20 w-1/6 h-[40%] rounded-sm"></div>
-          <div className="bg-primary/50 dark:bg-primary/40 w-1/6 h-[65%] rounded-sm"></div>
-          <div className="bg-primary/70 dark:bg-primary/60 w-1/6 h-[55%] rounded-sm"></div>
-          <div className="bg-primary dark:bg-primary/80 w-1/6 h-[80%] rounded-sm"></div>
-        </div>
-      </div>
     </div>
   );
 }
