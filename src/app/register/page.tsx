@@ -10,6 +10,7 @@ import LandingNavigation from "@/components/landing/LandingNavigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { PRIVACY_POLICY, TERMS_OF_SERVICE } from "@/constants/legal_constants";
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
@@ -44,14 +45,7 @@ export default function RegisterPage() {
   const [agreeMarketing, setAgreeMarketing] = useState(false);
 
   const [isTermsOpen, setIsTermsOpen] = useState(false);
-  const [termsContent, setTermsContent] = useState<string | null>(null);
-  const [isTermsLoading, setIsTermsLoading] = useState(false);
-  const [termsError, setTermsError] = useState<string | null>(null);
-
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
-  const [privacyContent, setPrivacyContent] = useState<string | null>(null);
-  const [isPrivacyLoading, setIsPrivacyLoading] = useState(false);
-  const [privacyError, setPrivacyError] = useState<string | null>(null);
 
   const [birthYear, setBirthYear] = useState<string>(""
   );
@@ -230,46 +224,12 @@ export default function RegisterPage() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isPrivacyOpen, isTermsOpen]);
 
-  async function openTermsOfService() {
+  function openTermsOfService() {
     setIsTermsOpen(true);
-    if (termsContent || isTermsLoading) return;
-
-    try {
-      setIsTermsLoading(true);
-      setTermsError(null);
-      const res = await fetch("/api/legal/terms-of-service", { method: "GET" });
-      const data = (await res.json()) as { ok: boolean; content?: string; message?: string };
-      if (!res.ok || !data.ok || !data.content) {
-        setTermsError(data.message ?? "이용약관을 불러오지 못했습니다.");
-        return;
-      }
-      setTermsContent(data.content);
-    } catch {
-      setTermsError("이용약관을 불러오지 못했습니다.");
-    } finally {
-      setIsTermsLoading(false);
-    }
   }
 
-  async function openPrivacyPolicy() {
+  function openPrivacyPolicy() {
     setIsPrivacyOpen(true);
-    if (privacyContent || isPrivacyLoading) return;
-
-    try {
-      setIsPrivacyLoading(true);
-      setPrivacyError(null);
-      const res = await fetch("/api/legal/privacy-policy", { method: "GET" });
-      const data = (await res.json()) as { ok: boolean; content?: string; message?: string };
-      if (!res.ok || !data.ok || !data.content) {
-        setPrivacyError(data.message ?? "개인정보 처리방침을 불러오지 못했습니다.");
-        return;
-      }
-      setPrivacyContent(data.content);
-    } catch {
-      setPrivacyError("개인정보 처리방침을 불러오지 못했습니다.");
-    } finally {
-      setIsPrivacyLoading(false);
-    }
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -313,17 +273,9 @@ export default function RegisterPage() {
             </div>
 
             <div className="px-6 py-5 overflow-auto max-h-[calc(80vh-120px)]">
-              {isTermsLoading ? (
-                <p className="text-sm text-slate-500 dark:text-[#9dacb9]">불러오는 중...</p>
-              ) : termsError ? (
-                <p className="text-sm text-red-500">{termsError}</p>
-              ) : termsContent ? (
-                <pre className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700 dark:text-[#d5dde6]">
-                  {termsContent}
-                </pre>
-              ) : (
-                <p className="text-sm text-slate-500 dark:text-[#9dacb9]">내용이 없습니다.</p>
-              )}
+              <pre className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700 dark:text-[#d5dde6]">
+                {TERMS_OF_SERVICE}
+              </pre>
             </div>
 
             <div className="px-6 py-4 border-t border-slate-200 dark:border-[#2a3441] flex justify-end">
@@ -363,17 +315,9 @@ export default function RegisterPage() {
             </div>
 
             <div className="px-6 py-5 overflow-auto max-h-[calc(80vh-120px)]">
-              {isPrivacyLoading ? (
-                <p className="text-sm text-slate-500 dark:text-[#9dacb9]">불러오는 중...</p>
-              ) : privacyError ? (
-                <p className="text-sm text-red-500">{privacyError}</p>
-              ) : privacyContent ? (
-                <pre className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700 dark:text-[#d5dde6]">
-                  {privacyContent}
-                </pre>
-              ) : (
-                <p className="text-sm text-slate-500 dark:text-[#9dacb9]">내용이 없습니다.</p>
-              )}
+              <pre className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700 dark:text-[#d5dde6]">
+                {PRIVACY_POLICY}
+              </pre>
             </div>
 
             <div className="px-6 py-4 border-t border-slate-200 dark:border-[#2a3441] flex justify-end">

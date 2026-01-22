@@ -35,16 +35,7 @@ export default function WorkflowSection() {
                 backgroundPosition: "center",
               }}
             >
-              {/* UI Decoration */}
-              <div className="absolute bottom-4 left-4 right-4 rounded-lg border border-[#283039] bg-[#1c2127]/90 p-4 backdrop-blur-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-[#9dabb9] uppercase">현재 세션 점수</span>
-                    <span className="text-2xl font-black text-green-500">98/100</span>
-                  </div>
-                  <CheckCircle className="size-10 text-green-500" />
-                </div>
-              </div>
+
             </div>
           </div>
 
@@ -53,8 +44,8 @@ export default function WorkflowSection() {
             <h2 className="text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl">
               정의. 실행. 평가.
             </h2>
-            <p className="text-lg leading-relaxed text-[#9dabb9]">
-              성공적인 트레이딩은 예측이 아닌 대응과 원칙에 있습니다. TradeMate가 제안하는 체계적인 훈련 과정:
+            <p className="text-base leading-relaxed text-[#9dabb9]">
+              성공적인 트레이딩은 예측이 아닌 대응과 원칙에 있습니다. TradeMate가 제안하는 체계적인 훈련 과정
             </p>
             <ul className="flex flex-col gap-4">
               {steps.map((step, index) => (
@@ -67,14 +58,7 @@ export default function WorkflowSection() {
                 </li>
               ))}
             </ul>
-            <div className="pt-4">
-              <Link
-                href="/dashboard"
-                className="inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-base font-bold text-[#101922] hover:bg-gray-200 transition-colors"
-              >
-                작동 방식 보기
-              </Link>
-            </div>
+
           </div>
         </div>
       </div>
