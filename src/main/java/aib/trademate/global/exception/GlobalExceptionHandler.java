@@ -36,6 +36,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    // 재무제표를 찾을 수 없는 경우 404 반환
+    @ExceptionHandler(StatementNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleStatementNotFoundException(StatementNotFoundException e) {
+        log.warn("Statement not found: {}", e.getMessage());
+        
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Not Found")
+                .message(e.getMessage())
+                .build();
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     // 날짜 형식 오류 400 반환
     @ExceptionHandler(DateTimeParseException.class)
     public ResponseEntity<ErrorResponse> handleDateTimeParseException(DateTimeParseException e) {

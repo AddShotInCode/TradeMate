@@ -1,0 +1,42 @@
+create database trademate;
+use trademate;
+
+CREATE TABLE stock (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(20) NOT NULL UNIQUE COMMENT '종목 단축코드 (예: 005930)',
+    name VARCHAR(100) NOT NULL COMMENT '종목명 (예: 삼성전자)',
+    market_type VARCHAR(20) COMMENT '시장구분 (KOSPI, KOSDAQ)',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE daily_price (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    stock_id BIGINT NOT NULL COMMENT 'Stock 테이블 FK',
+    date DATE NOT NULL COMMENT '기준일자 (basDt)',
+    open_price BIGINT NOT NULL COMMENT '시가 (mkp)',
+    high_price BIGINT NOT NULL COMMENT '고가 (hipr)',
+    low_price BIGINT NOT NULL COMMENT '저가 (lopr)',
+    close_price BIGINT NOT NULL COMMENT '종가 (clpr)',
+    volume BIGINT NOT NULL COMMENT '거래량 (trqu)',
+    change_amount BIGINT COMMENT '대비 (vs)',
+    change_rate DOUBLE COMMENT '등락률 (fltRt)',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (stock_id) REFERENCES stock(id),
+    UNIQUE KEY uk_stock_date (stock_id, date) -- 같은 종목의 같은 날짜 데이터 중복 방지
+);
+
+CREATE TABLE statement (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    stock_code VARCHAR(6) NOT NULL COMMENT '종목코드 (예: 005930)',
+    fiscal_year INT NOT NULL COMMENT '사업연도 (예: 2024)',
+    qtr INT NOT NULL COMMENT '분기 (1, 2, 3, 4)',
+    rcept_no VARCHAR(14) NOT NULL COMMENT '보고서코드 (14자리)',
+    rcept_dt VARCHAR(8) NOT NULL COMMENT '보고서업로드일 (yyyyMMdd)',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_statement_rcept_no (rcept_no) -- 보고서코드는 고유함
+);
