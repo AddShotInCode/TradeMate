@@ -2,13 +2,16 @@ package aib.trademate.domain.stock.controller;
 
 import aib.trademate.domain.stock.dto.StockPriceResponseDto;
 import aib.trademate.domain.stock.service.StockService;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@Validated
 @RestController
 @RequestMapping("/api/stock")
 @RequiredArgsConstructor
@@ -31,8 +34,8 @@ public class StockController {
             @PathVariable String stockCode,
             @RequestParam String start,
             @RequestParam String end,
-            @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "1") int page
+            @RequestParam(defaultValue = "10") @Min(value = 1, message = "Page size must be at least 1") int pageSize,
+            @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page
     ) {
         // 날짜 파싱 (yyyyMMdd -> LocalDate)
         DateTimeFormatter formatter = DateTimeFormatter.BASIC_ISO_DATE;
