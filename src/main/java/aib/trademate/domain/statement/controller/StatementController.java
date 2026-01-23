@@ -2,10 +2,14 @@ package aib.trademate.domain.statement.controller;
 
 import aib.trademate.domain.statement.dto.StatementResponseDto;
 import aib.trademate.domain.statement.service.StatementService;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @RequestMapping("/api/statement")
 @RequiredArgsConstructor
@@ -35,8 +39,9 @@ public class StatementController {
     @GetMapping("/{stockCode}")
     public ResponseEntity<StatementResponseDto.Response> getStatementViewerLinks(
             @PathVariable String stockCode,
-            @RequestParam Integer year,
-            @RequestParam Integer quarter
+            @RequestParam @Min(value = 2015, message = "Year must be 2015 or later") Integer year,
+            @RequestParam @Min(value = 1, message = "Quarter must be between 1 and 4") 
+                          @Max(value = 4, message = "Quarter must be between 1 and 4") Integer quarter
     ) {
         StatementResponseDto.Response response = statementService.getStatementViewerLinks(
                 stockCode, year, quarter);

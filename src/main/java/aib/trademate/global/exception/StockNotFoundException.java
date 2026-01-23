@@ -1,8 +1,11 @@
 package aib.trademate.global.exception;
 
-public class StockNotFoundException extends RuntimeException {
-    
+/**
+ * 종목을 찾을 수 없을 때 발생하는 예외
+ */
+public class StockNotFoundException extends BusinessException {
+
     public StockNotFoundException(String stockCode) {
-        super("Stock not found: " + stockCode);
+        super(ErrorCode.STOCK_NOT_FOUND, stockCode);
     }
 }

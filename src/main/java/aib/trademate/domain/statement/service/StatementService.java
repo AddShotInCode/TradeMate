@@ -184,19 +184,12 @@ public class StatementService {
     @Transactional(readOnly = true)
     public StatementResponseDto.Response getStatementViewerLinks(
             String stockCode, Integer year, Integer quarter) {
-        
-        // 분기 유효성 검사
-        if (quarter < 1 || quarter > 4) {
-            throw new IllegalArgumentException("Invalid quarter: " + quarter + ". Must be 1, 2, 3, or 4.");
-        }
 
         List<FinancialStatement> statements = statementLowService
                 .findByStockCodeAndYearAndQuarter(stockCode, year, quarter);
 
         if (statements.isEmpty()) {
-            throw new StatementNotFoundException(
-                    String.format("Statement not found: stockCode=%s, year=%d, quarter=%d", 
-                            stockCode, year, quarter));
+            throw new StatementNotFoundException(stockCode, year, quarter);
         }
 
         List<StatementResponseDto.ViewerLink> items = statements.stream()

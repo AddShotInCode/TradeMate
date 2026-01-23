@@ -5,6 +5,13 @@ spring:
   config:
     import: classpath:stock-codes.yml  # 종목 코드 설정 파일
 
+  # 존재하지 않는 API 경로 요청 시 NoHandlerFoundException 발생 설정
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false  # 정적 리소스 매핑 비활성화 (API 서버용)
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
