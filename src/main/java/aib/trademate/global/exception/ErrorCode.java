@@ -20,6 +20,18 @@ public enum ErrorCode {
     INVALID_PARAMETER_TYPE(HttpStatus.BAD_REQUEST, "COMMON-005", "Invalid parameter type"),
     INVALID_QUARTER_VALUE(HttpStatus.BAD_REQUEST, "COMMON-006", "Invalid quarter value. Must be between 1 and 4"),
     INVALID_YEAR_VALUE(HttpStatus.BAD_REQUEST, "COMMON-007", "Invalid year value"),
+    INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST, "COMMON-008", "Request body is missing or invalid"),
+    INVALID_JSON_FORMAT(HttpStatus.BAD_REQUEST, "COMMON-009", "Invalid JSON format"),
+
+    // 401 Unauthorized
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH-001", "Invalid email or password"),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-002", "Invalid or expired token"),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH-003", "Token has expired"),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-004", "Authentication required"),
+    MALFORMED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-005", "Malformed JWT token"),
+
+    // 403 Forbidden
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "AUTH-020", "Access denied"),
 
     // 404 Not Found
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON-010", "Resource not found"),
@@ -29,6 +41,9 @@ public enum ErrorCode {
 
     // 405 Method Not Allowed
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "COMMON-020", "HTTP method not allowed"),
+
+    // 409 Conflict
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH-010", "Email already exists"),
 
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON-100", "An unexpected error occurred"),

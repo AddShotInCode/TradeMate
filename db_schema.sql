@@ -40,3 +40,24 @@ CREATE TABLE statement (
     
     UNIQUE KEY uk_statement_rcept_no (rcept_no) -- 보고서코드는 고유함
 );
+
+CREATE TABLE members (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL UNIQUE COMMENT '이메일 (로그인 ID)',
+    password VARCHAR(255) NOT NULL COMMENT '암호화된 비밀번호 (BCrypt)',
+    name VARCHAR(50) NOT NULL COMMENT '사용자 이름',
+    phone VARCHAR(20) NOT NULL COMMENT '전화번호',
+    role VARCHAR(20) DEFAULT 'USER' COMMENT '권한 (USER, ADMIN)',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE refresh_token (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    member_id BIGINT NOT NULL UNIQUE COMMENT 'members 테이블 FK',
+    token VARCHAR(500) NOT NULL COMMENT 'Refresh Token',
+    expiry_date DATETIME NOT NULL COMMENT '만료일시',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+);
