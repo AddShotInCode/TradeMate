@@ -18,10 +18,16 @@ export default function LandingNavigation() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          <Link href="/#about" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
+          <Link
+            href="/#about"
+            className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors"
+          >
             서비스 소개
           </Link>
-          <Link href="/#features" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
+          <Link
+            href="/#features"
+            className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors"
+          >
             주요 기능
           </Link>
         </div>
@@ -35,10 +41,10 @@ export default function LandingNavigation() {
             로그인
           </Link>
           <Link
-            href="/login"
+            href="/register"
             className="flex h-9 items-center justify-center rounded-lg bg-[#137fec] px-4 text-sm font-bold text-white hover:bg-blue-600 transition-colors shadow-[0_0_15px_rgba(19,127,236,0.4)]"
           >
-            시작하기
+            회원가입
           </Link>
 
           {/* Mobile Menu Button */}
@@ -55,10 +61,16 @@ export default function LandingNavigation() {
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-[#283039] bg-[#101922] px-4 py-4">
           <div className="flex flex-col gap-4">
-            <Link href="/#about" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
+            <Link
+              href="/#about"
+              className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors"
+            >
               서비스 소개
             </Link>
-            <Link href="/#features" className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors">
+            <Link
+              href="/#features"
+              className="text-sm font-medium text-[#9dabb9] hover:text-white transition-colors"
+            >
               주요 기능
             </Link>
             <Link

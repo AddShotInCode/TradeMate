@@ -6,11 +6,13 @@ import Sidebar from "@/components/layout/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, PencilLine, Phone, ShieldCheck, KeyRound, LockKeyhole } from "lucide-react";
+import { Mail, PencilLine, Phone, ShieldCheck, KeyRound, LockKeyhole, LogOut } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
 
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 
 export default function AccountPage() {
+  const { logout } = useAuthStore();
   const currentYear = new Date().getFullYear();
   const minYear = currentYear - 100;
   const maxYear = currentYear;
@@ -63,18 +65,18 @@ export default function AccountPage() {
 
   const isBirthSelected = useMemo(
     () => Boolean(birthYear) && Boolean(birthMonth) && Boolean(birthDay),
-    [birthDay, birthMonth, birthYear]
+    [birthDay, birthMonth, birthYear],
   );
 
   const isNameValid = useMemo(() => fullName.trim().length > 0, [fullName]);
 
   const isPhoneValid = useMemo(
     () => phone.trim().length === 0 || /^\d{11}$/.test(phone.trim()),
-    [phone]
+    [phone],
   );
   const isNewPasswordValid = useMemo(
     () => newPassword.trim().length === 0 || PASSWORD_REGEX.test(newPassword),
-    [newPassword]
+    [newPassword],
   );
   const isConfirmPasswordValid = useMemo(() => {
     if (newPassword.trim().length === 0 && confirmPassword.trim().length === 0) return true;
@@ -150,7 +152,10 @@ export default function AccountPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-900 dark:text-white" htmlFor="name">
+                    <label
+                      className="text-sm font-semibold text-gray-900 dark:text-white"
+                      htmlFor="name"
+                    >
                       이름
                     </label>
                     <div className="relative">
@@ -173,7 +178,10 @@ export default function AccountPage() {
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-900 dark:text-white" htmlFor="birth-year">
+                    <label
+                      className="text-sm font-semibold text-gray-900 dark:text-white"
+                      htmlFor="birth-year"
+                    >
                       생년월일
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -189,7 +197,12 @@ export default function AccountPage() {
                           const year = Number.parseInt(nextYear, 10);
                           const month = Number.parseInt(birthMonth, 10);
                           const day = Number.parseInt(birthDay, 10);
-                          if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return;
+                          if (
+                            !Number.isFinite(year) ||
+                            !Number.isFinite(month) ||
+                            !Number.isFinite(day)
+                          )
+                            return;
 
                           const maxDayInMonth = new Date(year, month, 0).getDate();
                           if (day > maxDayInMonth) setBirthDay("");
@@ -250,12 +263,17 @@ export default function AccountPage() {
                       <p className="text-xs text-red-500">생년월일을 선택해주세요.</p>
                     ) : null}
                     {saveAttempted && birthYear && !isBirthYearInRange ? (
-                      <p className="text-xs text-red-500">연도는 {minYear}~{maxYear} 범위만 가능합니다.</p>
+                      <p className="text-xs text-red-500">
+                        연도는 {minYear}~{maxYear} 범위만 가능합니다.
+                      </p>
                     ) : null}
                   </div>
 
                   <div className="flex flex-col gap-2 md:col-span-2">
-                    <label className="text-sm font-semibold text-gray-900 dark:text-white" htmlFor="email">
+                    <label
+                      className="text-sm font-semibold text-gray-900 dark:text-white"
+                      htmlFor="email"
+                    >
                       이메일
                     </label>
                     <div className="relative">
@@ -272,7 +290,10 @@ export default function AccountPage() {
                   </div>
 
                   <div className="flex flex-col gap-2 md:col-span-2">
-                    <label className="text-sm font-semibold text-gray-900 dark:text-white" htmlFor="phone">
+                    <label
+                      className="text-sm font-semibold text-gray-900 dark:text-white"
+                      htmlFor="phone"
+                    >
                       휴대폰 번호
                     </label>
                     <div className="relative">
@@ -302,12 +323,17 @@ export default function AccountPage() {
               <section className="flex flex-col gap-6 pt-8 border-t border-gray-200 dark:border-[#283039]">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="size-5 text-[#137fec]" />
-                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">비밀번호 및 보안</h2>
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+                    비밀번호 및 보안
+                  </h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="flex flex-col gap-2 md:col-span-2">
-                    <label className="text-sm font-semibold text-gray-900 dark:text-white" htmlFor="current-password">
+                    <label
+                      className="text-sm font-semibold text-gray-900 dark:text-white"
+                      htmlFor="current-password"
+                    >
                       현재 비밀번호
                     </label>
                     <div className="relative">
@@ -322,7 +348,10 @@ export default function AccountPage() {
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-900 dark:text-white" htmlFor="new-password">
+                    <label
+                      className="text-sm font-semibold text-gray-900 dark:text-white"
+                      htmlFor="new-password"
+                    >
                       새 비밀번호
                     </label>
                     <div className="relative">
@@ -338,12 +367,17 @@ export default function AccountPage() {
                       <LockKeyhole className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-gray-400 dark:text-[#9dabb9]" />
                     </div>
                     {(saveAttempted || newPassword.length > 0) && !isNewPasswordValid ? (
-                      <p className="text-xs text-red-500">알파벳/숫자/특수기호 포함, 8자 이상으로 입력해주세요.</p>
+                      <p className="text-xs text-red-500">
+                        알파벳/숫자/특수기호 포함, 8자 이상으로 입력해주세요.
+                      </p>
                     ) : null}
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-900 dark:text-white" htmlFor="confirm-password">
+                    <label
+                      className="text-sm font-semibold text-gray-900 dark:text-white"
+                      htmlFor="confirm-password"
+                    >
                       새 비밀번호 확인
                     </label>
                     <div className="relative">
@@ -371,21 +405,33 @@ export default function AccountPage() {
                 </div>
               ) : null}
 
-              <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-200 dark:border-[#283039]">
+              <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-[#283039]">
                 <Button
                   type="button"
-                  variant="ghost"
-                  className="text-gray-600 dark:text-[#9dabb9] hover:bg-gray-100 dark:hover:bg-[#252b33]"
+                  variant="outline"
+                  onClick={() => logout()}
+                  className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-900/10"
                 >
-                  취소
+                  <LogOut className="w-4 h-4 mr-2" />
+                  로그아웃
                 </Button>
-                <Button
-                  type="button"
-                  onClick={handleSave}
-                  className="bg-[#137fec] hover:bg-blue-600 text-white font-semibold"
-                >
-                  변경사항 저장
-                </Button>
+
+                <div className="flex items-center gap-3">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="text-gray-600 dark:text-[#9dabb9] hover:bg-gray-100 dark:hover:bg-[#252b33]"
+                  >
+                    취소
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleSave}
+                    className="bg-[#137fec] hover:bg-blue-600 text-white font-semibold"
+                  >
+                    변경사항 저장
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
