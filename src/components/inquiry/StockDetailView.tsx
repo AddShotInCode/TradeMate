@@ -1,125 +1,122 @@
 "use client";
 
 import StockHeader from "./StockHeader";
-import StockChart from "./StockChart";
 import KeyStats from "./KeyStats";
 import FundamentalData from "./FundamentalData";
-import PrincipleCheck from "./PrincipleCheck";
+import InquiryChart from "./InquiryChart";
+import { useInquiryStore } from "@/store/inquiryStore";
+import { useMemo } from "react";
 
-interface StockDetailViewProps {
-  symbol: string;
-}
+const formatKRW = (value: number) => `₩${new Intl.NumberFormat('ko-KR').format(Math.round(value))}`;
 
-// Mock data - 실제로는 API에서 가져올 데이터
-const stockData: Record<string, {
-  name: string;
-  exchange: string;
-  price: string;
-  change: string;
-  changePercent: string;
-  isPositive: boolean;
-}> = {
-  AAPL: {
-    name: "Apple Inc.",
-    exchange: "NASDAQ",
-    price: "$189.45",
-    change: "+2.25",
-    changePercent: "1.2%",
-    isPositive: true,
-  },
-  TSLA: {
-    name: "Tesla, Inc.",
-    exchange: "NASDAQ",
-    price: "$173.80",
-    change: "-0.87",
-    changePercent: "0.5%",
-    isPositive: false,
-  },
-  NVDA: {
-    name: "NVIDIA Corporation",
-    exchange: "NASDAQ",
-    price: "$890.22",
-    change: "+21.37",
-    changePercent: "2.4%",
-    isPositive: true,
-  },
-  MSFT: {
-    name: "Microsoft Corporation",
-    exchange: "NASDAQ",
-    price: "$420.55",
-    change: "+3.36",
-    changePercent: "0.8%",
-    isPositive: true,
-  },
-  AMZN: {
-    name: "Amazon.com, Inc.",
-    exchange: "NASDAQ",
-    price: "$180.11",
-    change: "+0.00",
-    changePercent: "0.0%",
-    isPositive: true,
-  },
+const formatAsOfDate = (dateStr: string) => {
+  const normalized = dateStr.replace(/[^0-9]/g, "");
+  if (normalized.length === 8) {
+    const y = normalized.slice(0, 4);
+    const m = normalized.slice(4, 6);
+    const d = normalized.slice(6, 8);
+    return `${y}-${m}-${d}`;
+  }
+  return dateStr;
 };
 
-const keyStats = [
-  { label: "시가총액", value: "2.95T" },
-  { label: "평균 거래량", value: "54.2M" },
-  { label: "P/E 비율", value: "28.4" },
-  { label: "배당 수익률", value: "0.52%" },
-];
+export default function StockDetailView() {
+  const { stockInfo, rawItems, isLoading, error, selectedStockCode } = useInquiryStore();
 
-const fundamentalData = [
-  { label: "전일 종가", value: "$187.20" },
-  { label: "시가", value: "$188.00" },
-  { label: "52주 최고가", value: "$199.62" },
-  { label: "52주 최저가", value: "$164.08" },
-  { label: "베타 (5년 월간)", value: "1.28" },
-  { label: "EPS (TTM)", value: "6.43" },
-];
+  const derived = useMemo(() => {
+    if (!rawItems || rawItems.length === 0) {
+      return null;
+    }
 
-const principles = [
-  { label: "추세 정렬 (일간)", passed: true },
-  { label: "거래량 > 20일 평균", passed: true },
-  { label: "RSI 다이버전스", passed: false },
-];
+    const last = rawItems[rawItems.length - 1];
+    const prev = rawItems.length >= 2 ? rawItems[rawItems.length - 2] : null;
 
-export default function StockDetailView({ symbol }: StockDetailViewProps) {
-  const data = stockData[symbol] || stockData.AAPL;
+    const lastClose = last.close;
+    const prevClose = prev?.close ?? last.close;
+    const change = lastClose - prevClose;
+    const changePercent = prevClose === 0 ? 0 : (change / prevClose) * 100;
+
+    const high52w = Math.max(...rawItems.map((i) => i.high));
+    const low52w = Math.min(...rawItems.map((i) => i.low));
+    const avgVolume = rawItems.reduce((sum, i) => sum + (i.volume ?? 0), 0) / rawItems.length;
+
+    return {
+      last,
+      prev,
+      lastClose,
+      prevClose,
+      change,
+      changePercent,
+      high52w,
+      low52w,
+      avgVolume,
+    };
+  }, [rawItems]);
+
+  const header = {
+    code: stockInfo?.code ?? selectedStockCode,
+    name: stockInfo?.name ?? "",
+    market: stockInfo?.market ?? "",
+    price: derived ? formatKRW(derived.lastClose) : "-",
+    change: derived ? `${derived.change >= 0 ? "+" : ""}${formatKRW(derived.change).replace("₩-", "-")}` : "-",
+    changePercent: derived ? `${derived.changePercent >= 0 ? "+" : ""}${derived.changePercent.toFixed(2)}%` : "-",
+    isPositive: derived ? derived.change >= 0 : true,
+  };
+
+  const keyStats = [
+    { label: "52주 최고", value: derived ? formatKRW(derived.high52w) : "-" },
+    { label: "52주 최저", value: derived ? formatKRW(derived.low52w) : "-" },
+    { label: "평균 거래량", value: derived ? new Intl.NumberFormat('ko-KR').format(Math.round(derived.avgVolume)) : "-" },
+    { label: "등락률(일)", value: derived ? `${derived.changePercent >= 0 ? "+" : ""}${derived.changePercent.toFixed(2)}%` : "-" },
+  ];
+
+  const fundamentalData = derived
+    ? [
+        { label: "전일 종가", value: formatKRW(derived.prevClose) },
+        { label: "시가", value: formatKRW(derived.last.open) },
+        { label: "고가", value: formatKRW(derived.last.high) },
+        { label: "저가", value: formatKRW(derived.last.low) },
+        { label: "종가", value: formatKRW(derived.last.close) },
+        { label: "거래량", value: new Intl.NumberFormat('ko-KR').format(derived.last.volume ?? 0) },
+      ]
+    : [
+        { label: "전일 종가", value: "-" },
+        { label: "시가", value: "-" },
+        { label: "고가", value: "-" },
+        { label: "저가", value: "-" },
+        { label: "종가", value: "-" },
+        { label: "거래량", value: "-" },
+      ];
+
+  const asOfDate = derived?.last?.date ? formatAsOfDate(derived.last.date) : undefined;
 
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden relative">
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 custom-scrollbar">
         <div className="max-w-[1200px] mx-auto space-y-6">
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-200 rounded-lg px-4 py-3 text-sm">
+              {error}
+            </div>
+          )}
+
           {/* Stock Header */}
           <StockHeader
-            symbol={symbol}
-            name={data.name}
-            exchange={data.exchange}
-            price={data.price}
-            change={data.change}
-            changePercent={data.changePercent}
-            isPositive={data.isPositive}
+            symbol={header.code}
+            name={header.name}
+            exchange={header.market || "KR"}
+            price={isLoading ? "Loading..." : header.price}
+            change={isLoading ? "" : header.change}
+            changePercent={isLoading ? "" : header.changePercent}
+            isPositive={header.isPositive}
           />
 
           {/* Chart Section */}
-          <StockChart />
+          <InquiryChart />
 
-          {/* Split Content Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Fundamentals Column */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Key Stats Grid */}
-              <KeyStats stats={keyStats} />
-
-              {/* Extended Info Table */}
-              <FundamentalData data={fundamentalData} />
-            </div>
-
-            {/* 분석 컬럼 */}
-            <div className="space-y-6">
-              {/* 원칙 체크 (TradeMate 고유 기능) */}
-              <PrincipleCheck principles={principles} />
-            </div>
+          <div className="space-y-6">
+            <KeyStats stats={keyStats} />
+            <FundamentalData data={fundamentalData} asOfDate={asOfDate} />
           </div>
         </div>
       </div>

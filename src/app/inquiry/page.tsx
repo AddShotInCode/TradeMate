@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import WatchlistSidebar from "@/components/inquiry/WatchlistSidebar";
 import StockDetailView from "@/components/inquiry/StockDetailView";
+import { useInquiryStore } from "@/store/inquiryStore";
+import { useEffect, useState } from "react";
 
 export default function InquiryPage() {
-  const [selectedStock, setSelectedStock] = useState("AAPL");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { selectedStockCode, setSelectedStock, loadData } = useInquiryStore();
+
+  useEffect(() => {
+    // Initial load
+    loadData(selectedStockCode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="relative flex h-screen w-full bg-[#f6f7f8] dark:bg-[#101922] overflow-hidden">
@@ -41,16 +48,16 @@ export default function InquiryPage() {
           w-[320px] lg:w-[360px]
         `}>
           <WatchlistSidebar 
-            selectedStock={selectedStock} 
-            onSelectStock={(symbol) => {
-              setSelectedStock(symbol);
+            selectedStockCode={selectedStockCode} 
+            onSelectStock={(code) => {
+              setSelectedStock(code);
               setIsSidebarOpen(false);
             }}
           />
         </div>
 
         {/* Main Detail View */}
-        <StockDetailView symbol={selectedStock} />
+        <StockDetailView />
         </div>
       </main>
     </div>
