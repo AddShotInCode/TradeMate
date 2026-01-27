@@ -3,17 +3,24 @@
 import { Rewind, Play, Pause } from "lucide-react";
 import { useSimulationStore } from "@/store/simulationStore";
 
+
 export default function ChartControls() {
-  const { currentPrice, nextCandle, prevCandle } = useSimulationStore();
+  const { currentPrice, nextCandle, prevCandle, interval, setInterval } = useSimulationStore();
+  const intervals = ['1D', '1W', '1M'] as const;
 
   return (
     <div className="flex items-center justify-between mb-4 z-10">
       <div className="flex items-center gap-2">
         <div className="flex bg-[#283039] rounded-lg p-1">
-          <button className="px-3 py-1 text-xs font-medium text-slate-400 hover:text-white rounded">1분</button>
-          <button className="px-3 py-1 text-xs font-medium text-white bg-[#101922] shadow-sm rounded">5분</button>
-          <button className="px-3 py-1 text-xs font-medium text-slate-400 hover:text-white rounded">15분</button>
-          <button className="px-3 py-1 text-xs font-medium text-slate-400 hover:text-white rounded">1시간</button>
+          {intervals.map((int) => (
+             <button 
+                key={int}
+                onClick={() => setInterval(int)}
+                className={`px-3 py-1 text-xs font-medium rounded transition-colors ${int === interval ? 'text-white bg-[#101922] shadow-sm' : 'text-slate-400 hover:text-white'}`}
+             >
+                {int}
+             </button>
+          ))}
         </div>
         <div className="h-6 w-px bg-[#3b4754] mx-2"></div>
         <div className="flex items-center gap-2 text-white">

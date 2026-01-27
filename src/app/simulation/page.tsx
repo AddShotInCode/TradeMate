@@ -1,3 +1,7 @@
+"use client";
+
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import SimulationHeader from "@/components/simulation/SimulationHeader";
 import StatsBar from "@/components/simulation/StatsBar";
@@ -5,10 +9,20 @@ import SimulationChart from "@/components/simulation/SimulationChart";
 import ChartControls from "@/components/simulation/ChartControls";
 import TradeLog from "@/components/simulation/TradeLog";
 import OrderForm from "@/components/simulation/OrderForm";
+import SessionSetupModal from "@/components/simulation/SessionSetupModal";
 
-export default function SimulationPage() {
+// Separate component to handle search params and logic
+function SimulationContent() {
+  const searchParams = useSearchParams();
+  const code = searchParams.get('code');
+  const start = searchParams.get('start');
+  const isSetupRequired = !code || !start;
+
   return (
     <div className="relative flex h-screen w-full bg-[#f6f7f8] dark:bg-[#101922] overflow-hidden">
+      {/* Force Setup Modal if direct access without params */}
+      <SessionSetupModal isOpen={isSetupRequired} isForce={true} />
+
       {/* Sidebar */}
       <Sidebar />
 
@@ -22,9 +36,13 @@ export default function SimulationPage() {
             <StatsBar />
 
             {/* Chart Area */}
-            <div className="flex-1 relative bg-[#1c252e] p-4 flex flex-col">
+            <div className="flex-1 relative bg-[#1c252e] p-4 flex flex-col min-h-0">
               <ChartControls />
-              <SimulationChart />
+              <div className="flex-1 w-full h-full relative">
+                 <Suspense fallback={<div className="text-white text-center p-10">Loading Simulation...</div>}>
+                    <SimulationChart />
+                 </Suspense>
+              </div>
             </div>
 
             {/* Trade Log */}
@@ -36,5 +54,14 @@ export default function SimulationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Main Page Component wraps content in Suspense
+export default function SimulationPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-[#101922] text-white">Loading...</div>}>
+      <SimulationContent />
+    </Suspense>
   );
 }
