@@ -41,7 +41,6 @@ export default function Sidebar() {
   const navItems = [
     { icon: LayoutDashboard, label: "대시보드", href: "/dashboard" },
     { icon: PlayCircle, label: "시뮬레이션", href: "/simulation" },
-    { icon: TrendingUp, label: "분석", href: "#" },
     { icon: TrendingUp, label: "조회", href: "/inquiry" },
     { icon: Gavel, label: "원칙", href: "/propensity" },
   ];
@@ -91,7 +90,6 @@ export default function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex flex-col gap-2 mt-4">
-
           {navItems.map((item) => {
             const active = isActive(item.href);
 
