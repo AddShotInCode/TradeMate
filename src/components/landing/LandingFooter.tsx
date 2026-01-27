@@ -3,8 +3,6 @@ import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 
 const footerLinks = {
-
-
   legal: [
     { label: "개인정보처리방침", href: "/policy/privacy" },
     { label: "이용약관", href: "/policy/terms" },
@@ -28,12 +26,14 @@ export default function LandingFooter() {
 
           {/* Footer Links */}
           <div className="flex gap-10">
-
-
             <div className="flex flex-col gap-4">
               <h4 className="text-sm font-bold text-white">법적 고지</h4>
               {footerLinks.legal.map((link) => (
-                <Link key={link.label} href={link.href} className="text-sm text-[#9dabb9] hover:text-white">
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm text-[#9dabb9] hover:text-white"
+                >
                   {link.label}
                 </Link>
               ))}
@@ -46,23 +46,30 @@ export default function LandingFooter() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-[#9dabb9]">© 2026 TradeMate. All rights reserved.</p>
             <div className="flex gap-4">
-              <a href="#" className="text-[#9dabb9] hover:text-white transition-colors">
-                <Twitter className="size-5" />
-              </a>
-              <a href="#" className="text-[#9dabb9] hover:text-white transition-colors">
+              <a
+                href="https://github.com/AddShotInCode"
+                className="text-[#9dabb9] hover:text-white transition-colors"
+              >
                 <Github className="size-5" />
               </a>
             </div>
           </div>
-          
+
           <div className="mt-4 flex flex-col gap-2 text-[11px] leading-relaxed text-[#9dabb9]/60">
             <p>
-              본 서비스는 공공데이터포털(apis.data.go.kr)의 [금융위원회_주식시세정보] API를 활용하여 데이터를 제공합니다.
+              본 서비스는 공공데이터포털(apis.data.go.kr)의 [금융위원회_주식시세정보] API를 활용하여
+              데이터를 제공합니다.
             </p>
             <ul className="list-disc pl-4 space-y-1">
               <li>데이터 갱신 주기: 일 1회 (기준일자로부터 영업일 하루 뒤 13:00 이후 업데이트)</li>
-              <li>제공되는 주식시세정보(시가, 종가, 고가, 저가, 거래량 등)는 실시간 정보가 아니며, 데이터 보유기관의 사정에 따라 지연되거나 제공되지 않을 수 있습니다.</li>
-              <li>제공된 데이터를 바탕으로 한 투자 결정의 책임은 전적으로 본인에게 있으며, TradeMate는 이에 대한 어떠한 법적 책임도 지지 않습니다.</li>
+              <li>
+                제공되는 주식시세정보(시가, 종가, 고가, 저가, 거래량 등)는 실시간 정보가 아니며,
+                데이터 보유기관의 사정에 따라 지연되거나 제공되지 않을 수 있습니다.
+              </li>
+              <li>
+                제공된 데이터를 바탕으로 한 투자 결정의 책임은 전적으로 본인에게 있으며, TradeMate는
+                이에 대한 어떠한 법적 책임도 지지 않습니다.
+              </li>
             </ul>
           </div>
         </div>
