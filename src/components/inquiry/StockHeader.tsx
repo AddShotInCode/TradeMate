@@ -9,7 +9,6 @@ interface StockHeaderProps {
 }
 
 export default function StockHeader({
-  symbol,
   name,
   exchange,
   price,
@@ -21,12 +20,11 @@ export default function StockHeader({
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <h1 className="text-3xl font-bold text-white">{symbol}</h1>
+          <h1 className="text-3xl font-bold text-white">{name || "-"}</h1>
           <span className="bg-slate-700 text-slate-300 px-2 py-0.5 rounded text-xs font-semibold">
             {exchange}
           </span>
         </div>
-        <h2 className="text-xl text-[#9dabb9]">{name}</h2>
       </div>
       <div className="flex flex-col items-start md:items-end">
         <div className="flex items-baseline gap-3">
