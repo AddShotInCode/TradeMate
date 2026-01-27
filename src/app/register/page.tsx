@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE } from "@/constants/legal_constants";
+import { AuthApiError, authService } from "@/services/authService";
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
@@ -43,6 +44,9 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [agreeRequired, setAgreeRequired] = useState(false);
   const [agreeMarketing, setAgreeMarketing] = useState(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
@@ -80,7 +84,10 @@ export default function RegisterPage() {
     () => confirmPassword.length > 0 && confirmPassword === password,
     [confirmPassword, password]
   );
-  const isPhoneValid = useMemo(() => phone.trim().length === 0 || /^\d{11}$/.test(phone.trim()), [phone]);
+  const isPhoneValid = useMemo(() => {
+    const digits = phone.replace(/\D/g, "");
+    return digits.length === 0 || digits.length === 11;
+  }, [phone]);
   const isBirthSelected = useMemo(
     () => Boolean(birthYear) && Boolean(birthMonth) && Boolean(birthDay),
     [birthYear, birthMonth, birthDay]
@@ -232,17 +239,61 @@ export default function RegisterPage() {
     setIsPrivacyOpen(true);
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!canSubmit) return;
+    if (isSubmitting) return;
 
-    try {
-      localStorage.setItem("tm_userName", fullName.trim());
-    } catch {
-      // ignore storage errors
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const name = fullName.trim();
+    const nextEmail = email.trim();
+    const birthdate = `${birthYear}-${birthMonth.padStart(2, "0")}-${birthDay.padStart(2, "0")}`;
+
+    const phoneDigits = phone.replace(/\D/g, "");
+    const formattedPhone =
+      phoneDigits.length === 0
+        ? null
+        : phoneDigits.length === 11
+          ? `${phoneDigits.slice(0, 3)}-${phoneDigits.slice(3, 7)}-${phoneDigits.slice(7)}`
+          : null;
+
+    if (phoneDigits.length > 0 && !formattedPhone) {
+      setSubmitError("전화번호 형식을 확인해주세요.");
+      setIsSubmitting(false);
+      return;
     }
 
-    router.push("/dashboard");
+    try {
+      await authService.signup({
+        email: nextEmail,
+        password,
+        name,
+        birthdate,
+        phone: formattedPhone,
+      });
+
+      try {
+        localStorage.setItem("tm_userName", name);
+      } catch {
+        // ignore storage errors
+      }
+
+      router.push("/login");
+    } catch (error) {
+      if (error instanceof AuthApiError) {
+        if (error.status === 409) {
+          setSubmitError("이미 가입된 이메일입니다.");
+        } else {
+          setSubmitError(error.message || "회원가입에 실패했습니다.");
+        }
+      } else {
+        setSubmitError("회원가입에 실패했습니다.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -353,9 +404,7 @@ export default function RegisterPage() {
 
           <Card className="bg-white dark:bg-[#151f28] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#2a3441] overflow-hidden">
             {/* progress bar */}
-            <div className="h-1 w-full bg-[#2a3441] relative overflow-hidden">
-              <div className="absolute top-0 left-0 h-full w-1/3 bg-[#137fec] rounded-full" />
-            </div>
+            <div className="h-1 w-full bg-[#137fec]" />
 
             <CardHeader className="sr-only">회원가입</CardHeader>
 
@@ -611,7 +660,7 @@ export default function RegisterPage() {
 
                   <Input
                     id="phone"
-                    placeholder="예) 01012345678"
+                    placeholder="예) 010-1234-5678"
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
@@ -667,12 +716,16 @@ export default function RegisterPage() {
 
                 <Button
                   type="submit"
-                  disabled={!canSubmit}
+                  disabled={!canSubmit || isSubmitting}
                   className="w-full h-12 mt-2 flex items-center justify-center gap-2 bg-[#137fec] hover:bg-blue-600 text-white font-bold rounded-lg transition-all duration-200 shadow-lg shadow-[#137fec]/25 hover:shadow-[#137fec]/40 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <span>회원가입</span>
+                  <span>{isSubmitting ? "가입중..." : "회원가입"}</span>
                   <span aria-hidden className="text-sm font-bold">→</span>
                 </Button>
+
+                {submitError ? (
+                  <p className="text-sm text-red-500 text-center mt-3">{submitError}</p>
+                ) : null}
               </form>
             </CardContent>
 

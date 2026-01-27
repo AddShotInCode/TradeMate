@@ -1,6 +1,6 @@
 "use client";
 
-import { CandlestickChart, Eye, EyeOff, User } from "lucide-react";
+import { CandlestickChart, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import LandingNavigation from "@/components/landing/LandingNavigation";
@@ -75,22 +75,6 @@ export default function LoginPage() {
             {/* 로그인 버튼 */}
             <Button className="w-full bg-[#137fec] hover:bg-blue-600 text-white h-12 text-sm font-semibold shadow-sm mt-2">
               로그인
-            </Button>
-
-            {/* 소셜 로그인 구분선 */}
-            <div className="relative mt-2">
-              <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200 dark:border-[#3b4754]"></div>
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white dark:bg-[#1e2329] px-2 text-xs text-gray-400 dark:text-[#637588]">또는</span>
-              </div>
-            </div>
-
-            {/* 게스트 로그인 버튼 */}
-            <Button variant="outline" className="w-full h-12 gap-2 border-gray-200 dark:border-[#3b4754] bg-white dark:bg-[#1c2127] text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-[#252b33]">
-              <User className="size-5" />
-              <span>게스트로 계속하기</span>
             </Button>
           </CardContent>
 
