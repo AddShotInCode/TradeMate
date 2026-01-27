@@ -52,6 +52,7 @@ public class AuthService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .name(request.name())
+                .birthdate(request.birthdate())
                 .phone(request.phone())
                 .build();
 
@@ -106,6 +107,38 @@ public class AuthService {
 
         // 이메일 추출 및 새 토큰 발급
         String email = jwtTokenProvider.getEmailFromToken(requestRefreshToken);
+        String newAccessToken = jwtTokenProvider.createAccessToken(email);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(email);
+
+        // Refresh Token 갱신
+        storedToken.updateToken(newRefreshToken,
+                LocalDateTime.now().plusSeconds(jwtTokenProvider.getRefreshTokenValidity() / 1000));
+        refreshTokenRepository.save(storedToken);
+
+        log.info("Token refreshed for: {}", email);
+        return new TokenResponse(newAccessToken, newRefreshToken, accessTokenValidity / 1000);
+    }
+
+    /**
+     * 토큰 갱신 (refresh token 문자열로 직접 갱신 - HttpOnly 쿠키 방식용)
+     */
+    @Transactional
+    public TokenResponse refreshWithToken(String refreshToken) {
+        // Refresh Token 유효성 검증 (예외 발생 버전 사용)
+        jwtTokenProvider.validateTokenOrThrow(refreshToken);
+
+        // DB에서 Refresh Token 조회
+        RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_TOKEN, "Token not found in database"));
+
+        // 만료 확인
+        if (storedToken.isExpired()) {
+            refreshTokenRepository.delete(storedToken);
+            throw new BusinessException(ErrorCode.TOKEN_EXPIRED, "Refresh token has expired");
+        }
+
+        // 이메일 추출 및 새 토큰 발급
+        String email = jwtTokenProvider.getEmailFromToken(refreshToken);
         String newAccessToken = jwtTokenProvider.createAccessToken(email);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(email);
 

@@ -2,8 +2,11 @@ package aib.trademate.domain.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
 
 /**
  * 회원가입 요청 DTO
@@ -21,7 +24,9 @@ public record SignUpRequest(
         @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
         String name,
 
-        @NotBlank(message = "Phone is required")
+        @NotNull(message = "Birthdate is required")
+        LocalDate birthdate,
+
         @Pattern(regexp = "^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$", message = "Invalid phone number format")
         String phone
 ) {

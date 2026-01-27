@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,7 +28,10 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
+    private LocalDate birthdate;
+
+    @Column(length = 20)
     private String phone;
 
     @Enumerated(EnumType.STRING)
@@ -34,10 +39,11 @@ public class Member extends BaseTimeEntity {
     private Role role = Role.USER;
 
     @Builder
-    public Member(String email, String password, String name, String phone, Role role) {
+    public Member(String email, String password, String name, LocalDate birthdate, String phone, Role role) {
         this.email = email;
         this.password = password;
         this.name = name;
+        this.birthdate = birthdate;
         this.phone = phone;
         this.role = role != null ? role : Role.USER;
     }
