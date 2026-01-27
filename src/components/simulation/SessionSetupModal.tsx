@@ -5,36 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Play } from "lucide-react";
-
-interface Stock {
-  code: string;
-  name: string;
-  market: string;
-}
-
-const STOCK_LIST = [
-  { code: "005930", name: "삼성전자", market: "KOSPO" },
-  { code: "000660", name: "SK하이닉스", market: "KOSPI" },
-  { code: "005380", name: "현대차", market: "KOSPI" },
-  { code: "005490", name: "POSCO홀딩스", market: "KOSPI" },
-  { code: "035420", name: "NAVER", market: "KOSPI" },
-  { code: "000270", name: "기아", market: "KOSPI" },
-  { code: "068270", name: "셀트리온", market: "KOSPI" },
-  { code: "012330", name: "현대모비스", market: "KOSPI" },
-  { code: "055550", name: "신한지주", market: "KOSPI" },
-  { code: "066570", name: "LG전자", market: "KOSPI" },
-  { code: "035720", name: "카카오", market: "KOSPI" },
-  { code: "036570", name: "엔씨소프트", market: "KOSPI" },
-  { code: "251270", name: "넷마블", market: "KOSPI" },
-  // KOSDAQ
-  { code: "900110", name: "이스트아시아홀딩스", market: "KOSDAQ" },
-  { code: "035760", name: "CJ ENM", market: "KOSDAQ" },
-  { code: "293490", name: "카카오게임즈", market: "KOSDAQ" },
-  { code: "263750", name: "펄어비스", market: "KOSDAQ" },
-  { code: "112040", name: "위메이드", market: "KOSDAQ" },
-  { code: "095340", name: "ISC", market: "KOSDAQ" },
-  { code: "058470", name: "리노공업", market: "KOSDAQ" },
-];
+import { TARGET_STOCKS } from "@/constants/targetStocks";
 
 interface SessionSetupModalProps {
     isOpen: boolean;
@@ -46,7 +17,7 @@ interface SessionSetupModalProps {
 export default function SessionSetupModal({ isOpen, onClose, trigger, isForce = false }: SessionSetupModalProps) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(isOpen);
-  const [selectedStock, setSelectedStock] = useState(STOCK_LIST[0].code);
+  const [selectedStock, setSelectedStock] = useState(TARGET_STOCKS[0].code);
   const [startDate, setStartDate] = useState("2024-01-01");
 
   // Sync internal state with prop
@@ -125,14 +96,14 @@ export default function SessionSetupModal({ isOpen, onClose, trigger, isForce = 
                   className="w-full h-10 rounded-md border border-slate-300 dark:border-[#3b4754] bg-white dark:bg-[#101922] px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <optgroup label="KOSPI" className="text-slate-900 dark:text-white bg-white dark:bg-[#101922]">
-                    {STOCK_LIST.filter(s => s.market === 'KOSPI' || !s.market || s.market === 'KOSPO').map(stock => (
+                    {TARGET_STOCKS.filter(s => s.market === 'KOSPI' || !s.market).map(stock => (
                       <option key={stock.code} value={stock.code}>
                         {stock.name} ({stock.code})
                       </option>
                     ))}
                   </optgroup>
                   <optgroup label="KOSDAQ" className="text-slate-900 dark:text-white bg-white dark:bg-[#101922]">
-                    {STOCK_LIST.filter(s => s.market === 'KOSDAQ').map(stock => (
+                    {TARGET_STOCKS.filter(s => s.market === 'KOSDAQ').map(stock => (
                         <option key={stock.code} value={stock.code}>
                           {stock.name} ({stock.code})
                         </option>
