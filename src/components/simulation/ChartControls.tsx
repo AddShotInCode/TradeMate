@@ -41,13 +41,6 @@ export default function ChartControls() {
           </button>
           <div className="h-6 w-px bg-[#3b4754] mx-2"></div>
           <button 
-            onClick={prevCandle}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#283039] hover:bg-[#3b4754] text-white text-sm font-medium rounded-lg border border-[#3b4754] transition-colors"
-          >
-            <Rewind className="w-4 h-4" />
-            이전
-          </button>
-          <button 
             onClick={nextCandle}
             className="flex items-center gap-2 px-4 py-1.5 bg-[#137fec] hover:bg-blue-600 text-white text-sm font-bold rounded-lg shadow-lg shadow-blue-500/20 transition-all"
           >

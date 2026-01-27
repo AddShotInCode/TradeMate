@@ -420,22 +420,28 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
         const high = Number(nextCandleData.high);
 
         if (pos.side === 'BUY') {
+            // SL/TP disabled as per user request (Manual exit only)
+            /* 
             if (pos.sl && pos.sl > 0 && low <= pos.sl) {
                 closePrice = pos.sl; 
                 isClosed = true;
             } else if (pos.tp && pos.tp > 0 && high >= pos.tp) {
                 closePrice = pos.tp;
                 isClosed = true;
-            }
+            } 
+            */
         }
         else if (pos.side === 'SELL') {
+             // SL/TP disabled as per user request (Manual exit only)
+             /* 
              if (pos.sl && pos.sl > 0 && high >= pos.sl) {
                 closePrice = pos.sl; 
                 isClosed = true;
             } else if (pos.tp && pos.tp > 0 && low <= pos.tp) {
                 closePrice = pos.tp; 
                 isClosed = true;
-            }
+            } 
+            */
         }
 
         if (isClosed) {
@@ -445,6 +451,16 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
                 : (pos.entryPrice - closePrice) * pos.qty;
 
             newBalance += pnl - fee;
+            
+            // Append reason
+            let autoCloseReason = pos.entryReason || "";
+            if (pos.side === 'BUY') {
+                 if (closePrice <= pos.sl!) autoCloseReason = `[Stop Loss] ${autoCloseReason}`;
+                 else if (closePrice >= pos.tp!) autoCloseReason = `[Take Profit] ${autoCloseReason}`;
+            } else {
+                 if (closePrice >= pos.sl!) autoCloseReason = `[Stop Loss] ${autoCloseReason}`;
+                 else if (closePrice <= pos.tp!) autoCloseReason = `[Take Profit] ${autoCloseReason}`;
+            }
 
             newTradeLogs.unshift({
                 id: Math.random().toString(36).substr(2, 9),
@@ -456,7 +472,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
                 slippage: 0, 
                 fee,
                 pnl,
-                entryReason: pos.entryReason 
+                entryReason: autoCloseReason.trim()
             });
         } else {
             activePositions.push(pos);

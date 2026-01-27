@@ -104,7 +104,6 @@ export default function TradeLog() {
                 <th className="px-4 py-3 font-medium">포지션 (Side)</th>
                 <th className="px-4 py-3 font-medium">가격 (Price)</th>
                 <th className="px-4 py-3 font-medium">수량 (Qty)</th>
-                <th className="px-4 py-3 font-medium">수수료 (Fee)</th>
                 <th className="px-4 py-3 font-medium text-right">실현 손익 (Net P&L)</th>
                 </tr>
             </thead>
@@ -127,14 +126,13 @@ export default function TradeLog() {
                         </td>
                         <td className="px-4 py-2 font-mono">{log.price.toLocaleString('ko-KR')}</td>
                         <td className="px-4 py-2 font-mono">{log.qty}</td>
-                        <td className="px-4 py-2 text-slate-500 text-xs">₩{log.fee.toLocaleString('ko-KR')}</td>
                         <td className={`px-4 py-2 text-right font-mono font-bold ${log.pnl >= 0 ? 'text-red-500' : 'text-blue-500'}`}>
                         {log.pnl !== 0 ? `${log.pnl > 0 ? '+' : ''}₩${Math.round(log.pnl).toLocaleString('ko-KR')}` : '-'}
                         </td>
                     </tr>
                     {/* 상세 정보 (진입 근거 등) - 기본적으로 숨김 */}
                     <tr id={`details-${log.id}`} className="hidden bg-[#151c24]/50 border-b border-[#283039]">
-                        <td colSpan={8} className="px-4 py-3">
+                        <td colSpan={6} className="px-4 py-3">
                             <div className="flex gap-4 text-xs">
                                 <span className="text-slate-500 font-bold whitespace-nowrap pt-1">진입 근거:</span>
                                 <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
@@ -147,7 +145,7 @@ export default function TradeLog() {
                 ))}
                 {tradeLogs.length === 0 && (
                 <tr className="h-full">
-                    <td colSpan={8} className="px-4 py-8 text-center text-slate-500">
+                    <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
                     거래 내역이 없습니다.
                     </td>
                 </tr>

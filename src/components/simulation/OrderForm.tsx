@@ -12,15 +12,25 @@ export default function OrderForm() {
   const [stopLoss, setStopLoss] = useState<number | ''>('');
   const [target, setTarget] = useState<number | ''>('');
 
-  // Fixed Entry Price & Auto SL/TP
+    // Calculate Holdings
+    const totalLongQty = useMemo(() => positions
+        .filter(p => p.side === 'BUY')
+        .reduce((acc, curr) => acc + curr.qty, 0), [positions]);
+
+    const hasHoldings = totalLongQty > 0;
+
+  // Fixed Entry Price & Auto SL/TP (Only for Initial Entry)
   useEffect(() => {
-    if (currentPrice > 0 && activeTab === 'BUY') {
+    if (currentPrice > 0 && activeTab === 'BUY' && !hasHoldings) {
         const defaultSL = Math.floor(currentPrice * 0.98);
         const defaultTP = Math.floor(currentPrice * 1.04);
         setStopLoss(defaultSL);
         setTarget(defaultTP);
+    } else if (hasHoldings) {
+        setStopLoss('');
+        setTarget('');
     }
-  }, [currentPrice, activeTab]);
+  }, [currentPrice, activeTab, hasHoldings]);
 
   // Calculate Max Qty based on Tab
   const maxQty = useMemo(() => {
@@ -31,12 +41,9 @@ export default function OrderForm() {
         return Math.floor(balance / currentPrice);
     } else {
         // Max based on Holdings (Long Positions)
-        const totalLongQty = positions
-            .filter(p => p.side === 'BUY')
-            .reduce((acc, curr) => acc + curr.qty, 0);
         return totalLongQty;
     }
-  }, [balance, currentPrice, positions, activeTab]);
+  }, [balance, currentPrice, totalLongQty, activeTab]);
 
   // Reset quantity when switching tabs
   useEffect(() => {
@@ -63,18 +70,20 @@ export default function OrderForm() {
             return;
         }
         
-        // SL/TP are mandatory for Entry
-        if (stopLoss === '' || Number(stopLoss) <= 0) {
-            alert("손절가(Stop Loss)를 올바르게 입력해주세요.");
-            return;
-        }
-        if (target === '' || Number(target) <= 0) {
-            alert("목표가(Target)를 올바르게 입력해주세요.");
-            return;
+        // SL/TP are mandatory ONLY for Initial Entry
+        if (!hasHoldings) {
+            if (stopLoss === '' || Number(stopLoss) <= 0) {
+                alert("신규 진입 시 손절가(Stop Loss) 설정은 필수입니다.");
+                return;
+            }
+            if (target === '' || Number(target) <= 0) {
+                alert("신규 진입 시 목표가(Target) 설정은 필수입니다.");
+                return;
+            }
         }
 
-        const sl = Number(stopLoss);
-        const tp = Number(target);
+        const sl = stopLoss ? Number(stopLoss) : undefined;
+        const tp = target ? Number(target) : undefined;
         const entryPrice = currentPrice;
 
         placeOrder('BUY', qty, entryPrice, sl, tp, entryReason);
@@ -140,63 +149,114 @@ export default function OrderForm() {
 
       <div className="flex-1 overflow-y-auto p-6 space-y-8">
         
-        {/* BUY MODE UI */}
-        {activeTab === 'BUY' && (
-            <div className="space-y-5">
-            <div className="relative group">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1">
-                진입 근거 (Entry Reason) <span className="text-red-500">*</span>
-                <HelpCircle className="w-4 h-4 text-slate-600 cursor-help" />
-                </label>
-                <textarea 
-                className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg p-3 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600 resize-none h-24" 
-                placeholder="매수 진입 근거를 입력하세요..."
-                value={entryReason}
-                onChange={(e) => setEntryReason(e.target.value)}
-                />
-            </div>
+            {/* BUY MODE UI */}
+            {activeTab === 'BUY' && (
+                <div className="space-y-5">
+                <div className="relative group">
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+                    진입 근거 (Entry Reason) <span className="text-red-500">*</span>
+                    <HelpCircle className="w-4 h-4 text-slate-600 cursor-help" />
+                    </label>
+                    <textarea 
+                    className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg p-3 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600 resize-none h-24" 
+                    placeholder="매수 진입 근거를 입력하세요..."
+                    value={entryReason}
+                    onChange={(e) => setEntryReason(e.target.value)}
+                    />
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            {hasHoldings && (
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded p-3 text-xs text-yellow-500 mb-2">
+                    💡 추가 매수(물타기/불타기) 시에는 손절/목표가를 새로 설정할 수 없습니다.
+                </div>
+            )}
+
+            <div className={`grid grid-cols-2 gap-4 ${hasHoldings ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
                 <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                    손절가 (Stop Loss) <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₩</span>
-                    <input 
-                    className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg py-2.5 pl-7 pr-3 text-sm font-mono text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" 
-                    placeholder="0" 
-                    type="number" 
-                    min="0"
-                    value={stopLoss}
-                    onChange={(e) => setStopLoss(e.target.value === '' ? '' : Number(e.target.value))}
-                    />
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                        손절가 (Stop Loss) <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative mb-2">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₩</span>
+                        <input 
+                        className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg py-2.5 pl-7 pr-3 text-sm font-mono text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" 
+                        placeholder={hasHoldings ? "설정 불가" : "0"}
+                        type={hasHoldings ? "text" : "number"}
+                        min="0"
+                        value={stopLoss}
+                        onChange={(e) => setStopLoss(e.target.value === '' ? '' : Number(e.target.value))}
+                        disabled={hasHoldings}
+                        />
+                    </div>
+                    {/* SL Slider */}
+                    <div className="flex items-center gap-2">
+                             <input 
+                                type="range" 
+                                min="0.1" 
+                                max="20" 
+                                step="0.1"
+                                className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                value={currentPrice > 0 && stopLoss && typeof stopLoss === 'number' ? ((currentPrice - stopLoss) / currentPrice * 100) : 0}
+                                onChange={(e) => {
+                                    if(currentPrice <= 0 || hasHoldings) return;
+                                    const pct = Number(e.target.value);
+                                    const price = Math.floor(currentPrice * (1 - pct/100));
+                                    setStopLoss(price);
+                                }}
+                                disabled={hasHoldings}
+                             />
+                             <span className="text-[10px] font-mono w-10 text-right text-blue-500">
+                                {currentPrice > 0 && stopLoss ? ((currentPrice - Number(stopLoss)) / currentPrice * 100).toFixed(1) : 0}%
+                             </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                            목표가 (Target) <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative mb-2">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₩</span>
+                            <input 
+                            className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg py-2.5 pl-7 pr-3 text-sm font-mono text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all" 
+                            placeholder={hasHoldings ? "설정 불가" : "0"}
+                            type={hasHoldings ? "text" : "number"}
+                            min="0"
+                            value={target}
+                            onChange={(e) => setTarget(e.target.value === '' ? '' : Number(e.target.value))} 
+                            disabled={hasHoldings}
+                            />
+                        </div>
+                        {/* TP Slider */}
+                         <div className="flex items-center gap-2">
+                             <input 
+                                type="range" 
+                                min="0.1" 
+                                max="50" 
+                                step="0.1"
+                                className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-500"
+                                value={currentPrice > 0 && target && typeof target === 'number' ? ((target - currentPrice) / currentPrice * 100) : 0}
+                                onChange={(e) => {
+                                    if(currentPrice <= 0 || hasHoldings) return;
+                                    const pct = Number(e.target.value);
+                                    const price = Math.floor(currentPrice * (1 + pct/100));
+                                    setTarget(price);
+                                }}
+                                disabled={hasHoldings}
+                             />
+                             <span className="text-[10px] font-mono w-10 text-right text-red-500">
+                                {currentPrice > 0 && target ? ((Number(target) - currentPrice) / currentPrice * 100).toFixed(1) : 0}%
+                             </span>
+                        </div>
+                    </div>
                 </div>
-                </div>
-                <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                    목표가 (Target) <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₩</span>
-                    <input 
-                    className="w-full bg-slate-50 dark:bg-[#1c252e] border border-slate-300 dark:border-[#3b4754] rounded-lg py-2.5 pl-7 pr-3 text-sm font-mono text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all" 
-                    placeholder="0" 
-                    type="number"
-                    min="0"
-                    value={target}
-                    onChange={(e) => setTarget(e.target.value === '' ? '' : Number(e.target.value))} 
-                    />
-                </div>
-                </div>
-            </div>
 
             {/* Projections */}
             <div className="bg-slate-50 dark:bg-[#1c252e] rounded-lg p-4 border border-slate-200 dark:border-[#3b4754]">
                 <div className="flex justify-between items-center mb-2">
                     <span className="text-xs font-medium text-slate-500 uppercase">예상 손실 (Est. Loss)</span>
                     <span className="text-sm font-bold text-blue-500">
-                        {estimatedLoss !== 0 ? `₩${Math.round(estimatedLoss).toLocaleString('ko-KR')}` : '-'}
+                        {estimatedLoss !== 0 ? `-₩${Math.abs(Math.round(estimatedLoss)).toLocaleString('ko-KR')}` : '-'}
                     </span>
                 </div>
                 <div className="flex justify-between items-center">
