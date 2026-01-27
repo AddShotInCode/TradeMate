@@ -1,6 +1,5 @@
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/dashboard/Header";
-import StatsGrid from "@/components/dashboard/StatsGrid";
 import RecentSessions from "@/components/dashboard/RecentSessions";
 
 export default function DashboardPage() {
@@ -13,8 +12,6 @@ export default function DashboardPage() {
       <main className="flex-1 h-full overflow-y-auto w-full">
         <div className="max-w-[1200px] mx-auto px-6 py-8 flex flex-col gap-8">
           <Header />
-
-          <StatsGrid />
 
           <RecentSessions />
 
