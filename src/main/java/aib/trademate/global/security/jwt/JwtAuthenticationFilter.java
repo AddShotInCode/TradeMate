@@ -7,6 +7,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import java.io.IOException;
 
 /**
  * JWT 인증 필터
- * 모든 요청에서 JWT 토큰을 검증하고, 유효한 경우 SecurityContext에 인증 정보를 저장
+ * 쿠키 또는 Authorization 헤더에서 JWT 토큰을 검증하고, 유효한 경우 SecurityContext에 인증 정보를 저장
  */
 @Slf4j
 @Component
@@ -70,16 +71,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Request Header에서 토큰 추출
+     * 요청에서 토큰 추출 (쿠키 우선, 그 다음 헤더)
      */
     private String resolveToken(HttpServletRequest request) {
+        // 1. 쿠키에서 Access Token 확인
+        String tokenFromCookie = extractTokenFromCookie(request);
+        if (StringUtils.hasText(tokenFromCookie)) {
+            log.debug("Token extracted from cookie");
+            return tokenFromCookie;
+        }
+
+        // 2. Authorization 헤더에서 토큰 확인 (하위 호환성 유지)
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken)) {
             if (bearerToken.startsWith(BEARER_PREFIX)) {
+                log.debug("Token extracted from Authorization header");
                 return bearerToken.substring(BEARER_PREFIX.length());
             } else {
-                // Bearer 접두사 없이 토큰만 전달된 경우
                 log.warn("Authorization header does not start with 'Bearer '");
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 쿠키에서 Access Token 추출
+     */
+    private String extractTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (JwtCookieProvider.ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
             }
         }
         return null;

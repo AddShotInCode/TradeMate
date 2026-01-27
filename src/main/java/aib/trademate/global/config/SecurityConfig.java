@@ -46,8 +46,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 엔드포인트
                         .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/refresh").permitAll()
-                        .requestMatchers("/api/stocks/**").permitAll()
-                        .requestMatchers("/api/statements/**").permitAll()
+                        .requestMatchers("/api/stock/**").permitAll()
+                        .requestMatchers("/api/statement/**").permitAll()
                         // 나머지는 인증 필요
                         .anyRequest().authenticated()
                 )
