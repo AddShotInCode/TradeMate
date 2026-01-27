@@ -44,7 +44,6 @@ export default function Sidebar() {
     { icon: TrendingUp, label: "분석", href: "#" },
     { icon: TrendingUp, label: "조회", href: "/inquiry" },
     { icon: Gavel, label: "원칙", href: "/propensity" },
-    { icon: User, label: "계정", href: "#" },
   ];
 
   const isActive = (href: string) => {

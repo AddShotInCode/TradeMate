@@ -1,6 +1,5 @@
 "use client";
 
-import { PlusCircle } from "lucide-react";
 import PrincipleItem from "./PrincipleItem";
 
 interface Principle {
@@ -35,12 +34,9 @@ export default function PrinciplesCustomizer({
   );
 
   return (
-    <section className="bg-[#1e293b] rounded-xl p-6 shadow-sm border border-slate-800 flex flex-col gap-4">
+    <section className="bg-[#1e293b] rounded-xl p-6 shadow-sm border border-slate-800 flex flex-col gap-4 w-full max-w-[880px] mx-auto">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
-          <div className="size-8 rounded-full bg-[#137fec]/10 flex items-center justify-center text-[#137fec] font-bold">
-            2
-          </div>
           <h2 className="text-xl font-bold text-white">평가 항목 비중 설정</h2>
         </div>
         <div className="flex items-center gap-3">
@@ -76,12 +72,6 @@ export default function PrinciplesCustomizer({
           tooltipText={principle.tooltipText}
         />
       ))}
-
-      {/* Add Custom Rule Button */}
-      <button className="flex items-center justify-center w-full py-3 border-2 border-dashed border-slate-700 rounded-lg text-slate-400 hover:text-[#137fec] hover:border-[#137fec] transition-all font-medium text-sm gap-2 group">
-        <PlusCircle className="size-5 group-hover:scale-110 transition-transform" />
-        (준비중) 사용자 정의 항목 추가
-      </button>
     </section>
   );
 }

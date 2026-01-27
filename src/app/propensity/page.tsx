@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
-import PropensityAssessment from "@/components/propensity/PropensityAssessment";
 import PrinciplesCustomizer from "@/components/propensity/PrinciplesCustomizer";
 import ActionBar from "@/components/propensity/ActionBar";
 
@@ -55,18 +54,14 @@ const defaultPrinciples: Principle[] = [
 ];
 
 export default function PropensityPage() {
-  // Strategy inputs for scoring
-  const [stopLossPct, setStopLossPct] = useState("2.0");
-  const [takeProfitPct, setTakeProfitPct] = useState("4.0");
-  const [expectedRoiPct, setExpectedRoiPct] = useState("3.0");
-  const [indicators, setIndicators] = useState([
-    { name: "RSI", weight: "40" },
-    { name: "Volume", weight: "30" },
-    { name: "MA", weight: "30" },
-  ]);
-
   // Principles State
   const [principles, setPrinciples] = useState(defaultPrinciples);
+
+  const totalWeight = principles.reduce(
+    (sum, p) => sum + (p.enabled ? (Number(p.inputValue) || 0) : 0),
+    0
+  );
+  const canSave = totalWeight === 100;
 
   const handleTogglePrinciple = (id: string) => {
     setPrinciples((prev) =>
@@ -84,36 +79,19 @@ export default function PropensityPage() {
     setPrinciples(defaultPrinciples);
   };
 
-  const handleSaveDraft = () => {
-    // TODO: Implement save draft logic
-    console.log("Saving draft...", {
-      stopLossPct,
-      takeProfitPct,
-      expectedRoiPct,
-      indicators,
+  const handleSave = () => {
+    // TODO: Implement save logic
+    console.log("Saving propensity profile...", {
       principles,
     });
   };
-
-  const handleSaveAndStart = () => {
-    // TODO: Implement save and start training logic
-    console.log("Saving and starting training...", {
-      stopLossPct,
-      takeProfitPct,
-      expectedRoiPct,
-      indicators,
-      principles,
-    });
-  };
-
-  const activePrinciplesCount = principles.filter((p) => p.enabled).length;
 
   return (
     <div className="relative flex h-screen w-full bg-[#f6f7f8] dark:bg-[#101922] overflow-hidden">
       <Sidebar />
 
       <main className="flex-1 h-full overflow-y-auto w-full">
-        <div className="max-w-[1200px] mx-auto px-6 py-8 flex flex-col gap-8">
+        <div className="max-w-[880px] mx-auto px-6 py-8 flex flex-col gap-8">
           {/* Page Heading */}
           <div className="flex flex-col gap-2">
             <h1 className="text-slate-900 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">
@@ -127,24 +105,8 @@ export default function PropensityPage() {
 
           {/* Content Grid: 2 Columns for larger screens */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Column: Assessment (Span 5) */}
-            <div className="lg:col-span-5 flex flex-col gap-6">
-              <PropensityAssessment
-                stopLossPct={stopLossPct}
-                onStopLossPctChange={setStopLossPct}
-                takeProfitPct={takeProfitPct}
-                onTakeProfitPctChange={setTakeProfitPct}
-                expectedRoiPct={expectedRoiPct}
-                onExpectedRoiPctChange={setExpectedRoiPct}
-                indicators={indicators}
-                onIndicatorChange={(index, next) =>
-                  setIndicators((prev) => prev.map((item, i) => (i === index ? next : item)))
-                }
-              />
-            </div>
-
             {/* Right Column: Templates & Rules (Span 7) */}
-            <div className="lg:col-span-7 flex flex-col gap-6">
+            <div className="lg:col-span-12 flex flex-col gap-6">
               <PrinciplesCustomizer
                 principles={principles}
                 onTogglePrinciple={handleTogglePrinciple}
@@ -155,11 +117,7 @@ export default function PropensityPage() {
           </div>
 
           {/* Footer / Action Bar */}
-          <ActionBar
-            activePrinciplesCount={activePrinciplesCount}
-            onSaveDraft={handleSaveDraft}
-            onSaveAndStart={handleSaveAndStart}
-          />
+          <ActionBar onSave={handleSave} disabled={!canSave} />
         </div>
       </main>
     </div>
