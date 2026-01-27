@@ -135,6 +135,23 @@ public class SimulationController {
     }
 
     /**
+     * 시뮬레이션 결과 분석 보고서 조회
+     * GET /api/simulation/{id}/report
+     */
+    @GetMapping("/{id}/report")
+    public ResponseEntity<SimulationReportResponse> getReport(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id) {
+
+        validateAuthenticated(userDetails);
+        log.debug("Get report request: simulationId={}", id);
+
+        SimulationReportResponse response = simulationService.getReport(userDetails.getUsername(), id);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * 인증 확인
      */
     private void validateAuthenticated(UserDetails userDetails) {
