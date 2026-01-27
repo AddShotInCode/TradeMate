@@ -31,6 +31,7 @@ public class SimulationService {
     private final SimulationRepository simulationRepository;
     private final SimulationTradeRepository tradeRepository;
     private final MemberRepository memberRepository;
+    private final SimulationScoreCalculator scoreCalculator;
 
     /**
      * 시뮬레이션 생성
@@ -130,6 +131,30 @@ public class SimulationService {
 
         log.debug("Retrieved {} trades for simulation: {}", trades.size(), simulationId);
         return TradeListResponse.of(trades);
+    }
+
+    /**
+     * 시뮬레이션 결과 분석 보고서 조회
+     */
+    public SimulationReportResponse getReport(String email, Long simulationId) {
+        Simulation simulation = findSimulationWithOwnerCheck(email, simulationId);
+
+        // 종료된 시뮬레이션만 분석 가능
+        if (simulation.getEndDate() == null) {
+            throw new BusinessException(ErrorCode.SIMULATION_NOT_ENDED,
+                    "Simulation must be ended before generating report");
+        }
+
+        // 거래 데이터 조회 (시간순)
+        List<SimulationTrade> trades = tradeRepository.findBySimulationIdOrderByTradeDateAsc(simulationId);
+
+        // 점수 계산 및 보고서 생성
+        SimulationReportResponse report = scoreCalculator.calculateReport(simulation, trades);
+        
+        log.info("Report generated for simulation: id={}, totalScore={}", 
+                simulationId, report.summary().totalScore());
+        
+        return report;
     }
 
     /**

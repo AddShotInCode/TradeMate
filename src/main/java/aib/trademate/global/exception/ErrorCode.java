@@ -22,6 +22,7 @@ public enum ErrorCode {
     INVALID_YEAR_VALUE(HttpStatus.BAD_REQUEST, "COMMON-007", "Invalid year value"),
     INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST, "COMMON-008", "Request body is missing or invalid"),
     INVALID_JSON_FORMAT(HttpStatus.BAD_REQUEST, "COMMON-009", "Invalid JSON format"),
+    SIMULATION_NOT_ENDED(HttpStatus.BAD_REQUEST, "SIMULATION-002", "Simulation is not ended yet. Set end date first"),
 
     // 401 Unauthorized
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH-001", "Invalid email or password"),
