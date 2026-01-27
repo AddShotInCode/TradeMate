@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { simulationService, Simulation } from "@/services/simulationService";
 import { Button } from "@/components/ui/button";
 import { Trash2, TrendingUp, Calendar, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 import { TARGET_STOCKS } from "@/constants/targetStocks";
 import {
   Dialog,
@@ -53,7 +54,7 @@ export default function RecentSessions() {
       setDeleteTargetId(null);
     } catch (error) {
       console.error("Failed to delete session", error);
-      alert("시뮬레이션 삭제에 실패했습니다.");
+      toast.error("시뮬레이션 삭제에 실패했습니다.");
     }
   };
 
@@ -105,30 +106,23 @@ export default function RecentSessions() {
               <th scope="col" className="px-6 py-4 font-semibold">
                 생성일
               </th>
-              <th scope="col" className="px-6 py-4 font-semibold text-right">
-                관리
-              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 dark:divide-[#3b4754] bg-white dark:bg-[#1c2127]">
             {sessions.map((session) => (
               <tr
                 key={session.id}
-                className="hover:bg-slate-50 dark:hover:bg-[#252b32] transition-colors group"
+                className="hover:bg-slate-50 dark:hover:bg-[#252b32] transition-colors group cursor-pointer"
+                onClick={() => handleResume(session.id)}
               >
-                <td
-                  className="px-6 py-4 font-medium text-slate-900 dark:text-white cursor-pointer"
-                  onClick={() => handleResume(session.id)}
-                >
+                <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
                   <span className="font-bold">{getStockName(session.stockCode)}</span>
                   <span className="ml-2 text-slate-500 dark:text-slate-400 font-normal">
                     ({session.stockCode})
                   </span>
                 </td>
-                <td className="px-6 py-4 cursor-pointer" onClick={() => handleResume(session.id)}>
-                  {session.startDate}
-                </td>
-                <td className="px-6 py-4 cursor-pointer" onClick={() => handleResume(session.id)}>
+                <td className="px-6 py-4">{session.startDate}</td>
+                <td className="px-6 py-4">
                   {session.endDate ? (
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
                       종료됨
@@ -139,22 +133,7 @@ export default function RecentSessions() {
                     </span>
                   )}
                 </td>
-                <td className="px-6 py-4 cursor-pointer" onClick={() => handleResume(session.id)}>
-                  {new Date(session.createdAt).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setDeleteTargetId(session.id);
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </td>
+                <td className="px-6 py-4">{new Date(session.createdAt).toLocaleDateString()}</td>
               </tr>
             ))}
           </tbody>

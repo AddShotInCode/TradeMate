@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { simulationService, Simulation } from "@/services/simulationService";
 import { Button } from "@/components/ui/button";
-import { Trash2, AlertCircle, ArrowUpDown } from "lucide-react";
+import { Trash2, AlertCircle, ArrowUpDown, TrendingUp } from "lucide-react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -63,7 +64,7 @@ export default function AllSimulationsList() {
       setDeleteTargetId(null);
     } catch (error) {
       console.error("Failed to delete session", error);
-      alert("시뮬레이션 삭제에 실패했습니다.");
+      toast.error("시뮬레이션 삭제에 실패했습니다.");
     }
   };
 
@@ -187,7 +188,22 @@ export default function AllSimulationsList() {
                     >
                       {new Date(session.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
+                      {session.endDate && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Analysis Logic here
+                            toast.info("분석 페이지로 이동합니다 (준비 중)");
+                          }}
+                        >
+                          <TrendingUp className="w-4 h-4 mr-1" />
+                          결과 분석
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"

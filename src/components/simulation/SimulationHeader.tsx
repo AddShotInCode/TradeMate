@@ -3,6 +3,7 @@
 import { Timer, LogOut } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useSimulationStore } from "@/store/simulationStore";
 import { simulationService } from "@/services/simulationService";
 import {
@@ -82,7 +83,7 @@ export default function SimulationHeader() {
       router.push("/dashboard");
     } catch (error) {
       console.error("Failed to terminate simulation:", error);
-      alert("시뮬레이션 종료 중 오류가 발생했습니다.");
+      toast.error("시뮬레이션 종료 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
       setIsDialogOpen(false);

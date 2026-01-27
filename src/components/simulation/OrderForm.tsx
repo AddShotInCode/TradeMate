@@ -3,6 +3,7 @@
 import { Edit, HelpCircle, Minus, Plus } from "lucide-react";
 import { useSimulationStore } from "@/store/simulationStore";
 import { useState, useEffect, useMemo } from "react";
+import { toast } from "sonner";
 
 export default function OrderForm() {
   const { placeOrder, sellPosition, currentPrice, balance, positions, isFinished } =
@@ -74,25 +75,25 @@ export default function OrderForm() {
 
   const handleOrder = () => {
     if (qty <= 0) {
-      alert("수량을 입력해주세요.");
+      toast.error("수량을 입력해주세요.");
       return;
     }
 
     if (activeTab === "BUY") {
       // Buy Logic (Long Entry)
       if (!entryReason.trim()) {
-        alert("진입 근거를 입력해주세요.");
+        toast.error("진입 근거를 입력해주세요.");
         return;
       }
 
       // SL/TP are mandatory ONLY for Initial Entry
       if (!hasHoldings) {
         if (stopLoss === "" || Number(stopLoss) <= 0) {
-          alert("신규 진입 시 손절가(Stop Loss) 설정은 필수입니다.");
+          toast.error("신규 진입 시 손절가(Stop Loss) 설정은 필수입니다.");
           return;
         }
         if (target === "" || Number(target) <= 0) {
-          alert("신규 진입 시 목표가(Target) 설정은 필수입니다.");
+          toast.error("신규 진입 시 목표가(Target) 설정은 필수입니다.");
           return;
         }
       }
@@ -106,15 +107,15 @@ export default function OrderForm() {
     } else {
       // Sell Logic (Partial Close)
       if (maxQty === 0) {
-        alert("보유 중인 포지션이 없습니다.");
+        toast.error("보유 중인 포지션이 없습니다.");
         return;
       }
       if (qty > maxQty) {
-        alert("보유 수량을 초과하여 매도할 수 없습니다.");
+        toast.error("보유 수량을 초과하여 매도할 수 없습니다.");
         return;
       }
       if (!entryReason.trim()) {
-        alert("매도 근거를 입력해주세요.");
+        toast.error("매도 근거를 입력해주세요.");
         return;
       }
 

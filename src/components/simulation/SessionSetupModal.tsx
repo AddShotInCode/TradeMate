@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Play } from "lucide-react";
+import { toast } from "sonner";
 import { TARGET_STOCKS } from "@/constants/targetStocks";
 
 import { simulationService } from "@/services/simulationService";
@@ -28,8 +29,8 @@ export default function SessionSetupModal({
 
   // Calculate default valid date (e.g., today or yesterday)
   const getTodayString = () => {
-      const d = new Date();
-      return d.toISOString().split("T")[0];
+    const d = new Date();
+    return d.toISOString().split("T")[0];
   };
 
   const [startDate, setStartDate] = useState(getTodayString());
@@ -67,7 +68,7 @@ export default function SessionSetupModal({
       }
     } catch (error) {
       console.error("Failed to create simulation", error);
-      alert("시뮬레이션 생성에 실패했습니다.");
+      toast.error("시뮬레이션 생성에 실패했습니다.");
     } finally {
       setIsCreating(false);
     }
@@ -163,10 +164,10 @@ export default function SessionSetupModal({
             {/* Footer */}
             <div className="p-4 border-t border-slate-100 dark:border-[#283039] bg-slate-50 dark:bg-[#161f28] flex justify-end gap-3">
               {!isForce && (
-                <Button 
-                    variant="ghost" 
-                    onClick={closeModal}
-                    className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-[#283039]"
+                <Button
+                  variant="ghost"
+                  onClick={closeModal}
+                  className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-[#283039]"
                 >
                   취소
                 </Button>
