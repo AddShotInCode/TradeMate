@@ -37,6 +37,7 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON-010", "Resource not found"),
     STOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "STOCK-001", "Stock not found"),
     STATEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "STATEMENT-001", "Financial statement not found"),
+    SIMULATION_NOT_FOUND(HttpStatus.NOT_FOUND, "SIMULATION-001", "Simulation not found"),
     API_ENDPOINT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON-011", "API endpoint not found"),
 
     // 405 Method Not Allowed

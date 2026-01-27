@@ -62,3 +62,32 @@ CREATE TABLE refresh_token (
     
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
 );
+
+CREATE TABLE simulation (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    member_id BIGINT NOT NULL COMMENT 'members 테이블 FK',
+    stock_code VARCHAR(20) NOT NULL COMMENT '종목코드 (예: 005930)',
+    start_date DATE NOT NULL COMMENT '시뮬레이션 시작일',
+    end_date DATE COMMENT '시뮬레이션 종료일 (nullable)',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
+    INDEX idx_simulation_member (member_id)
+);
+
+CREATE TABLE simulation_trade (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    simulation_id BIGINT NOT NULL COMMENT 'simulation 테이블 FK',
+    trade_date DATE NOT NULL COMMENT '거래일',
+    balance INT NOT NULL COMMENT '거래 전 보유수',
+    price INT NOT NULL COMMENT '거래 시점 주가',
+    upper_limit INT NOT NULL COMMENT '사용자 설정 상한',
+    lower_limit INT NOT NULL COMMENT '사용자 설정 하한',
+    trade_type CHAR(1) NOT NULL COMMENT '거래종류 (B: 매수, S: 매도)',
+    volume INT NOT NULL COMMENT '거래량',
+    comment VARCHAR(100) COMMENT '메모 (최대 100자)',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (simulation_id) REFERENCES simulation(id) ON DELETE CASCADE,
+    INDEX idx_trade_simulation (simulation_id)
+);
