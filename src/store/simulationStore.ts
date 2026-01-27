@@ -381,12 +381,25 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
     // Calculate current holdings (quantity of stocks) BEFORE the trade
     const currentHoldings = state.positions.reduce((acc, pos) => acc + pos.qty, 0);
 
+    // If holding stock (currentHoldings > 0), inherit existing TP/SL if not provided
+    // This fixes the issue where adding to a position or selling saves 0/0 for TP/SL
+    let finalTp = tp;
+    let finalSl = sl;
+
+    if (currentHoldings > 0 && (!finalTp || !finalSl)) {
+      const existingPos = state.positions.find((p) => p.qty > 0);
+      if (existingPos) {
+        if (!finalTp) finalTp = existingPos.tp;
+        if (!finalSl) finalSl = existingPos.sl;
+      }
+    }
+
     const tradeData: TradeData = {
       timestamp: String(state.data[state.currentTimeIndex].time),
       balance: currentHoldings,
       price: price,
-      upper: tp || 0,
-      lower: sl || 0,
+      upper: finalTp || 0,
+      lower: finalSl || 0,
       type: side === "BUY" ? "B" : "S",
       volume: qty,
       comment: entryReason,
