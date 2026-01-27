@@ -42,6 +42,7 @@ public class SimulationScoreCalculator {
 
         // 계산용 상태 변수
         BigDecimal avgPrice = ZERO;           // 현재 평단가
+        BigDecimal lastSellAvgPrice = ZERO;   // 마지막 매도 시점의 평단가
         int currentBalance = 0;               // 현재 보유 수량
         BigDecimal totalInvestment = ZERO;    // 총 투자금액
         BigDecimal totalRealizedProfit = ZERO;// 실현 손익 합계
@@ -77,6 +78,9 @@ public class SimulationScoreCalculator {
                 int sellVolume = trade.getVolume();
                 BigDecimal target = new BigDecimal(trade.getUpperLimit());  // 상한 = 목표가 (T)
                 BigDecimal stopLoss = new BigDecimal(trade.getLowerLimit()); // 하한 = 손절가 (S)
+
+                // 마지막 매도 시점의 평단가 저장 (전량 매도 전에 저장)
+                lastSellAvgPrice = avgPrice;
 
                 // 개별 수익 계산
                 BigDecimal profit = sellPrice.subtract(avgPrice).multiply(new BigDecimal(sellVolume));
@@ -146,7 +150,7 @@ public class SimulationScoreCalculator {
                 .stockCode(simulation.getStockCode())
                 .startDate(simulation.getStartDate())
                 .endDate(simulation.getEndDate())
-                .finalAvgPrice(avgPrice.setScale(2, ROUNDING_MODE))
+                .finalAvgPrice(lastSellAvgPrice.setScale(2, ROUNDING_MODE))
                 .totalInvestment(totalInvestment.setScale(0, ROUNDING_MODE))
                 .totalRealizedProfit(totalRealizedProfit.setScale(0, ROUNDING_MODE))
                 .totalRoi(totalRoi.setScale(2, ROUNDING_MODE))
