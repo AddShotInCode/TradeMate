@@ -35,6 +35,36 @@ export interface TradeListResponse {
   totalElements: number;
 }
 
+export interface SimulationReportResponse {
+  summary: {
+    simulationId: number;
+    stockCode: string;
+    startDate: string;
+    endDate: string;
+    finalAvgPrice: number;
+    totalInvestment: number;
+    totalRealizedProfit: number;
+    totalRoi: number;
+    totalScore: number;
+  };
+  trades: {
+    sequence: number;
+    tradeDate: string;
+    sellPrice: number;
+    avgPrice: number;
+    targetPrice: number;
+    stopLoss: number;
+    volume: number;
+    profit: number;
+    roi: number;
+    resultScore: number;
+    complianceScore: number;
+    tradeScore: number;
+  }[];
+  totalSellVolume: number;
+  totalTradeCount: number;
+}
+
 const BASE_URL = "/api/simulation";
 
 export const simulationService = {
@@ -72,6 +102,12 @@ export const simulationService = {
   // 6. Get Trade List
   getTrades: async (id: number): Promise<TradeListResponse> => {
     const response = await axios.get<TradeListResponse>(`${BASE_URL}/${id}/data`);
+    return response.data;
+  },
+
+  // 7. Get Report
+  getReport: async (id: number): Promise<SimulationReportResponse> => {
+    const response = await axios.get<SimulationReportResponse>(`${BASE_URL}/${id}/report`);
     return response.data;
   },
 };

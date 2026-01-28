@@ -123,22 +123,25 @@ export default function AllSimulationsList() {
             <table className="w-full text-left text-sm text-slate-500 dark:text-[#9dabb9]">
               <thead className="bg-slate-50 dark:bg-[#252b32] text-xs uppercase text-slate-900 dark:text-white">
                 <tr>
-                  <th scope="col" className="px-6 py-4 font-semibold">
+                  <th scope="col" className="px-6 py-4 font-semibold text-center whitespace-nowrap">
                     종목(코드)
                   </th>
-                  <th scope="col" className="px-6 py-4 font-semibold">
+                  <th scope="col" className="px-6 py-4 font-semibold text-center whitespace-nowrap">
                     시작일
                   </th>
-                  <th scope="col" className="px-6 py-4 font-semibold">
+                  <th scope="col" className="px-6 py-4 font-semibold text-center whitespace-nowrap">
                     종료일
                   </th>
-                  <th scope="col" className="px-6 py-4 font-semibold">
+                  <th scope="col" className="px-6 py-4 font-semibold text-center whitespace-nowrap">
                     상태
                   </th>
-                  <th scope="col" className="px-6 py-4 font-semibold">
+                  <th scope="col" className="px-6 py-4 font-semibold text-center whitespace-nowrap">
                     생성일
                   </th>
-                  <th scope="col" className="px-6 py-4 font-semibold text-right">
+                  <th scope="col" className="px-6 py-4 font-semibold text-center whitespace-nowrap">
+                    분석
+                  </th>
+                  <th scope="col" className="px-6 py-4 font-semibold text-center whitespace-nowrap">
                     관리
                   </th>
                 </tr>
@@ -150,26 +153,26 @@ export default function AllSimulationsList() {
                     className="hover:bg-slate-50 dark:hover:bg-[#252b32] transition-colors group"
                   >
                     <td
-                      className="px-6 py-4 font-medium text-slate-900 dark:text-white cursor-pointer"
+                      className="px-6 py-4 font-medium text-slate-900 dark:text-white cursor-pointer whitespace-nowrap text-center"
                       onClick={() => handleResume(session.id)}
                     >
                       <span className="font-bold">{getStockName(session.stockCode)}</span>
                       <span className="ml-1 text-slate-500 font-normal">({session.stockCode})</span>
                     </td>
                     <td
-                      className="px-6 py-4 cursor-pointer"
+                      className="px-6 py-4 cursor-pointer whitespace-nowrap text-center"
                       onClick={() => handleResume(session.id)}
                     >
                       {session.startDate}
                     </td>
                     <td
-                      className="px-6 py-4 cursor-pointer"
+                      className="px-6 py-4 cursor-pointer whitespace-nowrap text-center"
                       onClick={() => handleResume(session.id)}
                     >
                       {session.endDate || "-"}
                     </td>
                     <td
-                      className="px-6 py-4 cursor-pointer"
+                      className="px-6 py-4 cursor-pointer whitespace-nowrap text-center"
                       onClick={() => handleResume(session.id)}
                     >
                       {session.endDate ? (
@@ -183,12 +186,12 @@ export default function AllSimulationsList() {
                       )}
                     </td>
                     <td
-                      className="px-6 py-4 cursor-pointer"
+                      className="px-6 py-4 cursor-pointer whitespace-nowrap text-center"
                       onClick={() => handleResume(session.id)}
                     >
                       {new Date(session.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
+                    <td className="px-6 py-4 text-center whitespace-nowrap">
                       {session.endDate && (
                         <Button
                           variant="ghost"
@@ -196,14 +199,15 @@ export default function AllSimulationsList() {
                           className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Analysis Logic here
-                            toast.info("분석 페이지로 이동합니다 (준비 중)");
+                            router.push(`/simulation/${session.id}/report`);
                           }}
                         >
                           <TrendingUp className="w-4 h-4 mr-1" />
                           결과 분석
                         </Button>
                       )}
+                    </td>
+                    <td className="px-6 py-4 text-center whitespace-nowrap">
                       <Button
                         variant="ghost"
                         size="sm"
