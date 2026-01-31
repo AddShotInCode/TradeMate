@@ -527,6 +527,157 @@
 - 최종 버그 수정 및 성능 테스트
 - 발표 자료 데이터 추출 지원
 
+### Week 6 (26.01.26 - 02.01)
+
+**작업 내역** (필수)
+
+**FE**
+
+- **Inquiry 페이지 백엔드 연동**: Mock 데이터를 실제 API 데이터로 교체하고, `ResizeObserver` 및 `lightweight-charts`를 활용해 기간별(1개월~1년) 캔들 차트를 구현했습니다.
+- **미들웨어 및 인증 보안 강화**: `middleware.ts`를 도입하여 토큰 없는 접근을 원천 차단하고, 로그아웃 및 로그인 실패 피드백 로직을 개선했습니다.
+- **회원가입 기능 완성**: `authService`를 통한 실제 회원가입 API(`POST /api/auth/signup`) 연동 및 선택 입력(전화번호) 등 유효성 검사를 강화했습니다.
+- **원칙(Propensity) 페이지 UI 정리**: 전략 입력 단계를 간소화하고, 비중 합계 100% 검증 UX를 적용하여 저장 로직을 단일화했습니다.
+- **시뮬레이션 고도화**: 자동 매매(SL/TP)를 비활성화하여 수동 대응 능력을 기르도록 원칙을 강화하고, 손절/익절 슬라이더(0~50%) 및 `sonner` 토스트 알림을 도입했습니다.
+- **리포트 및 대시보드 폴리싱**: 시뮬레이션 결과 리포트의 시인성을 높이고(폰트 확대, 불필요 정보 제거), 대시보드 목록 정렬을 개선했습니다.
+
+**BE**
+
+- **JWT 기반 인증 시스템 구축**:
+  - Spring Security와 JWT를 활용한 사용자 인증 구현.
+  - HttpOnly 쿠키 기반 토큰 저장으로 XSS 공격 방어 및 보안 강화.
+  - 회원가입(`/api/auth/signup`), 로그인(`/api/auth/login`), 로그아웃(`/api/auth/logout`) API 구현.
+  - BCrypt를 활용한 비밀번호 암호화 및 `@AuthenticationPrincipal`을 통한 현재 사용자 주입.
+- **시뮬레이션 CRUD API 개발**:
+  - 시뮬레이션 세션 관리를 위한 `Simulation`, `SimulationTrade` Entity 및 Repository 설계.
+  - 시뮬레이션 생성(`POST`), 조회(`GET`), 종료일 수정(`PATCH`), 삭제(`DELETE`) 엔드포인트 구현.
+  - 거래 데이터 추가(`POST /{id}/data`) 및 조회(`GET /{id}/data`) API 구현.
+  - 사용자 소유권 검증 로직을 통한 타 사용자 데이터 접근 차단.
+- **시뮬레이션 리포트 API 개발**:
+  - 원칙 기반 평가를 위한 점수 계산 알고리즘(`SimulationScoreCalculator`) 구현.
+  - R(Result: 수익률) + C(Compliance: 원칙 준수) 가중 평균 기반 개별 거래 점수 산출.
+  - 매도 거래량 기반 가중치 적용으로 큰 거래에 더 높은 비중 부여.
+  - 최종 분석 리포트(`GET /{id}/report`) 반환: 총점, 등급(A~F), 거래별 상세 점수 포함.
+- **버그 수정 및 안정화**:
+  - 전량 매도 시 `finalAvgPrice`가 0으로 표시되는 버그 수정 (마지막 매도 시점의 평균가 보존 로직 추가).
+  - `BigDecimal` 기반 금융 계산(SCALE=8, RoundingMode.HALF_UP)으로 정밀도 확보.
+  - 커스텀 예외(`SIMULATION_NOT_FOUND`, `SIMULATION_NOT_ENDED`) 추가 및 에러 핸들링 강화.
+
+**AI 활용** (필수)
+
+**FE**
+
+- **코드 생성 및 로직 제안**: Next.js Middleware의 토큰 검증 로직 구현 문제와 시뮬레이션 주문 슬라이더-잔고 연동 로직을 AI로 생성하여 해결했습니다.
+- **UX 라이팅 개선**: 시뮬레이션 리포트의 원칙 분석 결과를 점수 구간별(80점 이상/50점 미만 등)로 자연스러운 문장으로 다듬는 데 활용했습니다.
+- **리팩토링**: 불필요한 레거시 컴포넌트(이전 차트 컨트롤, 청산 버튼) 제거 및 전역 상태 관리(Zustand) 로직 최적화를 제안받아 적용했습니다.
+
+**BE**
+
+- **아키텍처 설계**: JWT + HttpOnly 쿠키 인증 방식의 장단점 분석 및 Spring Security 필터 체인 구성 가이드 제공.
+- **알고리즘 구현**: 점수 계산 알고리즘(R+C 가중 평균, 매도 거래량 기반 가중치)의 수학적 모델링 및 Java 코드 변환 지원.
+- **DTO 설계**: Entity ↔ DTO 변환 패턴 및 Record 기반 불변 DTO 구조 제안으로 코드 간결화.
+- **버그 분석 및 해결**: 실제 DB 덤프 데이터를 분석하여 전량 매도 시 평균가 초기화 버그의 원인 파악 및 수정안 도출.
+- **문서화**: API 명세서(simulation_api_spec.md) 및 프롬프트 문서(simulation_crud_api.md, simulation_report_api.md) 작성 지원.
+
+**완료 기능**
+
+**FE**
+
+- Inquiry 페이지 실 데이터 연동 및 차트화
+- 인증 미들웨어(Middleware) 및 로그아웃
+- 회원가입 프로세스 연동
+- 시뮬레이션 수동 매매 강화 및 주문 UI (슬라이더)
+- 시뮬레이션 결과 리포트 UI 개선
+
+**BE**
+
+- JWT 기반 인증 시스템 (회원가입/로그인/로그아웃)
+- HttpOnly 쿠키 기반 토큰 관리
+- 시뮬레이션 CRUD API (6개 엔드포인트)
+- 시뮬레이션 리포트 API (점수 계산 및 등급 산출)
+- 사용자 소유권 검증 및 접근 제어
+- 커스텀 예외 처리 및 에러 코드 체계화
+
+**커밋 로그**
+
+**FE**
+
+- docs: readme 핵심 기술 내용 변경
+- feat: 분석 페이지 구현
+- fix: 목표가 손절가 0 문제 해결
+- feat: toast 알람 변경
+- feat: 시뮬레이션 api 변경
+- feat: 로그인 zod 적용
+- feat: 회원가입 기능 백이랑 연결
+- refactor: 원칙 페이지 수정, 사이드바 계정 버튼 제거
+- feat: 조회 페이지 실 데이터와 연결
+- feat: 시뮬레이션 로직 추가
+- feat: 시뮬레이션 페이지 재무제표 추가
+
+**BE**
+
+- feat: JWT 인증 시스템 및 HttpOnly 쿠키 기반 토큰 관리 구현
+- feat: 시뮬레이션 CRUD API 개발 (생성/조회/수정/삭제/거래추가)
+- feat: 시뮬레이션 리포트 API 및 점수 계산 알고리즘 구현
+- fix: 전량 매도 시 finalAvgPrice 0 표시 버그 수정
+- docs: 시뮬레이션 API 명세서 및 프롬프트 문서 작성
+
+**링크**
+
+**FE**
+
+- [시뮬레이션 페이지 로직 추가 및 수정](https://github.com/AddShotInCode/TradeMate_FE/pull/28)
+- [조회 페이지 데이터 연결](https://github.com/AddShotInCode/TradeMate_FE/pull/30)
+- [회원가입 최종 완성](https://github.com/AddShotInCode/TradeMate_FE/pull/35)
+- [회원가입 페이지 프롬프트 추가](https://github.com/AddShotInCode/TradeMate_FE/pull/36)
+- [로그인, 로그아웃, 권한 설정](https://github.com/AddShotInCode/TradeMate_FE/pull/37)
+- [시뮬레이션 페이지 api 추가](https://github.com/AddShotInCode/TradeMate_FE/pull/38)
+- [분석 페이지 구현](https://github.com/AddShotInCode/TradeMate_FE/pull/39)
+- [readme 핵심 기술 내용 변경](https://github.com/AddShotInCode/TradeMate_FE/pull/40)
+
+**BE**
+
+- [로그인 기능 구현](https://github.com/AddShotInCode/TradeMate_BE/pull/13)
+- [권한 오류 수정 및 사용자 데이터 구성 변경, 토큰 구조 변경](https://github.com/AddShotInCode/TradeMate_BE/pull/14)
+- [시뮬레이션 정보 저장 및 조회 api 구현](https://github.com/AddShotInCode/TradeMate_BE/pull/15)
+- [시뮬레이션 결과 보고서 api 구현](https://github.com/AddShotInCode/TradeMate_BE/pull/16)
+- [최종 평단가 계산 버그 수정](https://github.com/AddShotInCode/TradeMate_BE/pull/17)
+
+**테스트 결과**
+
+**FE**
+
+- 회원가입 프로세스 정상 동작 및 중복 이메일 에러 핸들링 확인.
+- 비로그인 사용자의 대시보드 접근 시 로그인 페이지 리다이렉트 동작 확인.
+- Inquiry 차트 기간 변경 및 종목 교체 시 데이터 렌더링 확인.
+- 시뮬레이션 매수/매도 슬라이더 및 손익 계산 로직 검증 완료.
+
+**BE**
+
+- 회원가입 API 정상 동작 및 중복 이메일 예외 처리 확인.
+- 로그인 성공 시 HttpOnly 쿠키에 JWT 토큰 설정 확인.
+- 시뮬레이션 CRUD 전체 플로우(생성→거래추가→조회→리포트→삭제) 검증 완료.
+- 타 사용자 시뮬레이션 접근 시 403 Forbidden 응답 확인.
+- 리포트 API에서 점수 계산 및 등급(A~F) 산출 로직 정상 동작 확인.
+- 전량 매도 후 finalAvgPrice 정상 표시(마지막 매도 시점 평균가) 확인.
+
+**다음 주 계획** (필수)
+
+**FE**
+
+- 테스트 코드 추가
+- CI/CD 구축
+- 반응형 디자인 추가
+- 프로젝트 문서화 및 마무리
+- 캔들 색상 강조 및 마커 표시
+- 각 시점의 진입 근거 및 결과 데이터 툴팁 제공
+
+**BE**
+
+- 테스트 코드 작성 (Service/Controller 단위 테스트)
+- CI/CD 파이프라인 구축
+- API 문서화 (Swagger)
+- 성능 최적화 및 배포 준비
+
 ## 팀원 소개
 
 <div align="center">
