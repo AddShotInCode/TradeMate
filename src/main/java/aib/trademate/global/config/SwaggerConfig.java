@@ -46,8 +46,8 @@ public class SwaggerConfig {
                         + "모든 에러는 `ErrorResponse` 형식으로 반환됩니다.")
                 .version("1.0.0")
                 .contact(new Contact()
-                        .name("TradeMate Team")
-                        .url("https://github.com/trademate"));
+                        .name("AddShotInCode - TradeMate")
+                        .url("https://github.com/orgs/AddShotInCode/repositories"));
     }
 
     private SecurityScheme securityScheme() {

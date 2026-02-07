@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/statement")
 @RequiredArgsConstructor
-@Tag(name = "재무제표", description = "재무제표 듰어 링크 조회 및 초기화 API")
+@Tag(name = "재무제표", description = "재무제표 뷰어 링크 조회 및 초기화 API")
 public class StatementController {
 
     private final StatementService statementService;
@@ -41,7 +41,7 @@ public class StatementController {
     /**
      * 재무제표 뷰어 링크 목록 조회
      */
-    @Operation(summary = "재무제표 듰어 링크 조회", description = "특정 종목의 연도/분기별 재무제표 듰어 링크 목록을 조회합니다.")
+    @Operation(summary = "재무제표 뷰어 링크 조회", description = "특정 종목의 연도/분기별 재무제표 뷰어 링크 목록을 조회합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터",
