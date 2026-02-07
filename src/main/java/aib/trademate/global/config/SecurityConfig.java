@@ -48,6 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/refresh").permitAll()
                         .requestMatchers("/api/stock/**").permitAll()
                         .requestMatchers("/api/statement/**").permitAll()
+                        // Swagger UI
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         // 나머지는 인증 필요
                         .anyRequest().authenticated()
                 )
