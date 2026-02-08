@@ -26,13 +26,14 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true,
         isLoading: false,
       });
-    } catch (error: any) {
-      if (error.response?.status !== 401) {
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
+      if (axiosError.response?.status !== 401) {
         console.error("Login Failed:", error);
       }
-      let errorMessage = error.response?.data?.message || "로그인에 실패했습니다.";
+      let errorMessage = axiosError.response?.data?.message || "로그인에 실패했습니다.";
 
-      if (error.response?.status === 401) {
+      if (axiosError.response?.status === 401) {
         errorMessage = "이메일 또는 비밀번호가 올바르지 않습니다.";
       }
 
@@ -67,7 +68,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true,
         isLoading: false,
       });
-    } catch (error) {
+    } catch {
       // If refresh fails, we are not authenticated
       set({
         isAuthenticated: false,

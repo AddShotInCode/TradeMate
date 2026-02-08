@@ -11,7 +11,6 @@ export default function StatsBar() {
   }, 0);
 
   const equity = balance + unrealizedPnl;
-  const isProfit = unrealizedPnl >= 0;
 
   return (
     <div className="grid grid-cols-3 gap-4 p-4 bg-slate-50 dark:bg-[#151c24] border-b border-slate-200 dark:border-[#283039]">

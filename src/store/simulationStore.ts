@@ -75,7 +75,15 @@ interface SimulationState {
   setCurrentPrice: (price: number) => void;
 }
 
-const mapToCandle = (item: any): CandlestickData => ({
+interface StockItem {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
+const mapToCandle = (item: StockItem): CandlestickData => ({
   time: item.date,
   open: item.open,
   high: item.high,
@@ -189,7 +197,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
         formatToYYYYMMDD(sim.startDate),
         sim.endDate ? formatToYYYYMMDD(sim.endDate) : todayStr
       );
-      let items = stockRes.items;
+      const items = [...stockRes.items];
       items.sort((a, b) => a.date.localeCompare(b.date));
       const candles = items.map(mapToCandle);
 
@@ -331,12 +339,14 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
         positions: positions,
         tradeLogs: tradeLogs.reverse(),
       });
-    } catch (e: any) {
-      set({ isLoading: false, error: e.message || "Error loading simulation" });
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : "Error loading simulation";
+      set({ isLoading: false, error: errorMessage });
     }
   },
 
-  loadData: async (code, start, end) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  loadData: async (_code, _start, _end) => {
     // Legacy or manual load without ID
     // ... (simplified or keep minimal logic if needed by other components?)
     // Current simulation/page.tsx logic flow is changing to use loadSimulation.

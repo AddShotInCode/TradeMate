@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+
 import { simulationService, Simulation } from "@/services/simulationService";
 import { Button } from "@/components/ui/button";
-import { Trash2, TrendingUp, Calendar, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { TARGET_STOCKS } from "@/constants/targetStocks";
 import {

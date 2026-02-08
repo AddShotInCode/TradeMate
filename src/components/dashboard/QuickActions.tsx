@@ -1,5 +1,4 @@
-import { Play, Edit, BarChart3, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Edit, BarChart3, ChevronRight } from "lucide-react";
 
 export default function QuickActions() {
   return (

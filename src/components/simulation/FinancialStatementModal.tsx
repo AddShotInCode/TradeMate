@@ -14,7 +14,8 @@ import { useSimulationStore } from "@/store/simulationStore";
 import { statementService, StatementItem } from "@/services/statementService";
 import { ExternalLink, Loader2, AlertCircle } from "lucide-react";
 
-// Simple date parser if date-fns is not available/desired
+// Parse simulation date - kept for future use
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const parseSimDate = (dateStr: string) => {
   return dateStr;
 };
@@ -89,8 +90,9 @@ export default function FinancialStatementModal({
       } else {
         setItems(validItems);
       }
-    } catch (err: any) {
-      if (err.response?.status === 404) {
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { status?: number } };
+      if (axiosErr.response?.status === 404) {
         setError("데이터가 존재하지 않습니다.");
       } else {
         setError("보고서를 불러오는데 실패했습니다.");

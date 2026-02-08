@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Plus } from "lucide-react";
+import { Search } from "lucide-react";
 import { useState } from "react";
 import { TARGET_STOCKS } from "@/constants/targetStocks";
 

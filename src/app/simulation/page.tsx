@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import SimulationHeader from "@/components/simulation/SimulationHeader";
 import StatsBar from "@/components/simulation/StatsBar";
@@ -14,7 +14,6 @@ import { useSimulationStore } from "@/store/simulationStore";
 
 function SimulationContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const id = searchParams.get("id");
   const { loadSimulation, isLoading, error } = useSimulationStore();
 

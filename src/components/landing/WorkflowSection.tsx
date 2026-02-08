@@ -1,5 +1,4 @@
-import { PenLine, Zap, BarChart3, CheckCircle } from "lucide-react";
-import Link from "next/link";
+import { PenLine, Zap, BarChart3 } from "lucide-react";
 
 const steps = [
   {

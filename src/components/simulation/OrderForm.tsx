@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { Edit, HelpCircle, Minus, Plus } from "lucide-react";

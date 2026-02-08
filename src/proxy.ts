@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const protectedRoutes = ["/dashboard", "/simulation", "/account", "/propensity"];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const publicRoutes = ["/login", "/register", "/"];
 
 export function proxy(request: NextRequest) {

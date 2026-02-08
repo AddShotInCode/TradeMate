@@ -10,6 +10,7 @@ export default function SimulationChart() {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<ReturnType<typeof createChart> | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+<<<<<<< HEAD
 
   const { data, isLoading, currentTimeIndex, setCurrentPrice, currentPrice, loadData, error } =
     useSimulationStore();
@@ -21,6 +22,12 @@ export default function SimulationChart() {
     date: string;
   } | null>(null);
 
+=======
+  
+  const { data, isLoading, currentTimeIndex, setCurrentPrice, loadData, error } = useSimulationStore();
+  const [legend, setLegend] = useState<{ open: number; high: number; low: number; close: number; date: string } | null>(null);
+  
+>>>>>>> c24a983 (fix: 린트 오류 해결)
   // Refs for accessing fresh state inside event callbacks without re-subscribing
   const dataRef = useRef(data);
   const currentIndexRef = useRef(currentTimeIndex);
@@ -35,10 +42,17 @@ export default function SimulationChart() {
   const startParam = searchParams.get("start");
 
   useEffect(() => {
+<<<<<<< HEAD
     const code = codeParam || "005930";
     const start = startParam || "20240101";
     loadData(code, start, "20251231");
   }, [codeParam, startParam]);
+=======
+    const code = codeParam || '005930';
+    const start = startParam || '20240101';
+    loadData(code, start, '20251231');
+  }, [codeParam, startParam, loadData]);
+>>>>>>> c24a983 (fix: 린트 오류 해결)
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
@@ -188,7 +202,12 @@ export default function SimulationChart() {
         seriesRef.current = null;
       }
     };
+<<<<<<< HEAD
   }, [data, isLoading]); // Re-create chart only if data length changes drastically (like initial load), logic might need refinement if simple data updates ensue
+=======
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, isLoading]);  // Re-create chart only if data length changes drastically (like initial load), logic might need refinement if simple data updates ensue
+>>>>>>> c24a983 (fix: 린트 오류 해결)
 
   // Update data when currentTimeIndex changes
   useEffect(() => {

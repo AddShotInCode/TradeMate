@@ -21,9 +21,8 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface RefreshRequest {
-  // No payload needed, uses HttpOnly cookie
-}
+// No payload needed for refresh, uses HttpOnly cookie
+export type RefreshRequest = Record<string, never>;
 
 export interface AuthResponse {
   message: string;

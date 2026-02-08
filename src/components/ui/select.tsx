@@ -50,8 +50,11 @@ const SelectTrigger = React.forwardRef<
 });
 SelectTrigger.displayName = "SelectTrigger";
 
-const SelectValue = React.forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanElement>>(
-  ({ className, placeholder, ...props }, ref) => {
+interface SelectValueProps extends React.HTMLAttributes<HTMLSpanElement> {
+    placeholder?: string;
+}
+
+const SelectValue = React.forwardRef<HTMLSpanElement, SelectValueProps>(({ className, placeholder, ...props }, ref) => {
     const { value } = React.useContext(SelectContext);
     return (
       <span ref={ref} className={cn("block truncate", className)} {...props}>
@@ -86,12 +89,9 @@ const SelectContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
 );
 SelectContent.displayName = "SelectContent";
 
-const SelectItem = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { value: string }
->(({ className, children, value: itemValue, ...props }, ref) => {
-  const { value, onValueChange, setOpen } = React.useContext(SelectContext);
-  const isSelected = value === itemValue;
+const SelectGroup = ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+const SelectLabel = ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+const SelectSeparator = () => <hr className="my-1 border-slate-600" />
 
   return (
     <div
