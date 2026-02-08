@@ -272,9 +272,10 @@ describe("simulationStore", () => {
 
       mockStockService.fetchStockData.mockResolvedValueOnce({
         stock: { code: "005930", name: "삼성전자", market: "KOSPI" },
+        pagination: { page: 1, pageSize: 1000, totalElements: 2, totalPages: 1 },
         items: [
-          { date: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000 },
-          { date: "2024-01-02", open: 71000, high: 73000, low: 70000, close: 72000 },
+          { date: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000, volume: 1000000, changeAmount: 1000, changeRate: 1.43 },
+          { date: "2024-01-02", open: 71000, high: 73000, low: 70000, close: 72000, volume: 1200000, changeAmount: 1000, changeRate: 1.41 },
         ],
       });
 
@@ -310,8 +311,9 @@ describe("simulationStore", () => {
 
       mockStockService.fetchStockData.mockResolvedValueOnce({
         stock: { code: "005930", name: "삼성전자", market: "KOSPI" },
+        pagination: { page: 1, pageSize: 1000, totalElements: 1, totalPages: 1 },
         items: [
-          { date: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000 },
+          { date: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000, volume: 1000000, changeAmount: 1000, changeRate: 1.43 },
         ],
       });
 
@@ -357,6 +359,7 @@ describe("simulationStore", () => {
 
       mockStockService.fetchStockData.mockResolvedValueOnce({
         stock: { code: "005930", name: "삼성전자", market: "KOSPI" },
+        pagination: { page: 1, pageSize: 1000, totalElements: 0, totalPages: 0 },
         items: [],
       });
 
@@ -389,9 +392,10 @@ describe("simulationStore", () => {
 
       mockStockService.fetchStockData.mockResolvedValueOnce({
         stock: { code: "005930", name: "삼성전자", market: "KOSPI" },
+        pagination: { page: 1, pageSize: 1000, totalElements: 2, totalPages: 1 },
         items: [
-          { date: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000 },
-          { date: "2024-01-02", open: 71000, high: 73000, low: 70000, close: 72000 },
+          { date: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000, volume: 1000000, changeAmount: 1000, changeRate: 1.43 },
+          { date: "2024-01-02", open: 71000, high: 73000, low: 70000, close: 72000, volume: 1200000, changeAmount: 1000, changeRate: 1.41 },
         ],
       });
 
