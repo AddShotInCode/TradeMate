@@ -32,7 +32,9 @@ export default function StockChart() {
           <button
             onClick={() => setChartType("line")}
             className={`p-1.5 rounded transition-colors ${
-              chartType === "line" ? "text-[#137fec] bg-[#137fec]/10" : "text-slate-400 hover:text-white hover:bg-slate-700"
+              chartType === "line"
+                ? "text-[#137fec] bg-[#137fec]/10"
+                : "text-slate-400 hover:text-white hover:bg-slate-700"
             }`}
           >
             <LineChart className="size-5" />
@@ -40,7 +42,9 @@ export default function StockChart() {
           <button
             onClick={() => setChartType("candle")}
             className={`p-1.5 rounded transition-colors ${
-              chartType === "candle" ? "text-[#137fec] bg-[#137fec]/10" : "text-slate-400 hover:text-white hover:bg-slate-700"
+              chartType === "candle"
+                ? "text-[#137fec] bg-[#137fec]/10"
+                : "text-slate-400 hover:text-white hover:bg-slate-700"
             }`}
           >
             <CandlestickChart className="size-5" />
@@ -98,8 +102,8 @@ export default function StockChart() {
                 [2, 5, 10].includes(i)
                   ? "bg-red-500"
                   : [0, 7].includes(i)
-                  ? "bg-slate-500"
-                  : "bg-green-500"
+                    ? "bg-slate-500"
+                    : "bg-green-500"
               }`}
               style={{ height: `${height}%` }}
             />

@@ -25,10 +25,7 @@ export default function RiskAppetiteSlider({ value, onChange }: RiskAppetiteSlid
         </span>
       </div>
       <div className="relative h-2 w-full bg-slate-700 rounded-full mt-4">
-        <div
-          className="absolute h-full bg-[#137fec] rounded-full"
-          style={{ width: `${value}%` }}
-        />
+        <div className="absolute h-full bg-[#137fec] rounded-full" style={{ width: `${value}%` }} />
         <input
           type="range"
           min="0"

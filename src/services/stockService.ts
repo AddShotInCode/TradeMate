@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 export interface Stock {
   code: string;
@@ -28,15 +28,15 @@ export interface StockResponse {
   items: StockItem[];
 }
 
-const BASE_URL = '/api';
+const BASE_URL = "/api";
 
 export const stockService = {
   async fetchStockData(
-    stockCode: string, 
-    start: string, 
-    end: string, 
-    page: number = 1, 
-    pageSize: number = 1000 
+    stockCode: string,
+    start: string,
+    end: string,
+    page: number = 1,
+    pageSize: number = 1000
   ): Promise<StockResponse> {
     try {
       const response = await axios.get<StockResponse>(`${BASE_URL}/stock/${stockCode}`, {
@@ -44,17 +44,17 @@ export const stockService = {
           start,
           end,
           page,
-          pageSize
-        }
+          pageSize,
+        },
       });
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-         console.error("Axios error:", error.message);
-         throw new Error(error.response?.data?.message || error.message);
+        console.error("Axios error:", error.message);
+        throw new Error(error.response?.data?.message || error.message);
       }
       console.error("Failed to fetch stock data:", error);
       throw error;
     }
-  }
+  },
 };

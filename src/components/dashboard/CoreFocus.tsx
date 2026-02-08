@@ -12,7 +12,9 @@ export default function CoreFocus() {
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="text-slate-900 dark:text-white text-base font-bold">뇌동매매 차단</h3>
-            <p className="text-slate-500 dark:text-[#9dabb9] text-sm">감정적인 진입을 막기 위해 Impulse Block AI가 모니터링합니다.</p>
+            <p className="text-slate-500 dark:text-[#9dabb9] text-sm">
+              감정적인 진입을 막기 위해 Impulse Block AI가 모니터링합니다.
+            </p>
           </div>
         </div>
 
@@ -23,7 +25,9 @@ export default function CoreFocus() {
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="text-slate-900 dark:text-white text-base font-bold">원칙 준수 평가</h3>
-            <p className="text-slate-500 dark:text-[#9dabb9] text-sm">설정된 원칙에 따라 매매 행동을 자동으로 점수화합니다.</p>
+            <p className="text-slate-500 dark:text-[#9dabb9] text-sm">
+              설정된 원칙에 따라 매매 행동을 자동으로 점수화합니다.
+            </p>
           </div>
         </div>
       </div>

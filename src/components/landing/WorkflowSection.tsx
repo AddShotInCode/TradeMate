@@ -34,9 +34,7 @@ export default function WorkflowSection() {
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
-            >
-
-            </div>
+            ></div>
           </div>
 
           {/* Text Side */}
@@ -45,7 +43,8 @@ export default function WorkflowSection() {
               정의. 실행. 평가.
             </h2>
             <p className="text-base leading-relaxed text-[#9dabb9]">
-              성공적인 트레이딩은 예측이 아닌 대응과 원칙에 있습니다. TradeMate가 제안하는 체계적인 훈련 과정
+              성공적인 트레이딩은 예측이 아닌 대응과 원칙에 있습니다. TradeMate가 제안하는 체계적인
+              훈련 과정
             </p>
             <ul className="flex flex-col gap-4">
               {steps.map((step, index) => (
@@ -58,7 +57,6 @@ export default function WorkflowSection() {
                 </li>
               ))}
             </ul>
-
           </div>
         </div>
       </div>

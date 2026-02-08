@@ -24,7 +24,7 @@ const Dialog = ({
       open: open !== undefined ? open : isOpen,
       onOpenChange: onOpenChange || setIsOpen,
     }),
-    [open, onOpenChange, isOpen],
+    [open, onOpenChange, isOpen]
   );
 
   return <DialogContext.Provider value={contextValue}>{children}</DialogContext.Provider>;
@@ -49,7 +49,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
         <div
           className={cn(
             "relative z-50 w-full max-w-lg bg-[#1c252e] p-6 shadow-lg rounded-lg border border-slate-700 text-white",
-            className,
+            className
           )}
           ref={ref}
           {...props}
@@ -65,7 +65,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
         </div>
       </div>
     );
-  },
+  }
 );
 DialogContent.displayName = "DialogContent";
 
@@ -92,7 +92,7 @@ const DialogTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HT
       className={cn("text-lg font-semibold leading-none tracking-tight", className)}
       {...props}
     />
-  ),
+  )
 );
 DialogTitle.displayName = "DialogTitle";
 
