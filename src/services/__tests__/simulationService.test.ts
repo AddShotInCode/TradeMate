@@ -17,9 +17,7 @@ describe("simulationService", () => {
 
       const result = await simulationService.create("005930", "2024-01-01");
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(
-        "/api/simulation?code=005930&start=2024-01-01"
-      );
+      expect(mockedAxios.post).toHaveBeenCalledWith("/api/simulation?code=005930&start=2024-01-01");
       expect(result).toEqual({ id: 1, message: "Created successfully" });
     });
   });
@@ -57,9 +55,7 @@ describe("simulationService", () => {
 
       const result = await simulationService.terminate(1, "2024-12-31");
 
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        "/api/simulation/1?end=2024-12-31"
-      );
+      expect(mockedAxios.patch).toHaveBeenCalledWith("/api/simulation/1?end=2024-12-31");
       expect(result).toEqual({ message: "Terminated successfully" });
     });
   });
@@ -91,10 +87,7 @@ describe("simulationService", () => {
 
       const result = await simulationService.addTrade(1, tradeData);
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(
-        "/api/simulation/1/data",
-        tradeData
-      );
+      expect(mockedAxios.post).toHaveBeenCalledWith("/api/simulation/1/data", tradeData);
       expect(result).toEqual({ message: "Trade added successfully" });
     });
   });

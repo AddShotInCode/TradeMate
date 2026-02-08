@@ -66,7 +66,7 @@ export default function SimulationHeader() {
           currentPrice,
           undefined,
           undefined,
-          "Simulation End - Auto Liquidate",
+          "Simulation End - Auto Liquidate"
         );
       }
 

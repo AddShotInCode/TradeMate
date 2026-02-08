@@ -50,10 +50,7 @@ export default function PrincipleItem({
         <div className="flex items-center gap-2">
           <h4 className="text-sm font-bold text-white">{title}</h4>
           {hasTooltip && (
-            <span
-              className="cursor-help"
-              title={tooltipText}
-            >
+            <span className="cursor-help" title={tooltipText}>
               <Info className="size-4 text-slate-500" />
             </span>
           )}
@@ -68,14 +65,12 @@ export default function PrincipleItem({
               inputMode="numeric"
               value={inputValue}
               onChange={(e) => {
-                const numericValue = e.target.value.replace(/[^0-9.]/g, '');
+                const numericValue = e.target.value.replace(/[^0-9.]/g, "");
                 onInputChange?.(numericValue);
               }}
               disabled={!enabled}
               className={`w-16 py-1 px-2 text-right border border-slate-600 rounded text-sm font-medium focus:ring-1 focus:ring-[#137fec] focus:border-[#137fec] ${
-                enabled
-                  ? "bg-slate-800 text-white"
-                  : "bg-slate-900 text-slate-500"
+                enabled ? "bg-slate-800 text-white" : "bg-slate-900 text-slate-500"
               }`}
             />
             {inputUnit && <span className="ml-1 text-sm text-slate-500">{inputUnit}</span>}

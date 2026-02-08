@@ -32,8 +32,9 @@ export default function FeaturesSection() {
               왜 TradeMate인가요?
             </h2>
             <p className="text-lg text-[#9dabb9]">
-              TradeMate는 강력한 원칙 준수 시스템을 통해 나쁜 습관을 올바른 실행으로 바꾸도록 설계되었습니다. 
-              단순히 차트를 보여주는 것이 아니라, 당신의 거래 과정을 분석하고 개선합니다.
+              TradeMate는 강력한 원칙 준수 시스템을 통해 나쁜 습관을 올바른 실행으로 바꾸도록
+              설계되었습니다. 단순히 차트를 보여주는 것이 아니라, 당신의 거래 과정을 분석하고
+              개선합니다.
             </p>
           </div>
         </div>

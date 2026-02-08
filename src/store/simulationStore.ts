@@ -66,7 +66,7 @@ interface SimulationState {
     price: number,
     sl?: number,
     tp?: number,
-    entryReason?: string,
+    entryReason?: string
   ) => Promise<void>;
   closePosition: (positionIndices: number[]) => Promise<void>;
   sellPosition: (qty: number, comment?: string) => Promise<void>;
@@ -104,7 +104,7 @@ const getMonthKey = (dateStr: string) => {
 
 const aggregateData = (
   dailyData: CandlestickData[],
-  interval: "1D" | "1W" | "1M",
+  interval: "1D" | "1W" | "1M"
 ): CandlestickData[] => {
   if (interval === "1D") return dailyData;
 
@@ -187,7 +187,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
       const stockRes = await stockService.fetchStockData(
         sim.stockCode,
         formatToYYYYMMDD(sim.startDate),
-        sim.endDate ? formatToYYYYMMDD(sim.endDate) : todayStr,
+        sim.endDate ? formatToYYYYMMDD(sim.endDate) : todayStr
       );
       let items = stockRes.items;
       items.sort((a, b) => a.date.localeCompare(b.date));

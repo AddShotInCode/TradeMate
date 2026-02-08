@@ -98,7 +98,13 @@ export default function PropensityAssessment({
       <div className="bg-[#111418] border border-slate-700 rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-bold text-white">지표 가중치 (합계 100%)</p>
-          <p className={totalWeight === 100 ? "text-xs font-bold text-green-400" : "text-xs font-bold text-rose-400"}>
+          <p
+            className={
+              totalWeight === 100
+                ? "text-xs font-bold text-green-400"
+                : "text-xs font-bold text-rose-400"
+            }
+          >
             합계: {totalWeight}%
           </p>
         </div>
@@ -122,7 +128,12 @@ export default function PropensityAssessment({
                     type="text"
                     inputMode="numeric"
                     value={item.weight}
-                    onChange={(e) => onIndicatorChange(index, { ...item, weight: e.target.value.replace(/[^0-9]/g, "") })}
+                    onChange={(e) =>
+                      onIndicatorChange(index, {
+                        ...item,
+                        weight: e.target.value.replace(/[^0-9]/g, ""),
+                      })
+                    }
                     className="block w-full py-2 px-3 pr-8 bg-slate-900/40 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:ring-2 focus:ring-[#137fec] focus:border-transparent text-sm"
                     placeholder="0"
                   />
@@ -135,7 +146,8 @@ export default function PropensityAssessment({
           ))}
         </div>
         <p className="mt-3 text-xs text-slate-400">
-          주문 확정 시점에 지표 가중치와 SL/TP/Expected ROI는 고정(Hypothesis Lock)되어, 거래 종료 전까지 수정할 수 없도록 설계됩니다.
+          주문 확정 시점에 지표 가중치와 SL/TP/Expected ROI는 고정(Hypothesis Lock)되어, 거래 종료
+          전까지 수정할 수 없도록 설계됩니다.
         </p>
       </div>
     </section>

@@ -12,15 +12,18 @@ const tradingStyles = [
 const styleDescriptions = {
   scalping: {
     title: "스캘핑 (Scalping)",
-    description: "초단타 매매로, 몇 초~몇 분 내에 소액의 이익을 반복적으로 취하는 전략입니다. 빠른 판단력과 집중력이 필요합니다.",
+    description:
+      "초단타 매매로, 몇 초~몇 분 내에 소액의 이익을 반복적으로 취하는 전략입니다. 빠른 판단력과 집중력이 필요합니다.",
   },
   daytrading: {
     title: "데이트레이딩 (Day Trading)",
-    description: "하루 내에 매수와 매도를 완료하는 전략입니다. 장 중 추세와 변동성을 활용하며, 약간의 인내심이 필요합니다.",
+    description:
+      "하루 내에 매수와 매도를 완료하는 전략입니다. 장 중 추세와 변동성을 활용하며, 약간의 인내심이 필요합니다.",
   },
   swing: {
     title: "스윙 (Swing Trading)",
-    description: "몇 일~몇 주간 포지션을 보유하는 전략입니다. 중기적인 추세를 포착하며, 잦은 모니터링이 필요하지 않습니다.",
+    description:
+      "몇 일~몇 주간 포지션을 보유하는 전략입니다. 중기적인 추세를 포착하며, 잦은 모니터링이 필요하지 않습니다.",
   },
 };
 
@@ -35,9 +38,7 @@ export default function TradingStyleSelector({ value, onChange }: TradingStyleSe
   return (
     <div className="mb-6">
       <div className="flex items-center gap-2 mb-2">
-        <label className="text-sm font-medium text-slate-300">
-          주요 투자 스타일
-        </label>
+        <label className="text-sm font-medium text-slate-300">주요 투자 스타일</label>
         <button
           onClick={() => setShowHelp(!showHelp)}
           className="size-5 rounded-full bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-slate-400 hover:text-white transition-colors"

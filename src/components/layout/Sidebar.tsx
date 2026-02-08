@@ -35,7 +35,7 @@ export default function Sidebar() {
   const userName = useSyncExternalStore(
     subscribeToLocalStorage,
     getUserNameSnapshot,
-    getUserNameServerSnapshot,
+    getUserNameServerSnapshot
   );
 
   const navItems = [
@@ -54,7 +54,7 @@ export default function Sidebar() {
     <aside
       className={cn(
         "relative z-40 h-screen border-r border-slate-200 bg-white dark:bg-[#111418] dark:border-[#3b4754] flex flex-col transition-all duration-300 shrink-0",
-        isCollapsed ? "w-[80px]" : "w-[280px]",
+        isCollapsed ? "w-[80px]" : "w-[280px]"
       )}
     >
       <div className="flex flex-col gap-4 p-4 h-full">
@@ -62,7 +62,7 @@ export default function Sidebar() {
         <div
           className={cn(
             "flex items-center justify-between px-2 py-2",
-            isCollapsed ? "flex-col gap-4" : "",
+            isCollapsed ? "flex-col gap-4" : ""
           )}
         >
           {!isCollapsed && (
@@ -102,7 +102,7 @@ export default function Sidebar() {
                   active
                     ? "bg-blue-50 dark:bg-[#283039]"
                     : "hover:bg-slate-50 dark:hover:bg-[#283039]",
-                  isCollapsed && "justify-center",
+                  isCollapsed && "justify-center"
                 )}
                 title={item.label}
               >
@@ -111,7 +111,7 @@ export default function Sidebar() {
                     "w-6 h-6 shrink-0 transition-colors",
                     active
                       ? "text-primary dark:text-white"
-                      : "text-slate-500 dark:text-white group-hover:text-primary",
+                      : "text-slate-500 dark:text-white group-hover:text-primary"
                   )}
                 />
                 {!isCollapsed && (
@@ -120,7 +120,7 @@ export default function Sidebar() {
                       "text-sm font-medium leading-normal whitespace-nowrap overflow-hidden transition-colors",
                       active
                         ? "text-primary dark:text-white"
-                        : "text-slate-700 dark:text-white group-hover:text-primary",
+                        : "text-slate-700 dark:text-white group-hover:text-primary"
                     )}
                   >
                     {item.label}
@@ -137,7 +137,7 @@ export default function Sidebar() {
             href="/account"
             className={cn(
               "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors group hover:bg-slate-50 dark:hover:bg-[#283039]",
-              isCollapsed && "justify-center",
+              isCollapsed && "justify-center"
             )}
             title={userName ? userName : "사용자"}
             aria-label={userName ? `${userName} 회원정보로 이동` : "회원정보로 이동"}

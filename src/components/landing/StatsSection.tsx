@@ -17,7 +17,9 @@ export default function StatsSection() {
               key={index}
               className="flex flex-col items-center justify-center gap-1 rounded-xl border border-[#283039] bg-[#101922] p-6 text-center hover:border-[#137fec]/50 transition-colors"
             >
-              <p className={`text-3xl font-black tracking-tight ${stat.highlight ? "text-[#137fec]" : "text-white"}`}>
+              <p
+                className={`text-3xl font-black tracking-tight ${stat.highlight ? "text-[#137fec]" : "text-white"}`}
+              >
                 {stat.value}
               </p>
               <p className="text-sm font-medium text-[#9dabb9]">{stat.label}</p>

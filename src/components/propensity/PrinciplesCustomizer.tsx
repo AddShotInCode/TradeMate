@@ -29,7 +29,7 @@ export default function PrinciplesCustomizer({
   onReset,
 }: PrinciplesCustomizerProps) {
   const totalWeight = principles.reduce(
-    (sum, p) => sum + (p.enabled ? (Number(p.inputValue) || 0) : 0),
+    (sum, p) => sum + (p.enabled ? Number(p.inputValue) || 0 : 0),
     0
   );
 
@@ -40,7 +40,13 @@ export default function PrinciplesCustomizer({
           <h2 className="text-xl font-bold text-white">평가 항목 비중 설정</h2>
         </div>
         <div className="flex items-center gap-3">
-          <p className={totalWeight === 100 ? "text-xs font-bold text-green-400" : "text-xs font-bold text-rose-400"}>
+          <p
+            className={
+              totalWeight === 100
+                ? "text-xs font-bold text-green-400"
+                : "text-xs font-bold text-rose-400"
+            }
+          >
             합계: {totalWeight}%
           </p>
           <button
@@ -53,7 +59,8 @@ export default function PrinciplesCustomizer({
       </div>
 
       <p className="text-xs text-slate-400">
-        총 평가 점수는 원칙 준수(Compliance), 가설 적중(Validity), 성과(Performance)를 종합하여 계산됩니다.
+        총 평가 점수는 원칙 준수(Compliance), 가설 적중(Validity), 성과(Performance)를 종합하여
+        계산됩니다.
       </p>
 
       {principles.map((principle) => (

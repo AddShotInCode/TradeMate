@@ -38,7 +38,10 @@ export async function POST(req: Request) {
     const email = (body.email ?? "").trim();
 
     if (!EMAIL_REGEX.test(email)) {
-      return NextResponse.json({ ok: false, message: "이메일 형식이 올바르지 않습니다." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, message: "이메일 형식이 올바르지 않습니다." },
+        { status: 400 }
+      );
     }
 
     const code = generateSixDigitCode();
@@ -51,7 +54,11 @@ export async function POST(req: Request) {
     if (!host || !port || !user || !pass || !from) {
       if (process.env.NODE_ENV !== "production") {
         console.log(`[DEV] Email verification code for ${email}: ${code}`);
-        return NextResponse.json({ ok: true, delivered: false, message: "개발 환경: 서버 콘솔에 인증코드가 출력되었습니다." });
+        return NextResponse.json({
+          ok: true,
+          delivered: false,
+          message: "개발 환경: 서버 콘솔에 인증코드가 출력되었습니다.",
+        });
       }
 
       return NextResponse.json(

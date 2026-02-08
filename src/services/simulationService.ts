@@ -71,7 +71,7 @@ export const simulationService = {
   // 1. Create Simulation
   create: async (code: string, start: string): Promise<CreateSimulationResponse> => {
     const response = await axios.post<CreateSimulationResponse>(
-      `${BASE_URL}?code=${code}&start=${start}`,
+      `${BASE_URL}?code=${code}&start=${start}`
     );
     return response.data;
   },

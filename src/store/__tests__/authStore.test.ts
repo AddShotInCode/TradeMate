@@ -80,9 +80,9 @@ describe("authStore", () => {
 
       const { login } = useAuthStore.getState();
 
-      await expect(
-        login({ email: "test@example.com", password: "wrongpassword" })
-      ).rejects.toEqual(errorResponse);
+      await expect(login({ email: "test@example.com", password: "wrongpassword" })).rejects.toEqual(
+        errorResponse
+      );
 
       const state = useAuthStore.getState();
       expect(state.isAuthenticated).toBe(false);
@@ -101,9 +101,9 @@ describe("authStore", () => {
 
       const { login } = useAuthStore.getState();
 
-      await expect(
-        login({ email: "test@example.com", password: "password" })
-      ).rejects.toEqual(errorResponse);
+      await expect(login({ email: "test@example.com", password: "password" })).rejects.toEqual(
+        errorResponse
+      );
 
       const state = useAuthStore.getState();
       expect(state.error).toBe("서버 오류가 발생했습니다.");
@@ -131,9 +131,7 @@ describe("authStore", () => {
 
     it("로그아웃 API 실패해도 상태는 변경되어야 한다", async () => {
       useAuthStore.setState({ isAuthenticated: true });
-      (authService.logout as jest.Mock).mockRejectedValueOnce(
-        new Error("Network error")
-      );
+      (authService.logout as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
       const { logout } = useAuthStore.getState();
       try {
@@ -162,9 +160,7 @@ describe("authStore", () => {
     });
 
     it("초기화 실패 시 isAuthenticated가 false가 되어야 한다", async () => {
-      (authService.refresh as jest.Mock).mockRejectedValueOnce(
-        new Error("Token expired")
-      );
+      (authService.refresh as jest.Mock).mockRejectedValueOnce(new Error("Token expired"));
 
       const { initialize } = useAuthStore.getState();
       await initialize();

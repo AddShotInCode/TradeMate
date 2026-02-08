@@ -17,7 +17,7 @@ export default function OrderForm() {
   // Calculate Holdings
   const totalLongQty = useMemo(
     () => positions.filter((p) => p.side === "BUY").reduce((acc, curr) => acc + curr.qty, 0),
-    [positions],
+    [positions]
   );
 
   const hasHoldings = totalLongQty > 0;

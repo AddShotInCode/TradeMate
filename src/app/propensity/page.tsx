@@ -58,21 +58,17 @@ export default function PropensityPage() {
   const [principles, setPrinciples] = useState(defaultPrinciples);
 
   const totalWeight = principles.reduce(
-    (sum, p) => sum + (p.enabled ? (Number(p.inputValue) || 0) : 0),
+    (sum, p) => sum + (p.enabled ? Number(p.inputValue) || 0 : 0),
     0
   );
   const canSave = totalWeight === 100;
 
   const handleTogglePrinciple = (id: string) => {
-    setPrinciples((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, enabled: !p.enabled } : p))
-    );
+    setPrinciples((prev) => prev.map((p) => (p.id === id ? { ...p, enabled: !p.enabled } : p)));
   };
 
   const handleUpdatePrincipleValue = (id: string, value: string) => {
-    setPrinciples((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, inputValue: value } : p))
-    );
+    setPrinciples((prev) => prev.map((p) => (p.id === id ? { ...p, inputValue: value } : p)));
   };
 
   const handleReset = () => {
@@ -98,8 +94,8 @@ export default function PropensityPage() {
               나만의 투자 스타일 정의하기
             </h1>
             <p className="text-slate-600 dark:text-[#9dabb9] text-base sm:text-lg font-normal leading-normal max-w-2xl">
-              투자 스타일에 맞는 템플릿을 선택하고, 나만의 규칙으로 조정하세요.
-              이를 통해 맞춤형 훈련 환경을 제공해 드립니다.
+              투자 스타일에 맞는 템플릿을 선택하고, 나만의 규칙으로 조정하세요. 이를 통해 맞춤형
+              훈련 환경을 제공해 드립니다.
             </p>
           </div>
 

@@ -65,18 +65,18 @@ export default function AccountPage() {
 
   const isBirthSelected = useMemo(
     () => Boolean(birthYear) && Boolean(birthMonth) && Boolean(birthDay),
-    [birthDay, birthMonth, birthYear],
+    [birthDay, birthMonth, birthYear]
   );
 
   const isNameValid = useMemo(() => fullName.trim().length > 0, [fullName]);
 
   const isPhoneValid = useMemo(
     () => phone.trim().length === 0 || /^\d{11}$/.test(phone.trim()),
-    [phone],
+    [phone]
   );
   const isNewPasswordValid = useMemo(
     () => newPassword.trim().length === 0 || PASSWORD_REGEX.test(newPassword),
-    [newPassword],
+    [newPassword]
   );
   const isConfirmPasswordValid = useMemo(() => {
     if (newPassword.trim().length === 0 && confirmPassword.trim().length === 0) return true;

@@ -39,7 +39,9 @@ export default function StrategyTemplateCard({
           <Check className="size-6" />
         </div>
       )}
-      <div className={`size-10 rounded-lg ${iconBg} flex items-center justify-center ${iconColor} mb-3`}>
+      <div
+        className={`size-10 rounded-lg ${iconBg} flex items-center justify-center ${iconColor} mb-3`}
+      >
         <IconComponent className="size-5" />
       </div>
       <h3 className="text-base font-bold text-white">{title}</h3>

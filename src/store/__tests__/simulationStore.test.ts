@@ -38,9 +38,7 @@ const getMonthKey = (dateStr: string) => {
 };
 
 const mockStockService = stockService as jest.Mocked<typeof stockService>;
-const mockSimulationService = simulationService as jest.Mocked<
-  typeof simulationService
->;
+const mockSimulationService = simulationService as jest.Mocked<typeof simulationService>;
 
 describe("simulationStore", () => {
   beforeEach(() => {
@@ -142,9 +140,7 @@ describe("simulationStore", () => {
     });
 
     it("첫 번째 캔들에서는 0보다 작아지지 않아야 한다", () => {
-      const mockData = [
-        { time: "2024-01-01", open: 100, high: 110, low: 90, close: 105 },
-      ];
+      const mockData = [{ time: "2024-01-01", open: 100, high: 110, low: 90, close: 105 }];
       useSimulationStore.setState({
         data: mockData,
         currentTimeIndex: 0,
@@ -220,9 +216,7 @@ describe("simulationStore", () => {
     });
 
     it("같은 인터벌로 변경 시 상태가 유지되어야 한다", () => {
-      const mockData = [
-        { time: "2024-01-01", open: 100, high: 110, low: 90, close: 105 },
-      ];
+      const mockData = [{ time: "2024-01-01", open: 100, high: 110, low: 90, close: 105 }];
       useSimulationStore.setState({
         originalData: mockData,
         data: mockData,
@@ -274,8 +268,26 @@ describe("simulationStore", () => {
         stock: { code: "005930", name: "삼성전자", market: "KOSPI" },
         pagination: { page: 1, pageSize: 1000, totalElements: 2, totalPages: 1 },
         items: [
-          { date: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000, volume: 1000000, changeAmount: 1000, changeRate: 1.43 },
-          { date: "2024-01-02", open: 71000, high: 73000, low: 70000, close: 72000, volume: 1200000, changeAmount: 1000, changeRate: 1.41 },
+          {
+            date: "2024-01-01",
+            open: 70000,
+            high: 72000,
+            low: 69000,
+            close: 71000,
+            volume: 1000000,
+            changeAmount: 1000,
+            changeRate: 1.43,
+          },
+          {
+            date: "2024-01-02",
+            open: 71000,
+            high: 73000,
+            low: 70000,
+            close: 72000,
+            volume: 1200000,
+            changeAmount: 1000,
+            changeRate: 1.41,
+          },
         ],
       });
 
@@ -313,7 +325,16 @@ describe("simulationStore", () => {
         stock: { code: "005930", name: "삼성전자", market: "KOSPI" },
         pagination: { page: 1, pageSize: 1000, totalElements: 1, totalPages: 1 },
         items: [
-          { date: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000, volume: 1000000, changeAmount: 1000, changeRate: 1.43 },
+          {
+            date: "2024-01-01",
+            open: 70000,
+            high: 72000,
+            low: 69000,
+            close: 71000,
+            volume: 1000000,
+            changeAmount: 1000,
+            changeRate: 1.43,
+          },
         ],
       });
 
@@ -394,8 +415,26 @@ describe("simulationStore", () => {
         stock: { code: "005930", name: "삼성전자", market: "KOSPI" },
         pagination: { page: 1, pageSize: 1000, totalElements: 2, totalPages: 1 },
         items: [
-          { date: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000, volume: 1000000, changeAmount: 1000, changeRate: 1.43 },
-          { date: "2024-01-02", open: 71000, high: 73000, low: 70000, close: 72000, volume: 1200000, changeAmount: 1000, changeRate: 1.41 },
+          {
+            date: "2024-01-01",
+            open: 70000,
+            high: 72000,
+            low: 69000,
+            close: 71000,
+            volume: 1000000,
+            changeAmount: 1000,
+            changeRate: 1.43,
+          },
+          {
+            date: "2024-01-02",
+            open: 71000,
+            high: 73000,
+            low: 70000,
+            close: 72000,
+            volume: 1200000,
+            changeAmount: 1000,
+            changeRate: 1.41,
+          },
         ],
       });
 
@@ -433,9 +472,7 @@ describe("simulationStore", () => {
       useSimulationStore.setState({
         currentSimulationId: 1,
         stockInfo: { code: "005930", name: "삼성전자", market: "KOSPI" },
-        data: [
-          { time: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000 },
-        ],
+        data: [{ time: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000 }],
         currentTimeIndex: 0,
         currentPrice: 71000,
         balance: 100000000,
@@ -561,9 +598,7 @@ describe("simulationStore", () => {
       useSimulationStore.setState({
         currentSimulationId: 1,
         stockInfo: { code: "005930", name: "삼성전자", market: "KOSPI" },
-        data: [
-          { time: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000 },
-        ],
+        data: [{ time: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000 }],
         currentTimeIndex: 0,
         currentPrice: 72000,
         balance: 100000000,
@@ -596,9 +631,7 @@ describe("simulationStore", () => {
       useSimulationStore.setState({
         currentSimulationId: 1,
         stockInfo: { code: "005930", name: "삼성전자", market: "KOSPI" },
-        data: [
-          { time: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000 },
-        ],
+        data: [{ time: "2024-01-01", open: 70000, high: 72000, low: 69000, close: 71000 }],
         currentTimeIndex: 0,
         currentPrice: 72000,
         balance: 100000000,

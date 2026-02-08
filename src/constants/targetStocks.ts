@@ -2,7 +2,7 @@ export interface TargetStock {
   code: string;
   name: string;
   corpCode: string; // DART 고유번호
-  market: 'KOSPI' | 'KOSDAQ';
+  market: "KOSPI" | "KOSDAQ";
 }
 
 export const TARGET_STOCKS: TargetStock[] = [

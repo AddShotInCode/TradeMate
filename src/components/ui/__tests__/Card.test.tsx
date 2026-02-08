@@ -1,13 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "../card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../card";
 
 describe("Card Components", () => {
   describe("Card", () => {
@@ -89,9 +82,7 @@ describe("Card Components", () => {
 
   describe("CardDescription", () => {
     it("CardDescription이 올바르게 렌더링되어야 한다", () => {
-      render(
-        <CardDescription data-testid="desc">설명 텍스트</CardDescription>
-      );
+      render(<CardDescription data-testid="desc">설명 텍스트</CardDescription>);
       expect(screen.getByTestId("desc")).toBeInTheDocument();
       expect(screen.getByText("설명 텍스트")).toBeInTheDocument();
     });

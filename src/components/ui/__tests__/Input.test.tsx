@@ -12,9 +12,7 @@ describe("Input Component", () => {
 
     it("placeholder가 올바르게 표시되어야 한다", () => {
       render(<Input placeholder="이메일을 입력하세요" />);
-      expect(
-        screen.getByPlaceholderText("이메일을 입력하세요")
-      ).toBeInTheDocument();
+      expect(screen.getByPlaceholderText("이메일을 입력하세요")).toBeInTheDocument();
     });
   });
 
@@ -84,9 +82,7 @@ describe("Input Component", () => {
     it("제어 컴포넌트로 동작해야 한다", () => {
       const ControlledInput = () => {
         const [value, setValue] = React.useState("초기값");
-        return (
-          <Input value={value} onChange={(e) => setValue(e.target.value)} />
-        );
+        return <Input value={value} onChange={(e) => setValue(e.target.value)} />;
       };
       render(<ControlledInput />);
       const input = screen.getByRole("textbox");
@@ -131,10 +127,7 @@ describe("Input Component", () => {
 
     it("aria-describedby가 올바르게 적용되어야 한다", () => {
       render(<Input aria-describedby="email-hint" />);
-      expect(screen.getByRole("textbox")).toHaveAttribute(
-        "aria-describedby",
-        "email-hint"
-      );
+      expect(screen.getByRole("textbox")).toHaveAttribute("aria-describedby", "email-hint");
     });
   });
 

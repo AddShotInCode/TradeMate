@@ -21,21 +21,33 @@ export async function POST(req: Request) {
 
     const entry = codesByEmail.get(email);
     if (!entry) {
-      return NextResponse.json({ ok: false, message: "인증번호를 먼저 발송해주세요." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, message: "인증번호를 먼저 발송해주세요." },
+        { status: 400 }
+      );
     }
 
     if (Date.now() > entry.expiresAt) {
       codesByEmail.delete(email);
-      return NextResponse.json({ ok: false, message: "인증번호가 만료되었습니다. 다시 발송해주세요." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, message: "인증번호가 만료되었습니다. 다시 발송해주세요." },
+        { status: 400 }
+      );
     }
 
     if (entry.code !== code) {
-      return NextResponse.json({ ok: false, message: "인증번호가 일치하지 않습니다." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, message: "인증번호가 일치하지 않습니다." },
+        { status: 400 }
+      );
     }
 
     codesByEmail.delete(email);
     return NextResponse.json({ ok: true });
   } catch {
-    return NextResponse.json({ ok: false, message: "요청 처리 중 오류가 발생했습니다." }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, message: "요청 처리 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }

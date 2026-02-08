@@ -9,7 +9,10 @@ interface WatchlistSidebarProps {
   onSelectStock: (code: string) => void;
 }
 
-export default function WatchlistSidebar({ selectedStockCode, onSelectStock }: WatchlistSidebarProps) {
+export default function WatchlistSidebar({
+  selectedStockCode,
+  onSelectStock,
+}: WatchlistSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredStocks = TARGET_STOCKS.filter((stock) => {
@@ -56,9 +59,11 @@ export default function WatchlistSidebar({ selectedStockCode, onSelectStock }: W
           >
             <div className="flex flex-col justify-center">
               <div className="flex items-baseline gap-2">
-                <p className={`text-white text-base leading-normal line-clamp-1 ${
-                  selectedStockCode === stock.code ? "font-bold" : "font-medium"
-                }`}>
+                <p
+                  className={`text-white text-base leading-normal line-clamp-1 ${
+                    selectedStockCode === stock.code ? "font-bold" : "font-medium"
+                  }`}
+                >
                   {stock.name}
                 </p>
                 {stock.market && (

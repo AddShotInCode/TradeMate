@@ -82,7 +82,7 @@ export default function FinancialStatementModal({
 
       if (response.items.length > 0 && validItems.length === 0) {
         setError(
-          `해당 분기 보고서는 존재하지만,\n시뮬레이션 시점(${currentSimDateStr}) 이후에 공시되어 볼 수 없습니다.`,
+          `해당 분기 보고서는 존재하지만,\n시뮬레이션 시점(${currentSimDateStr}) 이후에 공시되어 볼 수 없습니다.`
         );
       } else if (response.items.length === 0) {
         setError("해당 분기의 공시 데이터가 존재하지 않습니다.");

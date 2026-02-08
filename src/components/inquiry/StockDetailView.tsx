@@ -7,7 +7,7 @@ import InquiryChart from "./InquiryChart";
 import { useInquiryStore } from "@/store/inquiryStore";
 import { useMemo } from "react";
 
-const formatKRW = (value: number) => `₩${new Intl.NumberFormat('ko-KR').format(Math.round(value))}`;
+const formatKRW = (value: number) => `₩${new Intl.NumberFormat("ko-KR").format(Math.round(value))}`;
 
 const formatAsOfDate = (dateStr: string) => {
   const normalized = dateStr.replace(/[^0-9]/g, "");
@@ -58,16 +58,28 @@ export default function StockDetailView() {
     name: stockInfo?.name ?? "",
     market: stockInfo?.market ?? "",
     price: derived ? formatKRW(derived.lastClose) : "-",
-    change: derived ? `${derived.change >= 0 ? "+" : ""}${formatKRW(derived.change).replace("₩-", "-")}` : "-",
-    changePercent: derived ? `${derived.changePercent >= 0 ? "+" : ""}${derived.changePercent.toFixed(2)}%` : "-",
+    change: derived
+      ? `${derived.change >= 0 ? "+" : ""}${formatKRW(derived.change).replace("₩-", "-")}`
+      : "-",
+    changePercent: derived
+      ? `${derived.changePercent >= 0 ? "+" : ""}${derived.changePercent.toFixed(2)}%`
+      : "-",
     isPositive: derived ? derived.change >= 0 : true,
   };
 
   const keyStats = [
     { label: "52주 최고", value: derived ? formatKRW(derived.high52w) : "-" },
     { label: "52주 최저", value: derived ? formatKRW(derived.low52w) : "-" },
-    { label: "평균 거래량", value: derived ? new Intl.NumberFormat('ko-KR').format(Math.round(derived.avgVolume)) : "-" },
-    { label: "등락률(일)", value: derived ? `${derived.changePercent >= 0 ? "+" : ""}${derived.changePercent.toFixed(2)}%` : "-" },
+    {
+      label: "평균 거래량",
+      value: derived ? new Intl.NumberFormat("ko-KR").format(Math.round(derived.avgVolume)) : "-",
+    },
+    {
+      label: "등락률(일)",
+      value: derived
+        ? `${derived.changePercent >= 0 ? "+" : ""}${derived.changePercent.toFixed(2)}%`
+        : "-",
+    },
   ];
 
   const fundamentalData = derived
@@ -77,7 +89,7 @@ export default function StockDetailView() {
         { label: "고가", value: formatKRW(derived.last.high) },
         { label: "저가", value: formatKRW(derived.last.low) },
         { label: "종가", value: formatKRW(derived.last.close) },
-        { label: "거래량", value: new Intl.NumberFormat('ko-KR').format(derived.last.volume ?? 0) },
+        { label: "거래량", value: new Intl.NumberFormat("ko-KR").format(derived.last.volume ?? 0) },
       ]
     : [
         { label: "전일 종가", value: "-" },

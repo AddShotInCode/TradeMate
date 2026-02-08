@@ -25,10 +25,7 @@ describe("authService", () => {
 
       const result = await authService.signup(signupPayload);
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(
-        "/api/auth/signup",
-        signupPayload
-      );
+      expect(mockedAxios.post).toHaveBeenCalledWith("/api/auth/signup", signupPayload);
       expect(result).toEqual({ message: "회원가입이 완료되었습니다." });
     });
 
@@ -46,9 +43,7 @@ describe("authService", () => {
       mockedAxios.isAxiosError.mockReturnValue(true);
       mockedAxios.post.mockRejectedValueOnce(errorResponse);
 
-      await expect(authService.signup(signupPayload)).rejects.toThrow(
-        AuthApiError
-      );
+      await expect(authService.signup(signupPayload)).rejects.toThrow(AuthApiError);
     });
 
     it("Axios 에러가 아닌 경우 원래 에러를 throw해야 한다", async () => {
@@ -56,9 +51,7 @@ describe("authService", () => {
       mockedAxios.isAxiosError.mockReturnValue(false);
       mockedAxios.post.mockRejectedValueOnce(genericError);
 
-      await expect(authService.signup(signupPayload)).rejects.toThrow(
-        "Network error"
-      );
+      await expect(authService.signup(signupPayload)).rejects.toThrow("Network error");
     });
   });
 
@@ -76,10 +69,7 @@ describe("authService", () => {
 
       const result = await authService.login(loginPayload);
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(
-        "/api/auth/login",
-        loginPayload
-      );
+      expect(mockedAxios.post).toHaveBeenCalledWith("/api/auth/login", loginPayload);
       expect(result).toEqual({ message: "Login successful", expiresIn: 3600 });
     });
   });

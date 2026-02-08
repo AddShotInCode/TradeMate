@@ -51,8 +51,7 @@ export default function RegisterPage() {
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
-  const [birthYear, setBirthYear] = useState<string>(""
-  );
+  const [birthYear, setBirthYear] = useState<string>("");
   const [birthMonth, setBirthMonth] = useState<string>("");
   const [birthDay, setBirthDay] = useState<string>("");
 
@@ -104,7 +103,16 @@ export default function RegisterPage() {
       isPhoneValid &&
       agreeRequired
     );
-  }, [agreeRequired, fullName, isBirthSelected, isConfirmValid, isEmailValid, isEmailVerified, isPasswordValid, isPhoneValid]);
+  }, [
+    agreeRequired,
+    fullName,
+    isBirthSelected,
+    isConfirmValid,
+    isEmailValid,
+    isEmailVerified,
+    isPasswordValid,
+    isPhoneValid,
+  ]);
 
   const sendEmailCodeButtonLabel = useMemo(() => {
     if (isEmailVerified) return "인증완료";
@@ -355,7 +363,9 @@ export default function RegisterPage() {
           <div className="absolute inset-0 bg-black/60" />
           <div className="relative w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-2xl bg-white dark:bg-[#151f28] border border-slate-200 dark:border-[#2a3441] shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-[#2a3441]">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">개인정보 처리방침</h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                개인정보 처리방침
+              </h3>
               <button
                 type="button"
                 className="text-sm font-semibold text-slate-500 hover:text-slate-700 dark:text-[#9dacb9] dark:hover:text-white transition-colors"
@@ -396,7 +406,9 @@ export default function RegisterPage() {
             <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#137fec] to-blue-600 text-white shadow-lg shadow-[#137fec]/20 mb-4">
               <CandlestickChart className="size-7" />
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">회원가입</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
+              회원가입
+            </h2>
             <p className="text-slate-500 dark:text-[#9dacb9] text-sm text-center max-w-xs">
               TradeMate와 함께 원칙 중심의 매매를 시작해보세요.
             </p>
@@ -409,12 +421,12 @@ export default function RegisterPage() {
             <CardHeader className="sr-only">회원가입</CardHeader>
 
             <CardContent className="p-8">
-              <form
-                className="flex flex-col gap-5"
-                onSubmit={handleSubmit}
-              >
+              <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-slate-700 dark:text-white" htmlFor="full-name">
+                  <label
+                    className="text-sm font-medium text-slate-700 dark:text-white"
+                    htmlFor="full-name"
+                  >
                     이름 <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -425,7 +437,6 @@ export default function RegisterPage() {
                     onChange={(e) => setFullName(e.target.value)}
                     className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-[#1c2227] border border-slate-200 dark:border-[#3b4954] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-[#9dacb9] focus-visible:ring-[#137fec] focus-visible:ring-offset-0"
                   />
-                  
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -446,7 +457,12 @@ export default function RegisterPage() {
                         const month = Number.parseInt(birthMonth, 10);
                         const day = Number.parseInt(birthDay, 10);
 
-                        if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return;
+                        if (
+                          !Number.isFinite(year) ||
+                          !Number.isFinite(month) ||
+                          !Number.isFinite(day)
+                        )
+                          return;
                         const maxDay = new Date(year, month, 0).getDate();
                         if (day > maxDay) setBirthDay("");
                       }}
@@ -508,7 +524,10 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-slate-700 dark:text-white" htmlFor="email">
+                  <label
+                    className="text-sm font-medium text-slate-700 dark:text-white"
+                    htmlFor="email"
+                  >
                     이메일 <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
@@ -561,7 +580,9 @@ export default function RegisterPage() {
                         if (next.length !== 6) return;
                         if (emailCodeExpiresAt && Date.now() > emailCodeExpiresAt) {
                           setIsEmailCodeSent(false);
-                          setEmailVerificationMessage("인증번호가 만료되었습니다. 다시 발송해주세요.");
+                          setEmailVerificationMessage(
+                            "인증번호가 만료되었습니다. 다시 발송해주세요."
+                          );
                           return;
                         }
                         void verifyEmailVerificationCode(next);
@@ -571,17 +592,25 @@ export default function RegisterPage() {
                   </div>
 
                   {isEmailCodeSent && !isEmailVerified && emailCodeRemainingSeconds !== null ? (
-                    <p className={
-                      emailCodeRemainingSeconds === 0
-                        ? "text-xs text-red-500"
-                        : "text-xs text-slate-500 dark:text-[#9dacb9]"
-                    }>
+                    <p
+                      className={
+                        emailCodeRemainingSeconds === 0
+                          ? "text-xs text-red-500"
+                          : "text-xs text-slate-500 dark:text-[#9dacb9]"
+                      }
+                    >
                       남은시간 {formatCountdown(emailCodeRemainingSeconds)}
                     </p>
                   ) : null}
 
                   {emailVerificationMessage ? (
-                    <p className={isEmailVerified ? "text-xs text-emerald-500" : "text-xs text-slate-500 dark:text-[#9dacb9]"}>
+                    <p
+                      className={
+                        isEmailVerified
+                          ? "text-xs text-emerald-500"
+                          : "text-xs text-slate-500 dark:text-[#9dacb9]"
+                      }
+                    >
                       {emailVerificationMessage}
                     </p>
                   ) : null}
@@ -590,7 +619,10 @@ export default function RegisterPage() {
                 <div className="grid grid-cols-1 gap-5">
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
-                      <label className="text-sm font-medium text-slate-700 dark:text-white" htmlFor="password">
+                      <label
+                        className="text-sm font-medium text-slate-700 dark:text-white"
+                        htmlFor="password"
+                      >
                         비밀번호 <span className="text-red-500">*</span>
                       </label>
 
@@ -622,12 +654,17 @@ export default function RegisterPage() {
                     </div>
 
                     {password.length > 0 && !isPasswordValid ? (
-                      <p className="text-xs text-red-500">알파벳/숫자/특수기호 포함, 8자 이상으로 입력해주세요.</p>
+                      <p className="text-xs text-red-500">
+                        알파벳/숫자/특수기호 포함, 8자 이상으로 입력해주세요.
+                      </p>
                     ) : null}
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-slate-700 dark:text-white" htmlFor="confirm-password">
+                    <label
+                      className="text-sm font-medium text-slate-700 dark:text-white"
+                      htmlFor="confirm-password"
+                    >
                       비밀번호 재입력 <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -645,7 +682,10 @@ export default function RegisterPage() {
 
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-slate-700 dark:text-white" htmlFor="phone">
+                    <label
+                      className="text-sm font-medium text-slate-700 dark:text-white"
+                      htmlFor="phone"
+                    >
                       전화번호
                     </label>
 
@@ -688,8 +728,8 @@ export default function RegisterPage() {
                         className="text-[#137fec] hover:text-blue-400 font-medium underline-offset-2 hover:underline"
                       >
                         이용약관
-                      </button>
-                      {" "}및{" "}
+                      </button>{" "}
+                      및{" "}
                       <button
                         type="button"
                         onClick={openPrivacyPolicy}
@@ -720,7 +760,9 @@ export default function RegisterPage() {
                   className="w-full h-12 mt-2 flex items-center justify-center gap-2 bg-[#137fec] hover:bg-blue-600 text-white font-bold rounded-lg transition-all duration-200 shadow-lg shadow-[#137fec]/25 hover:shadow-[#137fec]/40 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <span>{isSubmitting ? "가입중..." : "회원가입"}</span>
-                  <span aria-hidden className="text-sm font-bold">→</span>
+                  <span aria-hidden className="text-sm font-bold">
+                    →
+                  </span>
                 </Button>
 
                 {submitError ? (
@@ -732,7 +774,10 @@ export default function RegisterPage() {
             <CardFooter className="px-8 py-5 bg-slate-50 dark:bg-[#121a21] border-t border-slate-200 dark:border-[#2a3441] text-center flex justify-center">
               <p className="text-sm text-slate-600 dark:text-[#9dacb9]">
                 이미 계정이 있으신가요?{" "}
-                <Link className="text-[#137fec] hover:text-blue-400 font-bold ml-1 transition-colors" href="/login">
+                <Link
+                  className="text-[#137fec] hover:text-blue-400 font-bold ml-1 transition-colors"
+                  href="/login"
+                >
                   로그인
                 </Link>
               </p>

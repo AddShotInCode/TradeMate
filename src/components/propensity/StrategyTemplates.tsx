@@ -24,7 +24,10 @@ const templates = [
   },
 ];
 
-export default function StrategyTemplates({ selectedTemplate, onSelectTemplate }: StrategyTemplatesProps) {
+export default function StrategyTemplates({
+  selectedTemplate,
+  onSelectTemplate,
+}: StrategyTemplatesProps) {
   return (
     <section>
       <div className="flex items-center gap-3 mb-4">
