@@ -2,7 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import { useSimulationStore } from "@/store/simulationStore";
-import { useState, useEffect, useRef, MouseEvent, Fragment } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 
 export default function TradeLog() {
   const { tradeLogs } = useSimulationStore();

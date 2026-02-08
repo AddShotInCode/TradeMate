@@ -1,5 +1,3 @@
-import { History } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import NewSessionModal from "./NewSessionModal";
 
 export default function Header() {

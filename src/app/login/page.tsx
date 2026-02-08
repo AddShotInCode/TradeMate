@@ -31,7 +31,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isLoading, error } = useAuthStore();
+  const { login, error } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
@@ -46,7 +46,7 @@ export default function LoginPage() {
     try {
       await login(data);
       router.push("/dashboard");
-    } catch (err) {
+    } catch {
       // Error handled in store, displayed via error state
     }
   };

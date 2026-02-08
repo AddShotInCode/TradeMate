@@ -11,7 +11,7 @@ export default function SimulationChart() {
   const chartRef = useRef<ReturnType<typeof createChart> | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
 
-  const { data, isLoading, currentTimeIndex, setCurrentPrice, currentPrice, loadData, error } =
+  const { data, isLoading, currentTimeIndex, setCurrentPrice, loadData, error } =
     useSimulationStore();
   const [legend, setLegend] = useState<{
     open: number;
@@ -38,7 +38,7 @@ export default function SimulationChart() {
     const code = codeParam || "005930";
     const start = startParam || "20240101";
     loadData(code, start, "20251231");
-  }, [codeParam, startParam]);
+  }, [codeParam, startParam, loadData]);
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
@@ -188,11 +188,12 @@ export default function SimulationChart() {
         seriesRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isLoading]); // Re-create chart only if data length changes drastically (like initial load), logic might need refinement if simple data updates ensue
 
   // Update data when currentTimeIndex changes
   useEffect(() => {
-    if (!seriesRef.current || !data.length) return;
+    if (!seriesRef.current) return;
 
     // We can rely on replaceData or update.
     // Since we are simulating 'history' revealing, we are growing the known array.
@@ -263,9 +264,15 @@ export default function SimulationChart() {
       )}
 
       {/* Blind Mode Overlay */}
-      <div className="absolute top-0 right-0 h-full w-[20%] bg-[#101922] border-l border-dashed border-slate-600 flex items-center justify-center z-20 pointer-events-none">
-        <div className="flex flex-col items-center gap-2 text-slate-500">
-          <EyeOff className="w-8 h-8" />
+      <div
+        className="absolute top-0 right-0 h-full z-10 pointer-events-none"
+        style={{
+          width: "80px",
+          background: "linear-gradient(to right, transparent, #101922 30%)",
+        }}
+      >
+        <div className="absolute top-1/2 right-2 -translate-y-1/2 flex flex-col items-center gap-1 text-slate-500">
+          <EyeOff />
           <span className="text-xs uppercase tracking-widest font-bold">Blind Mode</span>
         </div>
       </div>

@@ -1,12 +1,12 @@
 "use client";
 
-import { Rewind, Play, FileText } from "lucide-react";
+import { Play, FileText } from "lucide-react";
 import { useSimulationStore } from "@/store/simulationStore";
 import { useState } from "react";
 import FinancialStatementModal from "./FinancialStatementModal";
 
 export default function ChartControls() {
-  const { currentPrice, nextCandle, prevCandle, interval, setInterval, isFinished } =
+  const { currentPrice, nextCandle, interval, setInterval, isFinished } =
     useSimulationStore();
   const intervals = ["1D", "1W", "1M"] as const;
   const [isStatementOpen, setIsStatementOpen] = useState(false);

@@ -678,6 +678,144 @@
 - API 문서화 (Swagger)
 - 성능 최적화 및 배포 준비
 
+### Week 7 (26.02.02 - 02.08)
+
+**작업 내역** (필수)
+
+**FE**
+
+- **테스트 환경 구축**: Jest + React Testing Library(RTL) 기반의 유닛 테스트 환경 구축. `jest.config.ts`, `jest.setup.ts` 등 설정 파일 구성 및 `@testing-library/react`, `jest-environment-jsdom` 등 테스트 의존성 설치.
+- **UI 컴포넌트 테스트 작성**: 핵심 UI 컴포넌트(`Button`, `Card`, `Input`)에 대한 테스트 코드 작성. 렌더링, 이벤트, variant, props 전달 등 다양한 시나리오 커버.
+- **Service 레이어 테스트 작성**: `authService`, `simulationService`에 대한 유닛 테스트 구현. Axios 모킹을 통한 API 호출 검증 및 에러 처리 테스트.
+- **Store 테스트 작성**: Zustand 기반 상태 관리(`authStore`, `simulationStore`)에 대한 테스트 구현. 상태 변경, 비동기 액션, 데이터 집계 로직 등 검증.
+- **테스트 코드 품질 개선**: 모든 테스트 파일에 GWT(Given-When-Then) 형식의 한글 주석 추가로 테스트 의도 명확화 및 가독성 향상.
+- **코드 포맷팅 도구 설정**: Prettier 설치 및 `.prettierrc`, `.prettierignore` 설정. `npm run format`, `npm run format:check` 스크립트 추가로 일관된 코드 스타일 유지.
+- **타입 에러 수정**: `simulationStore.test.ts`의 mock 데이터를 `StockItem`, `StockResponse` 인터페이스에 맞게 수정하여 TypeScript 타입 정합성 확보.
+
+**BE**
+
+- **테스트 코드 작성 (10개 테스트 클래스, ~97개 테스트 케이스)**:
+  - **Unit 테스트**: `SimulationScoreCalculatorTest`(15개) — 점수 계산 알고리즘의 빈 거래, 평균가, 손익 시나리오, 가중치 적용 등 검증. `JwtTokenProviderTest`(15개) — JWT 토큰 생성, 검증, 만료 처리, 이메일 추출, 인증 객체 생성 등 검증.
+  - **Service 테스트**: `AuthServiceTest`(10개) — 회원가입(성공/중복), 로그인(성공/이메일 불일치/비밀번호 불일치/토큰 갱신), 리프레시(성공/미존재/만료), 로그아웃(성공/미존재) 검증. `SimulationServiceTest`(12개) — 시뮬레이션 CRUD, 거래 추가, 거래 조회, 리포트 생성 등 비즈니스 로직 검증.
+  - **Controller 테스트**: `AuthControllerTest`(9개) — MockMvc Standalone 모드로 인증 API 엔드포인트 검증. `SimulationControllerTest`(9개) — Custom `TestUserDetailsArgumentResolver`를 통한 `@AuthenticationPrincipal` 처리 및 시뮬레이션 API 검증.
+  - **Repository 테스트**: `MemberRepositoryTest`(6개), `SimulationRepositoryTest`(8개), `SimulationTradeRepositoryTest`(6개), `RefreshTokenRepositoryTest`(7개) — H2 인메모리 DB 기반 `@DataJpaTest`로 쿼리 동작 검증.
+- **GitHub Actions CI 구성**:
+  - `.github/workflows/ci.yml` 워크플로우 생성.
+  - `main`, `develop` 브랜치에 Push/PR 시 자동 테스트 실행.
+  - JDK 21(Temurin) 설정, Gradle 캐시, 테스트 결과 아티팩트 업로드.
+- **JaCoCo 테스트 커버리지 리포트**:
+  - `build.gradle`에 JaCoCo 플러그인 추가 및 XML/HTML 리포트 설정.
+  - CI 파이프라인에 커버리지 리포트 업로드 및 PR 코멘트 자동 표시(`jacoco-report` 액션) 통합.
+- **Swagger API 문서화 (SpringDoc OpenAPI)**:
+  - `springdoc-openapi-starter-webmvc-ui:2.8.4` 의존성 추가.
+  - `SwaggerConfig.java` — API 메타데이터(제목, 설명, 버전), JWT Bearer 인증 스키마 정의.
+  - `SecurityConfig.java` — Swagger UI 경로(`/swagger-ui/**`, `/v3/api-docs/**`) permitAll 추가.
+  - **Controller 문서화**: `AuthController`(4개 메서드), `SimulationController`(7개 메서드), `StockController`(2개 메서드), `StatementController`(2개 메서드)에 `@Tag`, `@Operation`, `@Parameter`, `@ApiResponses` 어노테이션 적용.
+  - **DTO 문서화**: Auth DTO(3개), Simulation DTO(9개), Stock DTO(4개 내부 클래스), Statement DTO(2개 내부 클래스), ErrorResponse에 `@Schema` 어노테이션 적용.
+
+**AI 활용** (필수)
+
+**FE**
+
+- **테스트 코드 생성**: 기존 컴포넌트/서비스 구조를 분석하여 테스트 케이스 초안을 자동 생성하고, edge case 및 에러 시나리오를 보완.
+- **GWT 주석 작성**: 각 테스트의 사전 조건(Given), 동작(When), 결과(Then)를 명확히 구분하는 한글 주석을 일괄 적용.
+- **타입 에러 분석**: Mock 데이터와 인터페이스 간 불일치 원인을 분석하고, 누락된 속성(`volume`, `changeAmount`, `changeRate`, `pagination`) 추가 제안.
+- **설정 파일 구성**: Jest 및 Prettier 설정 파일의 최적 구성을 제안하고, Next.js/TypeScript 환경과의 호환성 확보.
+
+**BE**
+
+- **테스트 전략 수립**: 프로젝트 구조 분석을 통한 테스트 우선순위(Unit → Service → Controller → Repository) 계획 및 단계별 실행 가이드 제공.
+- **테스트 코드 생성**: Mockito 기반 Service/Controller 테스트, `@DataJpaTest` 기반 Repository 테스트 코드 자동 생성 및 DTO 필드 차이/ErrorCode 포맷 등 실제 코드와의 정합성 맞춤.
+- **트러블 슈팅**: `@WebMvcTest`의 Spring Security Context 로딩 문제를 MockMvc Standalone 모드로 전환하여 해결. `@AuthenticationPrincipal` null 주입 문제를 Custom `TestUserDetailsArgumentResolver` 구현으로 해결.
+- **CI/CD 구성**: GitHub Actions 워크플로우 및 JaCoCo 커버리지 리포트 설정 코드 생성.
+- **Swagger 문서화**: 전체 Controller/DTO에 대한 Swagger 어노테이션 일괄 적용 및 API 그룹(Tag) 분류 설계.
+
+**완료 기능**
+
+**FE**
+
+- Jest + RTL 테스트 환경 (8개 테스트 스위트, 110개 테스트 케이스)
+- UI 컴포넌트 테스트 (`Button.test.tsx`, `Card.test.tsx`, `Input.test.tsx`)
+- Service 테스트 (`authService.test.ts`, `simulationService.test.ts`)
+- Store 테스트 (`authStore.test.ts`, `simulationStore.test.ts`)
+- Test Utilities (`test-utils.tsx` - 커스텀 렌더 함수)
+- Prettier 코드 포맷팅 설정
+
+**BE**
+
+- 테스트 코드 작성 (10개 클래스, ~97개 테스트 케이스, BUILD SUCCESSFUL)
+- GitHub Actions CI 워크플로우 (Push/PR 자동 테스트)
+- JaCoCo 테스트 커버리지 리포트 및 PR 커버리지 코멘트
+- Swagger API 문서화 (4개 도메인 전체 문서화)
+- Swagger UI 접속 (`/swagger-ui.html`)
+
+**커밋 로그**
+
+**FE**
+
+- test: GWT 형태로 변경
+- docs: 포맷팅 프롬프트 추가
+- chore: 코드 포맷팅 설정
+- fix: 테스트 코드 타입에러 수정
+- docs: 테스트 코드 프롬프트 작성
+- ci: ci 코드 작성
+- test: 테스트 코드 추가
+
+**BE**
+
+- test: 테스트 코드 추가 및 CI 파이프라인 구축
+- docs: swagger 기반 api 문서화
+- fix: ci 중복빌드 방지 및 jacoco pr 코멘트 권한 설정
+- fix: 오타 수정 및 api 문서 내 링크 변경
+
+**링크**
+
+**FE**
+
+- [테스트 코드 추가 및 CI 파이프라인 구축](https://github.com/AddShotInCode/TradeMate_FE/pull/43)
+
+**BE**
+
+- [테스트 코드 추가 및 CI 파이프라인 구축](https://github.com/AddShotInCode/TradeMate_BE/pull/19)
+- [swagger 기반 api 문서화](https://github.com/AddShotInCode/TradeMate_BE/pull/20)
+
+**테스트 결과**
+
+**FE**
+
+- `npm run test` 실행 결과:
+  ```
+  Test Suites: 8 passed, 8 total
+  Tests:       110 passed, 1 skipped, 111 total
+  Time:        3.547 s
+  ```
+- 모든 UI 컴포넌트, Service, Store 테스트 정상 통과 확인.
+- JSDOM 환경 제약(navigation 미지원)으로 인한 1개 테스트 스킵 (authStore 로그아웃 리다이렉트).
+
+**BE**
+
+- 전체 테스트 스위트 `BUILD SUCCESSFUL` 확인 (10개 테스트 클래스, ~97개 테스트 케이스).
+- Unit 테스트(SimulationScoreCalculator, JwtTokenProvider) 빠른 실행 확인.
+- Service 테스트(AuthService, SimulationService) Mockito 기반 비즈니스 로직 검증 완료.
+- Controller 테스트(AuthController, SimulationController) MockMvc Standalone 모드 정상 동작 확인.
+- Repository 테스트 H2 인메모리 DB 기반 JPA 쿼리 동작 검증 완료.
+- JaCoCo 커버리지 리포트 정상 생성 (`build/reports/jacoco/test/html/`) 확인.
+- Swagger UI(`/swagger-ui.html`) 정상 접속 및 4개 API 그룹(인증, 시뮬레이션, 주가 조회, 재무제표) 표시 확인.
+
+**다음 주 계획** (필수)
+
+**FE**
+
+- LLM 활용에 맞춰 매매분석페이지 UI 수정
+- CI/CD 파이프라인 보완 및 강화
+- SEO 최적화
+
+**BE**
+
+- LLM 활용 매매분석리포트 내용 생성기능 개발계획 수립 및 구현
+- 성능 최적화 및 점검
+- CI/CD 파이프라인 보완 및 강화
+
 ## 팀원 소개
 
 <div align="center">
