@@ -774,7 +774,6 @@ describe("simulationStore", () => {
       await closePosition([0]);
 
       // Then: addTrade API가 호출되어야 함
-      const state = useSimulationStore.getState();
       expect(mockSimulationService.addTrade).toHaveBeenCalled();
     });
   });

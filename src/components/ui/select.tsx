@@ -51,10 +51,11 @@ const SelectTrigger = React.forwardRef<
 SelectTrigger.displayName = "SelectTrigger";
 
 interface SelectValueProps extends React.HTMLAttributes<HTMLSpanElement> {
-    placeholder?: string;
+  placeholder?: string;
 }
 
-const SelectValue = React.forwardRef<HTMLSpanElement, SelectValueProps>(({ className, placeholder, ...props }, ref) => {
+const SelectValue = React.forwardRef<HTMLSpanElement, SelectValueProps>(
+  ({ className, placeholder, ...props }, ref) => {
     const { value } = React.useContext(SelectContext);
     return (
       <span ref={ref} className={cn("block truncate", className)} {...props}>
@@ -89,9 +90,12 @@ const SelectContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
 );
 SelectContent.displayName = "SelectContent";
 
-const SelectGroup = ({ children }: { children: React.ReactNode }) => <div>{children}</div>
-const SelectLabel = ({ children }: { children: React.ReactNode }) => <div>{children}</div>
-const SelectSeparator = () => <hr className="my-1 border-slate-600" />
+const SelectItem = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { value: string }
+>(({ className, children, value: itemValue, ...props }, ref) => {
+  const { value, onValueChange, setOpen } = React.useContext(SelectContext);
+  const isSelected = value === itemValue;
 
   return (
     <div
@@ -117,8 +121,8 @@ const SelectSeparator = () => <hr className="my-1 border-slate-600" />
 });
 SelectItem.displayName = "SelectItem";
 
-const SelectGroup = ({ children }: any) => <div>{children}</div>;
-const SelectLabel = ({ children }: any) => <div>{children}</div>;
+const SelectGroup = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+const SelectLabel = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
 const SelectSeparator = () => <hr className="my-1 border-slate-600" />;
 
 export {
