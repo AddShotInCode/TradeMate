@@ -27,9 +27,6 @@ export const metadata: Metadata = {
   creator: "TradeMate",
   publisher: "TradeMate",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://trademate.io"),
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     locale: "ko_KR",
