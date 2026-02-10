@@ -1,6 +1,12 @@
 import LandingFooter from "@/components/landing/LandingFooter";
 import LandingNavigation from "@/components/landing/LandingNavigation";
 import { TERMS_OF_SERVICE } from "@/constants/legal_constants";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "이용약관",
+  description: "TradeMate 서비스 이용약관을 확인하세요.",
+};
 
 export default function TermsOfServicePage() {
   return (
