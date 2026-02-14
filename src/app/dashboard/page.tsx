@@ -1,6 +1,16 @@
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/dashboard/Header";
 import RecentSessions from "@/components/dashboard/RecentSessions";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "대시보드",
+  description: "나의 매매 훈련 현황과 최근 시뮬레이션 세션을 확인하세요.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function DashboardPage() {
   return (

@@ -1,6 +1,12 @@
 import LandingFooter from "@/components/landing/LandingFooter";
 import LandingNavigation from "@/components/landing/LandingNavigation";
 import { PRIVACY_POLICY } from "@/constants/legal_constants";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "개인정보 처리방침",
+  description: "TradeMate의 개인정보 보호 정책을 확인하세요.",
+};
 
 export default function PrivacyPolicyPage() {
   return (
