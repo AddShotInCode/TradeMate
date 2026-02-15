@@ -679,6 +679,318 @@
 - API 문서화 (Swagger)
 - 성능 최적화 및 배포 준비
 
+### Week 7 (26.02.02 - 02.08)
+
+**작업 내역** (필수)
+
+**FE**
+
+- **테스트 환경 구축**: Jest + React Testing Library(RTL) 기반의 유닛 테스트 환경 구축. `jest.config.ts`, `jest.setup.ts` 등 설정 파일 구성 및 `@testing-library/react`, `jest-environment-jsdom` 등 테스트 의존성 설치.
+- **UI 컴포넌트 테스트 작성**: 핵심 UI 컴포넌트(`Button`, `Card`, `Input`)에 대한 테스트 코드 작성. 렌더링, 이벤트, variant, props 전달 등 다양한 시나리오 커버.
+- **Service 레이어 테스트 작성**: `authService`, `simulationService`에 대한 유닛 테스트 구현. Axios 모킹을 통한 API 호출 검증 및 에러 처리 테스트.
+- **Store 테스트 작성**: Zustand 기반 상태 관리(`authStore`, `simulationStore`)에 대한 테스트 구현. 상태 변경, 비동기 액션, 데이터 집계 로직 등 검증.
+- **테스트 코드 품질 개선**: 모든 테스트 파일에 GWT(Given-When-Then) 형식의 한글 주석 추가로 테스트 의도 명확화 및 가독성 향상.
+- **코드 포맷팅 도구 설정**: Prettier 설치 및 `.prettierrc`, `.prettierignore` 설정. `npm run format`, `npm run format:check` 스크립트 추가로 일관된 코드 스타일 유지.
+- **타입 에러 수정**: `simulationStore.test.ts`의 mock 데이터를 `StockItem`, `StockResponse` 인터페이스에 맞게 수정하여 TypeScript 타입 정합성 확보.
+
+**BE**
+
+- **테스트 코드 작성 (10개 테스트 클래스, ~97개 테스트 케이스)**:
+  - **Unit 테스트**: `SimulationScoreCalculatorTest`(15개) — 점수 계산 알고리즘의 빈 거래, 평균가, 손익 시나리오, 가중치 적용 등 검증. `JwtTokenProviderTest`(15개) — JWT 토큰 생성, 검증, 만료 처리, 이메일 추출, 인증 객체 생성 등 검증.
+  - **Service 테스트**: `AuthServiceTest`(10개) — 회원가입(성공/중복), 로그인(성공/이메일 불일치/비밀번호 불일치/토큰 갱신), 리프레시(성공/미존재/만료), 로그아웃(성공/미존재) 검증. `SimulationServiceTest`(12개) — 시뮬레이션 CRUD, 거래 추가, 거래 조회, 리포트 생성 등 비즈니스 로직 검증.
+  - **Controller 테스트**: `AuthControllerTest`(9개) — MockMvc Standalone 모드로 인증 API 엔드포인트 검증. `SimulationControllerTest`(9개) — Custom `TestUserDetailsArgumentResolver`를 통한 `@AuthenticationPrincipal` 처리 및 시뮬레이션 API 검증.
+  - **Repository 테스트**: `MemberRepositoryTest`(6개), `SimulationRepositoryTest`(8개), `SimulationTradeRepositoryTest`(6개), `RefreshTokenRepositoryTest`(7개) — H2 인메모리 DB 기반 `@DataJpaTest`로 쿼리 동작 검증.
+- **GitHub Actions CI 구성**:
+  - `.github/workflows/ci.yml` 워크플로우 생성.
+  - `main`, `develop` 브랜치에 Push/PR 시 자동 테스트 실행.
+  - JDK 21(Temurin) 설정, Gradle 캐시, 테스트 결과 아티팩트 업로드.
+- **JaCoCo 테스트 커버리지 리포트**:
+  - `build.gradle`에 JaCoCo 플러그인 추가 및 XML/HTML 리포트 설정.
+  - CI 파이프라인에 커버리지 리포트 업로드 및 PR 코멘트 자동 표시(`jacoco-report` 액션) 통합.
+- **Swagger API 문서화 (SpringDoc OpenAPI)**:
+  - `springdoc-openapi-starter-webmvc-ui:2.8.4` 의존성 추가.
+  - `SwaggerConfig.java` — API 메타데이터(제목, 설명, 버전), JWT Bearer 인증 스키마 정의.
+  - `SecurityConfig.java` — Swagger UI 경로(`/swagger-ui/**`, `/v3/api-docs/**`) permitAll 추가.
+  - **Controller 문서화**: `AuthController`(4개 메서드), `SimulationController`(7개 메서드), `StockController`(2개 메서드), `StatementController`(2개 메서드)에 `@Tag`, `@Operation`, `@Parameter`, `@ApiResponses` 어노테이션 적용.
+  - **DTO 문서화**: Auth DTO(3개), Simulation DTO(9개), Stock DTO(4개 내부 클래스), Statement DTO(2개 내부 클래스), ErrorResponse에 `@Schema` 어노테이션 적용.
+
+**AI 활용** (필수)
+
+**FE**
+
+- **테스트 코드 생성**: 기존 컴포넌트/서비스 구조를 분석하여 테스트 케이스 초안을 자동 생성하고, edge case 및 에러 시나리오를 보완.
+- **GWT 주석 작성**: 각 테스트의 사전 조건(Given), 동작(When), 결과(Then)를 명확히 구분하는 한글 주석을 일괄 적용.
+- **타입 에러 분석**: Mock 데이터와 인터페이스 간 불일치 원인을 분석하고, 누락된 속성(`volume`, `changeAmount`, `changeRate`, `pagination`) 추가 제안.
+- **설정 파일 구성**: Jest 및 Prettier 설정 파일의 최적 구성을 제안하고, Next.js/TypeScript 환경과의 호환성 확보.
+
+**BE**
+
+- **테스트 전략 수립**: 프로젝트 구조 분석을 통한 테스트 우선순위(Unit → Service → Controller → Repository) 계획 및 단계별 실행 가이드 제공.
+- **테스트 코드 생성**: Mockito 기반 Service/Controller 테스트, `@DataJpaTest` 기반 Repository 테스트 코드 자동 생성 및 DTO 필드 차이/ErrorCode 포맷 등 실제 코드와의 정합성 맞춤.
+- **트러블 슈팅**: `@WebMvcTest`의 Spring Security Context 로딩 문제를 MockMvc Standalone 모드로 전환하여 해결. `@AuthenticationPrincipal` null 주입 문제를 Custom `TestUserDetailsArgumentResolver` 구현으로 해결.
+- **CI/CD 구성**: GitHub Actions 워크플로우 및 JaCoCo 커버리지 리포트 설정 코드 생성.
+- **Swagger 문서화**: 전체 Controller/DTO에 대한 Swagger 어노테이션 일괄 적용 및 API 그룹(Tag) 분류 설계.
+
+**완료 기능**
+
+**FE**
+
+- Jest + RTL 테스트 환경 (8개 테스트 스위트, 110개 테스트 케이스)
+- UI 컴포넌트 테스트 (`Button.test.tsx`, `Card.test.tsx`, `Input.test.tsx`)
+- Service 테스트 (`authService.test.ts`, `simulationService.test.ts`)
+- Store 테스트 (`authStore.test.ts`, `simulationStore.test.ts`)
+- Test Utilities (`test-utils.tsx` - 커스텀 렌더 함수)
+- Prettier 코드 포맷팅 설정
+
+**BE**
+
+- 테스트 코드 작성 (10개 클래스, ~97개 테스트 케이스, BUILD SUCCESSFUL)
+- GitHub Actions CI 워크플로우 (Push/PR 자동 테스트)
+- JaCoCo 테스트 커버리지 리포트 및 PR 커버리지 코멘트
+- Swagger API 문서화 (4개 도메인 전체 문서화)
+- Swagger UI 접속 (`/swagger-ui.html`)
+
+**커밋 로그**
+
+**FE**
+
+- test: GWT 형태로 변경
+- docs: 포맷팅 프롬프트 추가
+- chore: 코드 포맷팅 설정
+- fix: 테스트 코드 타입에러 수정
+- docs: 테스트 코드 프롬프트 작성
+- ci: ci 코드 작성
+- test: 테스트 코드 추가
+
+**BE**
+
+- test: 테스트 코드 추가 및 CI 파이프라인 구축
+- docs: swagger 기반 api 문서화
+- fix: ci 중복빌드 방지 및 jacoco pr 코멘트 권한 설정
+- fix: 오타 수정 및 api 문서 내 링크 변경
+
+**링크**
+
+**FE**
+
+- [테스트 코드 추가 및 CI 파이프라인 구축](https://github.com/AddShotInCode/TradeMate_FE/pull/43)
+
+**BE**
+
+- [테스트 코드 추가 및 CI 파이프라인 구축](https://github.com/AddShotInCode/TradeMate_BE/pull/19)
+- [swagger 기반 api 문서화](https://github.com/AddShotInCode/TradeMate_BE/pull/20)
+
+**테스트 결과**
+
+**FE**
+
+- `npm run test` 실행 결과:
+  ```
+  Test Suites: 8 passed, 8 total
+  Tests:       110 passed, 1 skipped, 111 total
+  Time:        3.547 s
+  ```
+- 모든 UI 컴포넌트, Service, Store 테스트 정상 통과 확인.
+- JSDOM 환경 제약(navigation 미지원)으로 인한 1개 테스트 스킵 (authStore 로그아웃 리다이렉트).
+
+**BE**
+
+- 전체 테스트 스위트 `BUILD SUCCESSFUL` 확인 (10개 테스트 클래스, ~97개 테스트 케이스).
+- Unit 테스트(SimulationScoreCalculator, JwtTokenProvider) 빠른 실행 확인.
+- Service 테스트(AuthService, SimulationService) Mockito 기반 비즈니스 로직 검증 완료.
+- Controller 테스트(AuthController, SimulationController) MockMvc Standalone 모드 정상 동작 확인.
+- Repository 테스트 H2 인메모리 DB 기반 JPA 쿼리 동작 검증 완료.
+- JaCoCo 커버리지 리포트 정상 생성 (`build/reports/jacoco/test/html/`) 확인.
+- Swagger UI(`/swagger-ui.html`) 정상 접속 및 4개 API 그룹(인증, 시뮬레이션, 주가 조회, 재무제표) 표시 확인.
+
+**다음 주 계획** (필수)
+
+**FE**
+
+- LLM 활용에 맞춰 매매분석페이지 UI 수정
+- CI/CD 파이프라인 보완 및 강화
+- SEO 최적화
+
+**BE**
+
+- LLM 활용 매매분석리포트 내용 생성기능 개발계획 수립 및 구현
+- 성능 최적화 및 점검
+- CI/CD 파이프라인 보완 및 강화
+
+### Week 8 (26.02.09 - 02.15)
+
+**작업 내역** (필수)
+
+**FE**
+
+- **SEO 최적화 구현**: Next.js Metadata API를 활용한 체계적인 SEO 구축.
+  - `robots.ts` 및 `sitemap.ts` 파일 생성으로 검색 엔진 크롤링 최적화.
+  - 루트 레이아웃 메타데이터 강화 (Open Graph, Twitter Card 추가).
+  - 11개 페이지에 개별 메타데이터 설정 (title, description, keywords).
+  - 공개 페이지(홈, 정책)와 비공개 페이지(대시보드, 시뮬레이션)의 인덱싱 정책 차별화.
+- **Canonical URL 구조 개선**: 루트 레이아웃의 잘못된 canonical URL 설정 수정.
+  - 모든 페이지가 홈페이지를 canonical로 지정하던 중대한 SEO 문제 해결.
+  - 각 페이지가 고유한 canonical URL을 가질 수 있도록 구조 개선.
+  - `/dashboard`, `/simulation` 등 각 페이지의 독립적인 인덱싱 보장.
+- **환경 변수 정규화 및 템플릿 개선**:
+  - `robots.ts`에서 trailing slash 처리 로직 추가로 `NEXT_PUBLIC_SITE_URL` 설정 견고성 향상.
+  - `.env.example` 파일을 적절한 템플릿으로 수정, 실제 SMTP 설정 값 제거 및 플레이스홀더로 교체.
+- **개발 워크플로우 자동화**: 프롬프트 정리 및 주간보고서 작성 자동화 시스템 구축
+  - PowerShell 기반 통합 스크립트 개발로 주차 자동 계산, 디렉토리 생성, 템플릿 파일 생성 자동화
+  - 프로젝트 시작일 기준으로 동적 주차 계산 로직 구현
+  - 프롬프트 문서 템플릿 자동 생성 및 VS Code 연동
+  - 주간보고서 섹션 자동 생성 및 클립보드 복사 기능
+- **워크플로우 문서화**: `docs/workflows` 폴더 신규 생성 및 팀 공유 문서 작성
+  - `prompt-organization.md`: 프롬프트 정리 워크플로우 전체 문서 (빠른 시작, 단계별 가이드, 트러블슈팅)
+  - `workflows/README.md`: 워크플로우 목차 및 사용 가이드
+  - 다른 팀원도 쉽게 참고할 수 있도록 체계적으로 구성
+- **프로젝트 문서 체계화**: 기존 `.agent/workflows`의 내용을 `docs` 폴더로 이동하여 접근성 향상
+
+**BE**
+
+- **기술 명세서 전면 개정**: 프로젝트 진행 상황을 반영하여 tech_spec.md 대폭 업데이트.
+  - 프로젝트 개요 및 실제 사용 기술 스택 명시 (Java 21, Spring Boot 3.5.9, MySQL 8.0, JWT 0.12.6).
+  - 외부 API 연동 현황 정리 (금융위원회 주식시세정보, 금융감독원 DART API).
+  - 패키지 구조 상세화 (domain 계층별 구조 및 global 공통 모듈).
+  - 설정 파일 구성 문서화 (application.yml, stock-codes.yml, .env).
+  - ERD 및 테이블 구조 명세 (8개 테이블: members, refresh_token, stock, daily_price, statement, simulation, simulation_trade).
+  - 인덱스 전략 및 성능 최적화 설계 문서화.
+  - 시뮬레이션 점수 계산 알고리즘 수식 및 로직 상세 기술 (개별 거래 점수 s_i, 가중 평균 총점, 등급 산출).
+  - JWT 인증 시스템 상세 (토큰 저장 방식, 유효기간, BCrypt 암호화).
+  - 데이터 수집 자동화 전략 (스케줄러 기반 시세 업데이트, 데이터 생명주기).
+  - 완전한 API 명세 작성 (5개 도메인 14개 API, 파라미터, 에러 코드 체계).
+  - 보안 설정 상세화 (인증 제외/필요 경로, CORS 설정).
+  - 관리 대상 종목 리스트 정리 (KOSPI 13개, KOSDAQ 7개 총 20종목).
+  - 개발 환경 설정 가이드 (필수 환경 변수, 실행 방법, 초기 데이터 적재).
+- **AI Agent 워크플로우 문서 작성**: docs/workflows/AGENT.md 신규 생성.
+  - AI Agent의 CTO 역할 정의 및 책임 범위 명시.
+  - 기술 스택 및 프로젝트 컨텍스트 상세 기술.
+  - 응답 방식 및 커뮤니케이션 가이드라인.
+  - 7단계 협업 워크플로우 정립 (브레인스토밍 → 질문 → 정보 수집 → 실행 계획 → 단계별 프롬프트 → 상태 리포트).
+  - Codex와의 협업 패턴 정의.
+
+**AI 활용** (필수)
+
+**FE**
+
+- **SEO 전략 수립**: Next.js Metadata API의 최적 활용 방법 및 페이지별 인덱싱 정책 제안.
+- **문제 진단 및 해결**: Canonical URL의 구조적 문제 분석 및 올바른 메타데이터 계층 구조 설계.
+- **코드 생성**: `robots.ts`, `sitemap.ts` 파일 생성 및 11개 페이지의 메타데이터 보일러플레이트 작성.
+- **정규 표현식 활용**: Trailing slash 제거를 위한 정규 표현식 패턴 제안.
+- **워크플로우 설계**: 프롬프트 정리부터 주간보고서 작성까지의 전체 프로세스 자동화 설계
+- **스크립트 생성**: PowerShell 기반 통합 스크립트 (주차 계산, 파일 생성, 클립보드 복사) 자동 생성
+- **문서 구조화**: 사용자가 바로 이해하고 사용할 수 있도록 문서 구조 제안 (빠른 시작, 단계별 가이드, 트러블슈팅)
+- **트러블슈팅 정리**: PowerShell 실행 오류, VS Code 연동, 주차 계산 등 5가지 주요 문제와 해결책 정리
+- **Week 7 보고서 작성 지원**: 2월 8일까지의 테스트 코드 작업 내용을 분석하여 주간보고서 각 섹션에 맞게 정리
+
+**BE**
+
+- **문서 구조 설계**: 기존 간략한 기술 명세를 실제 구현 상태를 반영한 체계적인 문서로 재구성.
+- **알고리즘 수식화**: 시뮬레이션 점수 계산 로직을 수학적 수식으로 명확히 표현 (R, C, s_i, 가중 평균).
+- **API 명세 표준화**: 14개 API의 파라미터, 응답, 에러 코드를 표 형식으로 정리하여 가독성 향상.
+- **워크플로우 템플릿 생성**: AI Agent와 Codex 간 협업을 위한 표준 워크플로우 프로세스 설계.
+
+**완료 기능**
+
+**FE**
+
+- SEO 최적화 시스템
+  - `robots.txt` 자동 생성 (공개/비공개 페이지 구분)
+  - `sitemap.xml` 자동 생성 (우선순위 및 업데이트 주기 설정)
+  - Open Graph 및 Twitter Card 메타데이터
+  - 페이지별 독립적인 canonical URL
+- 환경 변수 정규화 및 템플릿 개선
+- 프롬프트 정리 워크플로우 시스템
+  - 주차 자동 계산 (프로젝트 시작일 기준)
+  - 프롬프트 디렉토리 자동 생성 (`prompts/week{n}/{YY_MM_DD}/`)
+  - 템플릿 기반 프롬프트 문서 자동 생성
+  - 주간보고서 섹션 자동 생성 및 클립보드 복사
+- 워크플로우 문서화
+  - `docs/workflows/prompt-organization.md` (전체 워크플로우 문서)
+  - `docs/workflows/README.md` (목차 및 가이드)
+
+**BE**
+
+- 기술 명세서 전면 개정 완료
+  - 7개 섹션 361줄 분량 상세 문서 (개요, 구조, DB 설계, 비즈니스 로직, API 명세, 보안, 환경 설정)
+  - 시뮬레이션 점수 계산 알고리즘 완전 문서화
+  - 14개 REST API 엔드포인트 상세 명세
+  - 에러 코드 체계 정립
+- AI Agent 워크플로우 문서 작성
+  - CTO 역할 정의 및 7단계 협업 프로세스
+
+**커밋 로그**
+
+**FE**
+
+docs: 워크플로우 문서화
+feat: canonical url 코드 리뷰 반영
+feat: 사이트맵 링크 코드 리뷰 반영
+docs: 메타데이터, env 프롬프트 추가
+feat: api baseUrl 분리
+feat: SEO 최적화 메타데이터 추가
+
+**BE**
+
+- docs: techspec 문서 및 agent workflow 문서 업데이트 (f87246c)
+
+**링크**
+
+**FE**
+
+- [SEO 최적화](https://github.com/AddShotInCode/TradeMate_FE/pull/49)
+
+**BE**
+
+- [기술 명세서 및 워크플로우 문서 업데이트](https://github.com/AddShotInCode/TradeMate_BE/pull/21)
+
+**테스트 결과**
+
+**FE**
+
+- **SEO 검증 결과**:
+  - `/robots.txt` 접속 확인: 공개/비공개 페이지 구분 정상 동작.
+  - `/sitemap.xml` 접속 확인: 공개 페이지(홈, 로그인, 회원가입, 정책 페이지들) 포함.
+  - 각 페이지 HTML `<head>` 검증: canonical URL, Open Graph, Twitter Card 메타태그 정상 렌더링.
+  - 홈페이지: `canonical: "/"` ✅
+  - 대시보드: `canonical: "/dashboard"` ✅
+  - 시뮬레이션: `canonical: "/simulation"` ✅
+- **워크플로우 스크립트 검증**:
+  - PowerShell 통합 스크립트 정상 실행 확인
+  - 주차 자동 계산 (`week8` 정상 출력)
+  - 프롬프트 디렉토리 자동 생성 확인
+  - 템플릿 파일 생성 및 VS Code 자동 실행 확인
+- **문서 접근성 검증**:
+  - `docs/workflows/prompt-organization.md` 정상 생성 확인
+  - 워크플로우 문서가 독립적으로 이해 가능한지 검증 완료
+
+
+**BE**
+
+- **문서 품질 검증**:
+  - tech_spec.md 마크다운 렌더링 정상 확인 (361줄, 2개 파일 변경)
+  - ERD 다이어그램 코드블록 가독성 확인
+  - API 명세 표 형식 정상 렌더링 확인
+  - 수식 표기 (`s_i = (R + C) / 2`) 가독성 확인 ✅
+- **AGENT.md 구조 검증**:
+  - 7단계 워크플로우 순서도 논리성 확인
+  - 기술 스택 목록과 실제 build.gradle 일치성 확인
+  - Codex와의 협업 프로세스 실행 가능성 검증 ✅
+
+**다음 주 계획** (필수)
+
+**FE**
+
+- 배포 테스트
+- LLM 연결
+
+**BE**
+
+- LLM 활용 매매분석리포트 생성 기능 개발
+- CI/CD 파이프라인 구축 및 자동화
+- 성능 모니터링 및 최적화
+
+
 ## 팀원 소개
 
 <div align="center">
