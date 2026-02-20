@@ -182,15 +182,40 @@ public class SimulationController {
     }
 
     /**
-     * 시뮬레이션 결과 분석 보고서 조회
-     * GET /api/simulation/{id}/report
+     * 시뮬레이션 결과 분석 보고서 생성
+     * POST /api/simulation/{id}/report
      */
-    @Operation(summary = "분석 보고서 조회", description = "시뮬레이션 결과 분석 보고서를 조회합니다. 시뮬레이션 종료일 설정이 필요합니다.")
+    @Operation(summary = "분석 보고서 생성", description = "시뮬레이션 결과를 분석하여 보고서를 생성합니다. 시뮬레이션 종료일 설정이 필요합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "보고서 조회 성공"),
+            @ApiResponse(responseCode = "200", description = "보고서 생성 성공"),
             @ApiResponse(responseCode = "400", description = "시뮬레이션 종료일 미설정",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "시뮬레이션 없음",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "보고서 이미 존재",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping("/{id}/report")
+    public ResponseEntity<Map<String, String>> generateReport(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "시뮬레이션 ID", example = "1") @PathVariable Long id) {
+
+        validateAuthenticated(userDetails);
+        log.debug("Generate report request: simulationId={}", id);
+
+        simulationService.generateReport(userDetails.getUsername(), id);
+
+        return ResponseEntity.ok(Map.of("message", "Report generated successfully"));
+    }
+
+    /**
+     * 시뮬레이션 결과 분석 보고서 조회
+     * GET /api/simulation/{id}/report
+     */
+    @Operation(summary = "분석 보고서 조회", description = "생성된 시뮬레이션 분석 보고서를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "보고서 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "시뮬레이션 또는 보고서 없음",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/{id}/report")

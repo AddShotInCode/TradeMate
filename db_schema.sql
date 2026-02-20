@@ -91,3 +91,39 @@ CREATE TABLE simulation_trade (
     FOREIGN KEY (simulation_id) REFERENCES simulation(id) ON DELETE CASCADE,
     INDEX idx_trade_simulation (simulation_id)
 );
+
+CREATE TABLE simulation_report (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    simulation_id BIGINT NOT NULL UNIQUE COMMENT 'simulation 테이블 FK (1:1)',
+    final_avg_price DECIMAL(20, 8) NOT NULL COMMENT '최종 평균단가',
+    total_investment DECIMAL(20, 2) NOT NULL COMMENT '총 투자금액',
+    total_realized_profit DECIMAL(20, 2) NOT NULL COMMENT '총 실현 손익',
+    total_roi DECIMAL(10, 2) NOT NULL COMMENT '총 수익률 (%)',
+    total_score DECIMAL(10, 2) NOT NULL COMMENT '총점 (100점 만점)',
+    total_sell_volume INT NOT NULL COMMENT '총 매도 수량',
+    total_trade_count INT NOT NULL COMMENT '총 거래 횟수',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (simulation_id) REFERENCES simulation(id) ON DELETE CASCADE
+);
+
+CREATE TABLE report_trade_score (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    report_id BIGINT NOT NULL COMMENT 'simulation_report 테이블 FK',
+    sequence INT NOT NULL COMMENT '매도 순번',
+    trade_date DATE NOT NULL COMMENT '거래일',
+    sell_price INT NOT NULL COMMENT '매도 가격',
+    avg_price DECIMAL(20, 8) NOT NULL COMMENT '평균 단가',
+    target_price INT NOT NULL COMMENT '목표가',
+    stop_loss INT NOT NULL COMMENT '손절가',
+    volume INT NOT NULL COMMENT '거래량',
+    profit DECIMAL(20, 2) NOT NULL COMMENT '실현 손익',
+    roi DECIMAL(10, 2) NOT NULL COMMENT '수익률 (%)',
+    result_score DECIMAL(10, 2) NOT NULL COMMENT '성과 점수',
+    compliance_score DECIMAL(10, 2) NOT NULL COMMENT '규정 준수 점수',
+    trade_score DECIMAL(10, 2) NOT NULL COMMENT '거래 점수 (총점)',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (report_id) REFERENCES simulation_report(id) ON DELETE CASCADE,
+    INDEX idx_report_trade_score_report (report_id)
+);

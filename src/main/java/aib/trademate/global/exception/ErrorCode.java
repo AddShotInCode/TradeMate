@@ -39,6 +39,7 @@ public enum ErrorCode {
     STOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "STOCK-001", "Stock not found"),
     STATEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "STATEMENT-001", "Financial statement not found"),
     SIMULATION_NOT_FOUND(HttpStatus.NOT_FOUND, "SIMULATION-001", "Simulation not found"),
+    REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT-001", "Report not found for this simulation"),
     API_ENDPOINT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON-011", "API endpoint not found"),
 
     // 405 Method Not Allowed
@@ -46,6 +47,7 @@ public enum ErrorCode {
 
     // 409 Conflict
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH-010", "Email already exists"),
+    REPORT_ALREADY_EXISTS(HttpStatus.CONFLICT, "REPORT-002", "Report already exists for this simulation"),
 
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON-100", "An unexpected error occurred"),
