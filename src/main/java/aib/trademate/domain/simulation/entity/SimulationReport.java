@@ -51,6 +51,14 @@ public class SimulationReport {
     @Column(name = "total_trade_count", nullable = false)
     private Integer totalTradeCount;
 
+    @Setter
+    @Column(name = "ai_score")
+    private Integer aiScore;
+
+    @Setter
+    @Column(name = "ai_comment", columnDefinition = "TEXT")
+    private String aiComment;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

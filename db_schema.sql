@@ -102,6 +102,8 @@ CREATE TABLE simulation_report (
     total_score DECIMAL(10, 2) NOT NULL COMMENT '총점 (100점 만점)',
     total_sell_volume INT NOT NULL COMMENT '총 매도 수량',
     total_trade_count INT NOT NULL COMMENT '총 거래 횟수',
+    ai_score INT DEFAULT NULL COMMENT 'AI 애널리스트 점수 (0~100, nullable)',
+    ai_comment TEXT DEFAULT NULL COMMENT 'AI 애널리스트 코멘트 (nullable)',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (simulation_id) REFERENCES simulation(id) ON DELETE CASCADE

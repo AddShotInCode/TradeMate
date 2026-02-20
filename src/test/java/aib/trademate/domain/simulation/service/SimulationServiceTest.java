@@ -2,6 +2,8 @@ package aib.trademate.domain.simulation.service;
 
 import aib.trademate.domain.member.entity.Member;
 import aib.trademate.domain.member.repository.MemberRepository;
+import aib.trademate.domain.simulation.client.GeminiApiClient;
+import aib.trademate.domain.simulation.client.GeminiApiClient.GeminiAnalysisResult;
 import aib.trademate.domain.simulation.dto.*;
 import aib.trademate.domain.simulation.entity.Simulation;
 import aib.trademate.domain.simulation.entity.SimulationTrade;
@@ -56,6 +58,12 @@ class SimulationServiceTest {
 
     @Mock
     private SimulationScoreCalculator scoreCalculator;
+
+    @Mock
+    private GeminiPromptBuilder geminiPromptBuilder;
+
+    @Mock
+    private GeminiApiClient geminiApiClient;
 
     @InjectMocks
     private SimulationService simulationService;
@@ -363,12 +371,16 @@ class SimulationServiceTest {
             given(reportRepository.existsBySimulationId(testSimulation.getId())).willReturn(false);
             given(tradeRepository.findBySimulationIdOrderByTradeDateAsc(testSimulation.getId())).willReturn(trades);
             given(scoreCalculator.calculateReport(testSimulation, trades)).willReturn(expectedReport);
+            given(geminiPromptBuilder.buildPrompt(testSimulation)).willReturn("test prompt");
+            given(geminiApiClient.analyze("test prompt")).willReturn(new GeminiAnalysisResult(78, "AI 분석 코멘트"));
 
             // when
             simulationService.generateReport(email, testSimulation.getId());
 
             // then
             verify(scoreCalculator).calculateReport(testSimulation, trades);
+            verify(geminiPromptBuilder).buildPrompt(testSimulation);
+            verify(geminiApiClient).analyze("test prompt");
             verify(reportRepository).save(any());
         }
 
@@ -440,6 +452,8 @@ class SimulationServiceTest {
                             .totalSellVolume(10)
                             .totalTradeCount(2)
                             .build();
+            savedReport.setAiScore(78);
+            savedReport.setAiComment("AI 분석 코멘트");
 
             given(memberRepository.findByEmail(email)).willReturn(Optional.of(testMember));
             given(simulationRepository.findById(testSimulation.getId())).willReturn(Optional.of(testSimulation));
@@ -451,6 +465,8 @@ class SimulationServiceTest {
             // then
             assertThat(response.summary().totalScore()).isEqualTo(BigDecimal.valueOf(85));
             assertThat(response.summary().stockCode()).isEqualTo("005930");
+            assertThat(response.summary().aiScore()).isEqualTo(78);
+            assertThat(response.summary().aiComment()).isEqualTo("AI 분석 코멘트");
             verify(reportRepository).findBySimulationId(testSimulation.getId());
             verify(scoreCalculator, never()).calculateReport(any(), any());
         }

@@ -267,6 +267,8 @@ class SimulationControllerTest {
                     .totalRealizedProfit(BigDecimal.valueOf(50000))
                     .totalRoi(BigDecimal.valueOf(7.14))
                     .totalScore(BigDecimal.valueOf(85))
+                    .aiScore(78)
+                    .aiComment("AI 분석 코멘트")
                     .build();
 
             SimulationReportResponse response = new SimulationReportResponse(summary, List.of(), 10, 2);
@@ -276,7 +278,9 @@ class SimulationControllerTest {
             mockMvc.perform(get("/api/simulation/{id}/report", 1L))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.summary.stockCode").value("005930"))
-                    .andExpect(jsonPath("$.summary.totalScore").value(85));
+                    .andExpect(jsonPath("$.summary.totalScore").value(85))
+                    .andExpect(jsonPath("$.summary.aiScore").value(78))
+                    .andExpect(jsonPath("$.summary.aiComment").value("AI 분석 코멘트"));
         }
 
         @Test
