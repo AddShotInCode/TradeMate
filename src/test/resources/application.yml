@@ -40,6 +40,11 @@ dart-api:
   url: https://test.dart.example.com
   api-key: test-api-key
 
+gemini-api:
+  url: https://test.gemini.example.com
+  api-key: test-gemini-api-key
+  model: gemini-2.5-flash
+
 jwt:
   secret: dGVzdC1zZWNyZXQta2V5LWZvci1qdW5pdC10ZXN0LW11c3QtYmUtbG9uZy1lbm91Z2g=
   access-token-validity: 1800000

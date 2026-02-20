@@ -205,7 +205,52 @@ class SimulationControllerTest {
     }
 
     @Nested
-    @DisplayName("시뮬레이션 보고서 API 테스트")
+    @DisplayName("보고서 생성 API 테스트")
+    class GenerateReportTest {
+
+        @Test
+        @DisplayName("보고서 생성이 성공한다")
+        void generateReportSuccess() throws Exception {
+            // given
+            doNothing().when(simulationService).generateReport("test@test.com", 1L);
+
+            // when & then
+            mockMvc.perform(post("/api/simulation/{id}/report", 1L))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.message").value("Report generated successfully"));
+
+            verify(simulationService).generateReport("test@test.com", 1L);
+        }
+
+        @Test
+        @DisplayName("종료되지 않은 시뮬레이션의 보고서 생성 시 400 에러가 발생한다")
+        void generateReportFailsWhenNotEnded() throws Exception {
+            // given
+            doThrow(new BusinessException(ErrorCode.SIMULATION_NOT_ENDED))
+                    .when(simulationService).generateReport("test@test.com", 1L);
+
+            // when & then
+            mockMvc.perform(post("/api/simulation/{id}/report", 1L))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("SIMULATION-002"));
+        }
+
+        @Test
+        @DisplayName("이미 보고서가 존재하면 409 에러가 발생한다")
+        void generateReportFailsWhenAlreadyExists() throws Exception {
+            // given
+            doThrow(new BusinessException(ErrorCode.REPORT_ALREADY_EXISTS))
+                    .when(simulationService).generateReport("test@test.com", 1L);
+
+            // when & then
+            mockMvc.perform(post("/api/simulation/{id}/report", 1L))
+                    .andExpect(status().isConflict())
+                    .andExpect(jsonPath("$.code").value("REPORT-002"));
+        }
+    }
+
+    @Nested
+    @DisplayName("시뮬레이션 보고서 조회 API 테스트")
     class GetReportTest {
 
         @Test
@@ -222,6 +267,8 @@ class SimulationControllerTest {
                     .totalRealizedProfit(BigDecimal.valueOf(50000))
                     .totalRoi(BigDecimal.valueOf(7.14))
                     .totalScore(BigDecimal.valueOf(85))
+                    .aiScore(78)
+                    .aiComment("AI 분석 코멘트")
                     .build();
 
             SimulationReportResponse response = new SimulationReportResponse(summary, List.of(), 10, 2);
@@ -231,20 +278,22 @@ class SimulationControllerTest {
             mockMvc.perform(get("/api/simulation/{id}/report", 1L))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.summary.stockCode").value("005930"))
-                    .andExpect(jsonPath("$.summary.totalScore").value(85));
+                    .andExpect(jsonPath("$.summary.totalScore").value(85))
+                    .andExpect(jsonPath("$.summary.aiScore").value(78))
+                    .andExpect(jsonPath("$.summary.aiComment").value("AI 분석 코멘트"));
         }
 
         @Test
-        @DisplayName("종료되지 않은 시뮬레이션의 보고서 조회 시 400 에러가 발생한다")
-        void getReportFailsWhenNotEnded() throws Exception {
+        @DisplayName("보고서가 존재하지 않으면 404 에러가 발생한다")
+        void getReportFailsWhenNotFound() throws Exception {
             // given
             given(simulationService.getReport("test@test.com", 1L))
-                    .willThrow(new BusinessException(ErrorCode.SIMULATION_NOT_ENDED));
+                    .willThrow(new BusinessException(ErrorCode.REPORT_NOT_FOUND));
 
             // when & then
             mockMvc.perform(get("/api/simulation/{id}/report", 1L))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.code").value("SIMULATION-002"));
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.code").value("REPORT-001"));
         }
     }
 }

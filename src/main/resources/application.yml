@@ -46,6 +46,12 @@ dart-api:
   url: ${DART_API_URL}
   api-key: ${DART_API_KEY}
 
+# Gemini API (AI 애널리스트)
+gemini-api:
+  url: ${GEMINI_API_URL:https://generativelanguage.googleapis.com}
+  api-key: ${GEMINI_API_KEY:}
+  model: gemini-2.5-flash
+
 # JWT 설정
 jwt:
   secret: ${JWT_SECRET}

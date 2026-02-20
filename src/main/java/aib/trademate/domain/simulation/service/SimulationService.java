@@ -2,10 +2,15 @@ package aib.trademate.domain.simulation.service;
 
 import aib.trademate.domain.member.entity.Member;
 import aib.trademate.domain.member.repository.MemberRepository;
+import aib.trademate.domain.simulation.client.GeminiApiClient;
+import aib.trademate.domain.simulation.client.GeminiApiClient.GeminiAnalysisResult;
 import aib.trademate.domain.simulation.dto.*;
 import aib.trademate.domain.simulation.entity.Simulation;
 import aib.trademate.domain.simulation.entity.SimulationTrade;
 import aib.trademate.domain.simulation.entity.TradeType;
+import aib.trademate.domain.simulation.entity.ReportTradeScore;
+import aib.trademate.domain.simulation.entity.SimulationReport;
+import aib.trademate.domain.simulation.repository.SimulationReportRepository;
 import aib.trademate.domain.simulation.repository.SimulationRepository;
 import aib.trademate.domain.simulation.repository.SimulationTradeRepository;
 import aib.trademate.global.exception.BusinessException;
@@ -30,8 +35,11 @@ public class SimulationService {
 
     private final SimulationRepository simulationRepository;
     private final SimulationTradeRepository tradeRepository;
+    private final SimulationReportRepository reportRepository;
     private final MemberRepository memberRepository;
     private final SimulationScoreCalculator scoreCalculator;
+    private final GeminiPromptBuilder geminiPromptBuilder;
+    private final GeminiApiClient geminiApiClient;
 
     /**
      * 시뮬레이션 생성
@@ -134,9 +142,11 @@ public class SimulationService {
     }
 
     /**
-     * 시뮬레이션 결과 분석 보고서 조회
+     * 시뮬레이션 결과 분석 보고서 생성
+     * 계산 로직을 적용하여 DB에 보고서를 저장합니다.
      */
-    public SimulationReportResponse getReport(String email, Long simulationId) {
+    @Transactional
+    public void generateReport(String email, Long simulationId) {
         Simulation simulation = findSimulationWithOwnerCheck(email, simulationId);
 
         // 종료된 시뮬레이션만 분석 가능
@@ -145,16 +155,116 @@ public class SimulationService {
                     "Simulation must be ended before generating report");
         }
 
+        // 이미 보고서가 존재하는지 확인
+        if (reportRepository.existsBySimulationId(simulationId)) {
+            throw new BusinessException(ErrorCode.REPORT_ALREADY_EXISTS,
+                    "Report already exists for simulation: " + simulationId);
+        }
+
         // 거래 데이터 조회 (시간순)
         List<SimulationTrade> trades = tradeRepository.findBySimulationIdOrderByTradeDateAsc(simulationId);
 
-        // 점수 계산 및 보고서 생성
-        SimulationReportResponse report = scoreCalculator.calculateReport(simulation, trades);
-        
-        log.info("Report generated for simulation: id={}, totalScore={}", 
-                simulationId, report.summary().totalScore());
-        
-        return report;
+        // 점수 계산
+        SimulationReportResponse reportDto = scoreCalculator.calculateReport(simulation, trades);
+
+        // 엔티티로 변환하여 저장
+        SimulationReport report = SimulationReport.builder()
+                .simulationId(simulationId)
+                .finalAvgPrice(reportDto.summary().finalAvgPrice())
+                .totalInvestment(reportDto.summary().totalInvestment())
+                .totalRealizedProfit(reportDto.summary().totalRealizedProfit())
+                .totalRoi(reportDto.summary().totalRoi())
+                .totalScore(reportDto.summary().totalScore())
+                .totalSellVolume(reportDto.totalSellVolume())
+                .totalTradeCount(reportDto.totalTradeCount())
+                .build();
+
+        for (TradeScoreDetail detail : reportDto.trades()) {
+            ReportTradeScore tradeScore = ReportTradeScore.builder()
+                    .sequence(detail.sequence())
+                    .tradeDate(detail.tradeDate())
+                    .sellPrice(detail.sellPrice())
+                    .avgPrice(detail.avgPrice())
+                    .targetPrice(detail.targetPrice())
+                    .stopLoss(detail.stopLoss())
+                    .volume(detail.volume())
+                    .profit(detail.profit())
+                    .roi(detail.roi())
+                    .resultScore(detail.resultScore())
+                    .complianceScore(detail.complianceScore())
+                    .tradeScore(detail.tradeScore())
+                    .build();
+            report.addTradeScore(tradeScore);
+        }
+
+        // AI 분석 (실패 시에도 보고서는 정상 생성)
+        try {
+            String prompt = geminiPromptBuilder.buildPrompt(simulation);
+            GeminiAnalysisResult aiResult = geminiApiClient.analyze(prompt);
+            if (aiResult != null) {
+                report.setAiScore(aiResult.score());
+                report.setAiComment(aiResult.comment());
+                log.info("AI analysis completed for simulation: id={}, aiScore={}", simulationId, aiResult.score());
+            } else {
+                log.warn("AI analysis returned null for simulation: id={}", simulationId);
+            }
+        } catch (Exception e) {
+            log.error("AI analysis failed for simulation: id={}, error={}", simulationId, e.getMessage());
+        }
+
+        reportRepository.save(report);
+        log.info("Report generated and saved for simulation: id={}, totalScore={}",
+                simulationId, reportDto.summary().totalScore());
+    }
+
+    /**
+     * 시뮬레이션 결과 분석 보고서 조회
+     * DB에 저장된 보고서를 조회하여 반환합니다.
+     */
+    public SimulationReportResponse getReport(String email, Long simulationId) {
+        Simulation simulation = findSimulationWithOwnerCheck(email, simulationId);
+
+        // DB에서 보고서 조회
+        SimulationReport report = reportRepository.findBySimulationId(simulationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.REPORT_NOT_FOUND,
+                        "Report not found for simulation: " + simulationId));
+
+        // 엔티티 → DTO 변환
+        ReportSummary summary = ReportSummary.builder()
+                .simulationId(simulation.getId())
+                .stockCode(simulation.getStockCode())
+                .startDate(simulation.getStartDate())
+                .endDate(simulation.getEndDate())
+                .finalAvgPrice(report.getFinalAvgPrice())
+                .totalInvestment(report.getTotalInvestment())
+                .totalRealizedProfit(report.getTotalRealizedProfit())
+                .totalRoi(report.getTotalRoi())
+                .totalScore(report.getTotalScore())
+                .aiScore(report.getAiScore())
+                .aiComment(report.getAiComment())
+                .build();
+
+        List<TradeScoreDetail> tradeDetails = report.getTradeScores().stream()
+                .map(ts -> TradeScoreDetail.builder()
+                        .sequence(ts.getSequence())
+                        .tradeDate(ts.getTradeDate())
+                        .sellPrice(ts.getSellPrice())
+                        .avgPrice(ts.getAvgPrice())
+                        .targetPrice(ts.getTargetPrice())
+                        .stopLoss(ts.getStopLoss())
+                        .volume(ts.getVolume())
+                        .profit(ts.getProfit())
+                        .roi(ts.getRoi())
+                        .resultScore(ts.getResultScore())
+                        .complianceScore(ts.getComplianceScore())
+                        .tradeScore(ts.getTradeScore())
+                        .build())
+                .toList();
+
+        log.info("Report retrieved for simulation: id={}, totalScore={}",
+                simulationId, report.getTotalScore());
+
+        return SimulationReportResponse.of(summary, tradeDetails, report.getTotalSellVolume());
     }
 
     /**

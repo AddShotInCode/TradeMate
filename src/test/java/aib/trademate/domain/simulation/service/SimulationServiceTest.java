@@ -2,10 +2,13 @@ package aib.trademate.domain.simulation.service;
 
 import aib.trademate.domain.member.entity.Member;
 import aib.trademate.domain.member.repository.MemberRepository;
+import aib.trademate.domain.simulation.client.GeminiApiClient;
+import aib.trademate.domain.simulation.client.GeminiApiClient.GeminiAnalysisResult;
 import aib.trademate.domain.simulation.dto.*;
 import aib.trademate.domain.simulation.entity.Simulation;
 import aib.trademate.domain.simulation.entity.SimulationTrade;
 import aib.trademate.domain.simulation.entity.TradeType;
+import aib.trademate.domain.simulation.repository.SimulationReportRepository;
 import aib.trademate.domain.simulation.repository.SimulationRepository;
 import aib.trademate.domain.simulation.repository.SimulationTradeRepository;
 import aib.trademate.global.exception.BusinessException;
@@ -48,10 +51,19 @@ class SimulationServiceTest {
     private SimulationTradeRepository tradeRepository;
 
     @Mock
+    private SimulationReportRepository reportRepository;
+
+    @Mock
     private MemberRepository memberRepository;
 
     @Mock
     private SimulationScoreCalculator scoreCalculator;
+
+    @Mock
+    private GeminiPromptBuilder geminiPromptBuilder;
+
+    @Mock
+    private GeminiApiClient geminiApiClient;
 
     @InjectMocks
     private SimulationService simulationService;
@@ -322,12 +334,12 @@ class SimulationServiceTest {
     }
 
     @Nested
-    @DisplayName("시뮬레이션 보고서 조회 테스트")
-    class GetReportTest {
+    @DisplayName("보고서 생성 테스트")
+    class GenerateReportTest {
 
         @Test
-        @DisplayName("종료된 시뮬레이션의 보고서를 조회한다")
-        void getReportSuccess() {
+        @DisplayName("종료된 시뮬레이션의 보고서를 생성한다")
+        void generateReportSuccess() {
             // given
             String email = "test@test.com";
             testSimulation.updateEndDate(LocalDate.of(2024, 3, 1));
@@ -356,20 +368,25 @@ class SimulationServiceTest {
 
             given(memberRepository.findByEmail(email)).willReturn(Optional.of(testMember));
             given(simulationRepository.findById(testSimulation.getId())).willReturn(Optional.of(testSimulation));
+            given(reportRepository.existsBySimulationId(testSimulation.getId())).willReturn(false);
             given(tradeRepository.findBySimulationIdOrderByTradeDateAsc(testSimulation.getId())).willReturn(trades);
             given(scoreCalculator.calculateReport(testSimulation, trades)).willReturn(expectedReport);
+            given(geminiPromptBuilder.buildPrompt(testSimulation)).willReturn("test prompt");
+            given(geminiApiClient.analyze("test prompt")).willReturn(new GeminiAnalysisResult(78, "AI 분석 코멘트"));
 
             // when
-            SimulationReportResponse response = simulationService.getReport(email, testSimulation.getId());
+            simulationService.generateReport(email, testSimulation.getId());
 
             // then
-            assertThat(response.summary().totalScore()).isEqualTo(BigDecimal.valueOf(85));
             verify(scoreCalculator).calculateReport(testSimulation, trades);
+            verify(geminiPromptBuilder).buildPrompt(testSimulation);
+            verify(geminiApiClient).analyze("test prompt");
+            verify(reportRepository).save(any());
         }
 
         @Test
-        @DisplayName("종료되지 않은 시뮬레이션의 보고서 조회 시 예외가 발생한다")
-        void getReportFailsWhenNotEnded() {
+        @DisplayName("종료되지 않은 시뮬레이션의 보고서 생성 시 예외가 발생한다")
+        void generateReportFailsWhenNotEnded() {
             // given
             String email = "test@test.com";
             // endDate is null (not ended)
@@ -378,8 +395,8 @@ class SimulationServiceTest {
             given(simulationRepository.findById(testSimulation.getId())).willReturn(Optional.of(testSimulation));
 
             // when & then
-            assertThatThrownBy(() -> 
-                    simulationService.getReport(email, testSimulation.getId()))
+            assertThatThrownBy(() ->
+                    simulationService.generateReport(email, testSimulation.getId()))
                     .isInstanceOf(BusinessException.class)
                     .satisfies(ex -> {
                         BusinessException be = (BusinessException) ex;
@@ -387,6 +404,91 @@ class SimulationServiceTest {
                     });
 
             verify(scoreCalculator, never()).calculateReport(any(), any());
+        }
+
+        @Test
+        @DisplayName("이미 보고서가 존재하는 시뮬레이션에 보고서 생성 시 409 예외가 발생한다")
+        void generateReportFailsWhenAlreadyExists() {
+            // given
+            String email = "test@test.com";
+            testSimulation.updateEndDate(LocalDate.of(2024, 3, 1));
+
+            given(memberRepository.findByEmail(email)).willReturn(Optional.of(testMember));
+            given(simulationRepository.findById(testSimulation.getId())).willReturn(Optional.of(testSimulation));
+            given(reportRepository.existsBySimulationId(testSimulation.getId())).willReturn(true);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    simulationService.generateReport(email, testSimulation.getId()))
+                    .isInstanceOf(BusinessException.class)
+                    .satisfies(ex -> {
+                        BusinessException be = (BusinessException) ex;
+                        assertThat(be.getErrorCode()).isEqualTo(ErrorCode.REPORT_ALREADY_EXISTS);
+                    });
+
+            verify(scoreCalculator, never()).calculateReport(any(), any());
+        }
+    }
+
+    @Nested
+    @DisplayName("시뮬레이션 보고서 조회 테스트")
+    class GetReportTest {
+
+        @Test
+        @DisplayName("저장된 보고서를 조회한다")
+        void getReportSuccess() {
+            // given
+            String email = "test@test.com";
+            testSimulation.updateEndDate(LocalDate.of(2024, 3, 1));
+
+            aib.trademate.domain.simulation.entity.SimulationReport savedReport =
+                    aib.trademate.domain.simulation.entity.SimulationReport.builder()
+                            .simulationId(testSimulation.getId())
+                            .finalAvgPrice(BigDecimal.valueOf(70000))
+                            .totalInvestment(BigDecimal.valueOf(700000))
+                            .totalRealizedProfit(BigDecimal.valueOf(50000))
+                            .totalRoi(BigDecimal.valueOf(7.14))
+                            .totalScore(BigDecimal.valueOf(85))
+                            .totalSellVolume(10)
+                            .totalTradeCount(2)
+                            .build();
+            savedReport.setAiScore(78);
+            savedReport.setAiComment("AI 분석 코멘트");
+
+            given(memberRepository.findByEmail(email)).willReturn(Optional.of(testMember));
+            given(simulationRepository.findById(testSimulation.getId())).willReturn(Optional.of(testSimulation));
+            given(reportRepository.findBySimulationId(testSimulation.getId())).willReturn(Optional.of(savedReport));
+
+            // when
+            SimulationReportResponse response = simulationService.getReport(email, testSimulation.getId());
+
+            // then
+            assertThat(response.summary().totalScore()).isEqualTo(BigDecimal.valueOf(85));
+            assertThat(response.summary().stockCode()).isEqualTo("005930");
+            assertThat(response.summary().aiScore()).isEqualTo(78);
+            assertThat(response.summary().aiComment()).isEqualTo("AI 분석 코멘트");
+            verify(reportRepository).findBySimulationId(testSimulation.getId());
+            verify(scoreCalculator, never()).calculateReport(any(), any());
+        }
+
+        @Test
+        @DisplayName("보고서가 존재하지 않으면 404 예외가 발생한다")
+        void getReportFailsWhenNotFound() {
+            // given
+            String email = "test@test.com";
+
+            given(memberRepository.findByEmail(email)).willReturn(Optional.of(testMember));
+            given(simulationRepository.findById(testSimulation.getId())).willReturn(Optional.of(testSimulation));
+            given(reportRepository.findBySimulationId(testSimulation.getId())).willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() ->
+                    simulationService.getReport(email, testSimulation.getId()))
+                    .isInstanceOf(BusinessException.class)
+                    .satisfies(ex -> {
+                        BusinessException be = (BusinessException) ex;
+                        assertThat(be.getErrorCode()).isEqualTo(ErrorCode.REPORT_NOT_FOUND);
+                    });
         }
     }
 

@@ -35,7 +35,13 @@ public record ReportSummary(
         BigDecimal totalRoi,
 
         @Schema(description = "총점 (100점 만점)", example = "72.50")
-        BigDecimal totalScore
+        BigDecimal totalScore,
+
+        @Schema(description = "AI 애널리스트 점수 (0~100)", example = "80", nullable = true)
+        Integer aiScore,
+
+        @Schema(description = "AI 애널리스트 코멘트", example = "전반적으로 안정적인 거래 전략...", nullable = true)
+        String aiComment
 ) {
     public static Builder builder() {
         return new Builder();
@@ -51,6 +57,8 @@ public record ReportSummary(
         private BigDecimal totalRealizedProfit;
         private BigDecimal totalRoi;
         private BigDecimal totalScore;
+        private Integer aiScore;
+        private String aiComment;
 
         public Builder simulationId(Long simulationId) {
             this.simulationId = simulationId;
@@ -97,10 +105,21 @@ public record ReportSummary(
             return this;
         }
 
+        public Builder aiScore(Integer aiScore) {
+            this.aiScore = aiScore;
+            return this;
+        }
+
+        public Builder aiComment(String aiComment) {
+            this.aiComment = aiComment;
+            return this;
+        }
+
         public ReportSummary build() {
             return new ReportSummary(
                     simulationId, stockCode, startDate, endDate,
-                    finalAvgPrice, totalInvestment, totalRealizedProfit, totalRoi, totalScore
+                    finalAvgPrice, totalInvestment, totalRealizedProfit, totalRoi, totalScore,
+                    aiScore, aiComment
             );
         }
     }
