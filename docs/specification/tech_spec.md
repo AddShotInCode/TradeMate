@@ -18,12 +18,14 @@
 | **Security** | Spring Security + JWT | jjwt 0.12.6 |
 | **Validation** | Jakarta Validation | - |
 | **Utilities** | Lombok, spring-dotenv | 4.0.0 |
+| **AI/LLM** | Gemini 2.5 Flash | v1beta |
 
 ### 1.3 외부 API 연동
 | API | 제공처 | 용도 |
 |---|---|---|
 | 주식시세정보 API | 금융위원회 (공공데이터포털) | 일별 시세(OHLCV) 수집 |
 | DART OpenAPI | 금융감독원 | 분기별 재무제표 공시 링크 수집 |
+| Gemini API | Google | AI 애널리스트 매매 분석 (점수/코멘트 생성) |
 
 ## 2. 프로젝트 구조 (Project Structure)
 
@@ -40,6 +42,8 @@ src/main/java/aib/trademate/
 │   │   ├── entity/
 │   │   └── repository/
 │   ├── simulation/     # 시뮬레이션 훈련
+│   │   ├── client/     # Gemini API 클라이언트
+│   │   ├── config/     # Gemini 설정 (Properties, RestTemplate)
 │   │   ├── controller/
 │   │   ├── dto/
 │   │   ├── entity/
@@ -72,8 +76,9 @@ src/main/java/aib/trademate/
 ### 2.2 설정 파일
 | 파일 | 용도 |
 |---|---|
-| `application.yml` | DB, JPA, 로깅, JWT, 외부 API 설정 |
+| `application.yml` | DB, JPA, 로깅, JWT, 외부 API, Gemini API 설정 |
 | `stock-codes.yml` | 관리 대상 종목 리스트 (20개 종목) |
+| `prompts/analyst-prompt.txt` | AI 애널리스트 시스템 프롬프트 |
 | `.env` | 환경 변수 (DB 인증정보, API 키 등 민감 정보) |
 
 ## 3. 데이터베이스 설계 (Database Design)
@@ -81,7 +86,8 @@ src/main/java/aib/trademate/
 ### 3.1 ERD 개요
 ```
 members ─┬─< refresh_token
-         └─< simulation ─< simulation_trade
+         └─< simulation ─┬─< simulation_trade
+                         └── simulation_report ─< report_trade_score
 
 stock ─< daily_price
 
@@ -98,11 +104,15 @@ statement (독립)
 | **statement** | 재무제표 공시 링크 | `id`, `stock_code`, `fiscal_year`, `qtr`, `rcept_no`, `rcept_dt` |
 | **simulation** | 시뮬레이션 세션 | `id`, `member_id`(FK), `stock_code`, `start_date`, `end_date` |
 | **simulation_trade** | 개별 거래 기록 | `id`, `simulation_id`(FK), `trade_date`, `balance`, `price`, `upper_limit`, `lower_limit`, `trade_type`, `volume`, `comment` |
+| **simulation_report** | 분석 보고서 | `id`, `simulation_id`(UNIQUE FK), `final_avg_price`, `total_investment`, `total_realized_profit`, `total_roi`, `total_score`, `total_sell_volume`, `total_trade_count`, `ai_score`, `ai_comment`, `created_at` |
+| **report_trade_score** | 개별 거래 점수 | `id`, `report_id`(FK), `sequence`, `trade_date`, `sell_price`, `avg_price`, `target_price`, `stop_loss`, `volume`, `profit`, `roi`, `result_score`, `compliance_score`, `trade_score` |
 
 ### 3.3 인덱스 전략
 - `daily_price`: `(stock_id, date)` 복합 UNIQUE 인덱스 - 종목별 기간 조회 최적화
 - `simulation`: `member_id` 인덱스 - 사용자별 시뮬레이션 목록 조회
 - `simulation_trade`: `simulation_id` 인덱스 - 시뮬레이션별 거래 내역 조회
+- `simulation_report`: `simulation_id` UNIQUE 인덱스 - 시뮬레이션당 1개 보고서 보장
+- `report_trade_score`: `report_id` 인덱스 - 보고서별 거래 점수 조회
 
 ## 4. 핵심 비즈니스 로직 (Core Logic)
 
@@ -141,7 +151,27 @@ Total Score = Σ(s_i × v_i) / Σ(v_i)
 | 60점 이상 | D |
 | 60점 미만 | F |
 
-### 4.3 데이터 수집 자동화
+### 4.3 AI 애널리스트 (Gemini 2.5 Flash)
+보고서 생성 시 LLM을 활용하여 사용자의 매매 전략을 자동 분석합니다.
+
+#### 동작 흐름
+1. `GeminiPromptBuilder`가 주가 차트 데이터(StockService) + 거래 내역 + 시스템 프롬프트를 조합
+2. `GeminiApiClient`가 Gemini REST API(`x-goog-api-key` 헤더 인증)를 호출
+3. LLM 응답에서 `{"score": int, "comment": string}` JSON을 파싱
+4. `SimulationReport` 엔티티에 `aiScore`, `aiComment` 설정 후 저장
+
+#### 분석 기준 (시스템 프롬프트)
+- 매수/매도 타이밍의 적절성 (차트 흐름 대비)
+- 손절/익절 기준의 일관성
+- 분할 매수/매도 전략 활용도
+- 리스크 관리 능력
+- 전체 수익률 대비 시장 흐름 비교
+
+#### Graceful Degradation
+- AI 분석 실패 시 `aiScore=null`, `aiComment=null`로 보고서 정상 저장
+- Gemini 전용 RestTemplate: connect 5s, read 60s (thinking 모델 특성 반영)
+
+### 4.4 데이터 수집 자동화
 - **주식 시세**: 매일 당일 시세 자동 업데이트 (스케줄러)
 - **재무제표**: DART API 연동으로 분기별 공시 링크 수집
 - **데이터 생명주기**: 1년 경과 데이터 자동 삭제
@@ -177,6 +207,7 @@ Total Score = Σ(s_i × v_i) / Σ(v_i)
 | DELETE | `/{id}` | 시뮬레이션 삭제 | - |
 | POST | `/{id}/data` | 거래 데이터 추가 | Body: `AddTradeRequest` |
 | GET | `/{id}/data` | 거래 데이터 목록 조회 | - |
+| POST | `/{id}/report` | 결과 분석 보고서 생성 (점수 계산 + AI 분석 + DB 저장) | - |
 | GET | `/{id}/report` | 결과 분석 보고서 조회 | - |
 
 ### 5.5 에러 응답 형식
@@ -200,8 +231,10 @@ Total Score = Σ(s_i × v_i) / Σ(v_i)
 | 401 | AUTH-002 | 유효하지 않은 토큰 |
 | 403 | AUTH-020 | 접근 거부 |
 | 404 | SIMULATION-001 | 시뮬레이션 없음 |
+| 404 | REPORT-001 | 보고서 없음 |
 | 404 | STOCK-001 | 종목 없음 |
 | 409 | AUTH-010 | 이메일 중복 |
+| 409 | REPORT-002 | 보고서 이미 존재 |
 
 ## 6. 보안 설정 (Security Configuration)
 
@@ -260,6 +293,9 @@ OPENAPI_SERVICE_KEY=your_service_key
 # DART API (금융감독원)
 DART_API_URL=https://opendart.fss.or.kr/api/...
 DART_API_KEY=your_api_key
+
+# Gemini API (Google AI)
+GEMINI_API_KEY=your_gemini_api_key
 
 # JWT
 JWT_SECRET=your_jwt_secret_key_at_least_256_bits
