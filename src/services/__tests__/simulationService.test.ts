@@ -167,6 +167,24 @@ describe("simulationService", () => {
   });
 
   /**
+   * 시뮬레이션 리포트 생성 API 테스트
+   */
+  describe("generateReport", () => {
+    it("시뮬레이션 리포트 생성을 요청해야 한다", async () => {
+      // Given: 시뮬레이션 리포트 생성 성공 응답이 설정된 상태
+      const mockResponse = { data: { message: "Report generated successfully" } };
+      mockedAxios.post.mockResolvedValueOnce(mockResponse);
+
+      // When: generateReport 메서드를 호출하면
+      const result = await simulationService.generateReport(1);
+
+      // Then: 시뮬레이션 리포트 생성 요청을 보내고 메시지를 반환해야 함
+      expect(mockedAxios.post).toHaveBeenCalledWith("/api/simulation/1/report");
+      expect(result).toEqual({ message: "Report generated successfully" });
+    });
+  });
+
+  /**
    * 시뮬레이션 리포트 조회 API 테스트
    */
   describe("getReport", () => {

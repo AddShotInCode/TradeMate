@@ -46,6 +46,8 @@ export interface SimulationReportResponse {
     totalRealizedProfit: number;
     totalRoi: number;
     totalScore: number;
+    aiScore?: number;
+    aiComment?: string;
   };
   trades: {
     sequence: number;
@@ -105,7 +107,13 @@ export const simulationService = {
     return response.data;
   },
 
-  // 7. Get Report
+  // 7. Generate Report
+  generateReport: async (id: number): Promise<{ message: string }> => {
+    const response = await axios.post<{ message: string }>(`${BASE_URL}/${id}/report`);
+    return response.data;
+  },
+
+  // 8. Get Report
   getReport: async (id: number): Promise<SimulationReportResponse> => {
     const response = await axios.get<SimulationReportResponse>(`${BASE_URL}/${id}/report`);
     return response.data;

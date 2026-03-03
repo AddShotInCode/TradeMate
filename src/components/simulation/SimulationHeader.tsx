@@ -79,7 +79,10 @@ export default function SimulationHeader() {
 
       await simulationService.terminate(currentSimulationId, dateStr);
 
-      // 3. Redirect
+      // 3. Request Report Generation
+      await simulationService.generateReport(currentSimulationId);
+
+      // 4. Redirect
       router.push("/dashboard");
     } catch (error) {
       console.error("Failed to terminate simulation:", error);
