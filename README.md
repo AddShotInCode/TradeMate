@@ -92,6 +92,48 @@
 - **language**: Java
 - **Database**: MySQL
 
+## 통합 실행 스크립트 가이드
+
+프론트엔드와 백엔드를 하나의 레포에서 함께 실행할 수 있도록 루트 `package.json`에 통합 스크립트를 구성했습니다.
+
+### 사전 준비
+
+1. 프론트엔드 의존성 설치
+
+```bash
+cd frontend && npm ci
+```
+
+2. 백엔드 환경 변수 설정
+
+- `backend/.env.example`를 참고해 `backend/.env`를 준비하세요.
+
+### 자주 쓰는 명령어
+
+| 명령어                   | 설명                                                        |
+| ------------------------ | ----------------------------------------------------------- |
+| `npm run dev`            | 백엔드(`bootRun`) + 프론트엔드(`next dev`)를 동시에 실행    |
+| `npm run dev:backend`    | 백엔드 개발 서버만 실행 (`cd backend && ./gradlew bootRun`) |
+| `npm run dev:frontend`   | 프론트엔드 개발 서버만 실행 (`cd frontend && npm run dev`)  |
+| `npm run test`           | 백엔드 테스트 + 프론트엔드 테스트를 동시에 실행             |
+| `npm run test:backend`   | 백엔드 테스트 실행 (`./gradlew test`)                       |
+| `npm run test:frontend`  | 프론트엔드 테스트 실행 (`npm test`)                         |
+| `npm run build:backend`  | 백엔드 빌드 실행 (`./gradlew build`)                        |
+| `npm run build:frontend` | 프론트엔드 프로덕션 빌드 실행 (`npm run build`)             |
+| `npm run start:backend`  | 백엔드 실행 (`./gradlew bootRun`)                           |
+| `npm run start:frontend` | 프론트엔드 프로덕션 서버 실행 (`npm run start`)             |
+| `npm run lint:frontend`  | 프론트엔드 ESLint 실행                                      |
+
+### 권장 실행 순서
+
+```bash
+# 프로젝트 루트에서
+cd frontend && npm ci && cd ..
+npm run dev
+```
+
+기본 실행 기준으로 프론트엔드는 `http://localhost:3000`, 백엔드는 `http://localhost:8080`을 사용합니다.
+
 ## 주간 진행 상황
 
 ### Week 1 (24.12.22 - 12.28)
