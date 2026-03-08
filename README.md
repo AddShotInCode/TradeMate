@@ -990,6 +990,137 @@ feat: SEO 최적화 메타데이터 추가
 - CI/CD 파이프라인 구축 및 자동화
 - 성능 모니터링 및 최적화
 
+### Week 9 (26.02.16 - 02.22)
+
+**작업 내역** (필수)
+
+**FE**
+
+- **Report API 분리 반영**: 시뮬레이션 보고서 흐름을 생성(`POST`)과 조회(`GET`)로 분리된 백엔드 API에 맞춰 연결.
+  - `simulationService`에 `generateReport(id)` / `getReport(id)` 메서드 분리 적용.
+  - 시뮬레이션 종료 시점에 보고서 생성 요청(POST), 결과 분석 페이지 진입 시 보고서 조회(GET)로 역할 분리.
+- **리포트 페이지 에이전트 섹션 개편**:
+  - 기존 3개 카드 구조를 Gemini/GPT/Claude 에이전트 의견 구조로 전환.
+  - 1번 카드: Gemini 코멘트(`aiComment`) 요약 표시.
+  - 2~3번 카드: GPT/Claude 유료 회원 전용 잠금 UI 적용(LOCK 표시).
+- **Gemini 코멘트 표시 UX 개선**:
+  - 긴 코멘트가 카드 밖으로 잘리지 않도록 줄바꿈/단어 래핑 처리.
+  - 요약 텍스트를 문장 단위로 정리해 가독성 개선.
+- **점수 표시 로직 정리 및 업데이트**:
+  - 원칙/수익 점수는 거래 내역 전체를 반영한 수량 가중 평균으로 계산.
+  - 종합 점수는 `(원칙 준수 + 수익 실현 + AI 평가) / 3` 평균값으로 표시하도록 변경.
+  - 등급(A+/A/B/C/D) 산정도 변경된 종합 점수 기준으로 동기화.
+
+**BE**
+
+- **Report API 분리**: 기존 `GET /api/simulation/{id}/report` 단일 API를 보고서 생성(`POST`)과 조회(`GET`)로 분리.
+  - `SimulationReport`, `ReportTradeScore` 엔티티 및 정규화 테이블 신규 생성.
+  - `SimulationReportRepository` 추가.
+  - `ErrorCode`에 `REPORT_ALREADY_EXISTS`(409), `REPORT_NOT_FOUND`(404) 추가.
+  - 보고서를 DB에 저장하여 반복 조회 시 재계산 비용 제거.
+- **AI 애널리스트 기능 (Gemini 2.5 Flash)**:
+  - 보고서 생성 시 LLM 기반 AI 점수(`aiScore`)와 코멘트(`aiComment`) 자동 생성.
+  - `GeminiProperties` — `@ConfigurationProperties`로 Gemini API url, apiKey, model 관리.
+  - `GeminiRestTemplateConfig` — Gemini 전용 RestTemplate (connect 5s, read 60s).
+  - `GeminiApiClient` — Gemini REST API 호출, JSON 응답 파싱, 실패 시 null 반환 (graceful degradation).
+  - `GeminiPromptBuilder` — 주가 차트 데이터(StockService, pageSize=10000) + 거래 내역 + 시스템 프롬프트 조합.
+  - `analyst-prompt.txt` — AI 애널리스트 역할/분석 기준/JSON 출력 형식 정의.
+  - DB 스키마에 `ai_score INT`, `ai_comment TEXT` 컬럼 추가.
+- **Gemini API 버그 수정**:
+  - 인증 방식: `?key=` 쿼리 파라미터 → `x-goog-api-key` 헤더 방식으로 공식 문서 기준 수정.
+  - JSON 파싱: LLM 응답 내 줄바꿈 등 제어 문자를 `ALLOW_UNESCAPED_CONTROL_CHARS`로 허용.
+  - 보안: URL에 API 키 노출 문제 해결.
+- **디버그 로깅**: `GeminiApiClient`에 프롬프트 전문 및 Gemini 응답 원문을 DEBUG 레벨로 기록.
+- **테스트 코드 업데이트**: `SimulationServiceTest`, `SimulationControllerTest`에 AI 관련 mock/assertion 추가.
+
+**AI 활용** (필수)
+
+**FE**
+
+- **요구사항 해석/분해**: “종료 시 생성, 진입 시 조회”와 같은 사용자 시나리오를 API 호출 타이밍으로 분해해 반영.
+- **코드베이스 탐색 자동화**: 서비스/페이지/컴포넌트/테스트 파일의 호출 관계를 분석해 최소 변경 범위로 적용.
+- **UI/로직 동시 개선**: 단순 렌더링 변경이 아닌 점수 산식, 카드 구조, 접근 제한(LOCK) UX를 함께 정합성 있게 업데이트.
+- **원인 분석 지원**: Gemini `aiComment` 미노출 이슈에 대해 FE 표시 로직과 BE 데이터 흐름(저장/조회)까지 교차 점검.
+
+**BE**
+
+- **API 설계**: Report API 분리 시 HTTP 메서드, 상태 코드(409 중복, 404 미존재), 테이블 정규화 전략 등 아키텍처 결정.
+- **전체 구현**: DB 스키마부터 Entity, DTO, Repository, Service, Controller, 테스트까지 일괄 구현.
+- **공식 문서 분석**: Gemini API 인증 방식(`x-goog-api-key` 헤더) 및 요청/응답 구조를 공식 문서 기반으로 분석하여 버그 원인 진단.
+- **트러블 슈팅**: LLM 응답 JSON 내 제어 문자 파싱 오류를 Jackson `JsonReadFeature` 설정으로 해결.
+- **보안 점검**: 원격 저장소 push 전 git 이력/소스/설정 파일 전반에 걸쳐 API 키 노출 여부 점검.
+
+**완료 기능**
+
+**FE**
+
+- 보고서 API 분리 반영 (`generateReport`/`getReport`)
+- 시뮬레이션 종료 시 보고서 생성 POST 연동
+- 결과 분석 페이지 진입 시 보고서 GET 조회 연동
+- 리포트 페이지 에이전트 카드 구조 개편 (Gemini/GPT/Claude)
+- Gemini 코멘트 요약/래핑 처리로 카드 내 가독성 개선
+- GPT/Claude 유료 회원 전용 잠금 UI 적용
+- 종합 점수 산식 변경 (원칙+수익+AI 평균), 등급 연동
+
+**BE**
+
+- Report API 분리 (`POST /{id}/report` 생성, `GET /{id}/report` 조회)
+- AI 애널리스트 점수/코멘트 자동 생성 (Gemini 2.5 Flash 연동)
+- Gemini 전용 RestTemplate 및 설정 클래스
+- AI 분석 실패 시 graceful degradation (aiScore=null, aiComment=null로 보고서 정상 저장)
+- 디버그 로깅 (프롬프트 전문, 응답 원문)
+- 전체 테스트 통과 (BUILD SUCCESSFUL)
+
+**커밋 로그**
+
+**FE**
+
+- refactor: 보고서 페이지 수정
+- docs: 9주차 프롬프트
+
+**BE**
+
+feat: 분석 리포트 ai 애널리스트 평가 기능 추가
+refactor: report 응답 방식 개선
+
+**링크**
+
+**FE**
+
+- [보고서 페이지 수정 완료](https://github.com/AddShotInCode/TradeMate_FE/pull/51)
+
+**BE**
+
+- [시뮬레이션 보고서 AI 애널리스트 기능 추가](https://github.com/AddShotInCode/TradeMate_BE/pull/24)
+
+**테스트 결과**
+
+**FE**
+
+- 리포트 페이지/시뮬레이션 헤더 변경 파일 타입 점검 결과: 오류 없음.
+- 서비스/페이지 연동 확인: 생성(POST)과 조회(GET)가 분리된 흐름으로 동작하도록 반영 완료.
+
+**BE**
+
+- `.\gradlew test` 실행 결과: BUILD SUCCESSFUL.
+- SimulationServiceTest — `generateReport` 테스트: AI mock(GeminiPromptBuilder, GeminiApiClient) 포함 정상 통과.
+- SimulationControllerTest — `getReport` 테스트: aiScore/aiComment 응답 필드 검증 통과.
+- 전체 테스트 스위트 정상 통과 확인.
+
+**다음 주 계획** (필수)
+
+**FE**
+
+- 유료 회원 판별값 연동하여 GPT/Claude 카드 잠금 해제 조건 적용
+- 리포트 페이지 점수 산식/표기 문구(백 산식 vs 프론트 산식) 명확화
+- 리포트 UI 마감(카드 문구/레이아웃 미세조정)
+
+**BE**
+
+- ai 애널리스트용 llm 프롬프트 고도화
+- 코드 리팩토링
+- 성능 모니터링 및 최적화
+
 
 ## 팀원 소개
 
