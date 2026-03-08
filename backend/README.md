@@ -58,7 +58,7 @@
 - 진행 중인 세션과 종료된 세션을 분리하여 관리합니다.
 - 세션 종료 시 보유 주식 자동 청산 및 최종 리포트가 생성됩니다.
 
-#### 매매 마킹 리플레이 & 복기 _(추후 지원 예정)_
+#### 매매 마킹 리플레이 & 복기 *(추후 지원 예정)*
 
 - 훈련 종료 후, 사용자의 매수/매도 타점이 차트 위에 자동 마킹됩니다.
 
@@ -127,12 +127,10 @@
 **다음 주 계획** (필수)
 
 **FE**
-
 - Next.js 프로젝트 초기 세팅 및 라이브러리 설치
 - 공통 UI 컴포넌트 환경(shadcn/ui) 구성
 
 **BE**
-
 - 프로젝트 프로토타입 제작
 
 ### Week 2 (24.12.29 - 01.04)
@@ -236,10 +234,10 @@
 - **기술 명세서 및 아키텍처 수립**: 가중치 기반 다중 지표 진입 시스템, 전략 최적화 엔진의 상세 명세 확정 및 Spring Boot 기반 아키텍처 설계.
 - **프로젝트 환경 구축**: Spring Boot 3.x, Java 21, Gradle, MySQL 연동 및 JPA Auditing 등 기본 서버 환경 구성 완료.
 - **주식 데이터 수집 시스템 구현**:
-  - 금융위원회 '주식시세정보' OpenAPI 연동 Client 개발 (`RestTemplate` 활용).
-  - 종목(`Stock`) 및 일별 시세(`DailyPrice`) 정규화 DB 설계 및 Entity/Repository 구현.
-  - 1년치 과거 데이터 적재(Init) 및 매일 당일 시세 업데이트(Update) 로직 구현.
-  - 데이터 생명주기 관리(1년 경과 데이터 자동 삭제)를 위한 스케줄러(`@Scheduled`) 적용.
+    - 금융위원회 '주식시세정보' OpenAPI 연동 Client 개발 (`RestTemplate` 활용).
+    - 종목(`Stock`) 및 일별 시세(`DailyPrice`) 정규화 DB 설계 및 Entity/Repository 구현.
+    - 1년치 과거 데이터 적재(Init) 및 매일 당일 시세 업데이트(Update) 로직 구현.
+    - 데이터 생명주기 관리(1년 경과 데이터 자동 삭제)를 위한 스케줄러(`@Scheduled`) 적용.
 - **컨벤션 수립**: API 쿼리 파라미터 규칙, 데이터 락인(Lock-in) 프로세스 및 High/Low Service 계층 분리 전략 마련.
 
 **AI 활용** (필수)
@@ -255,9 +253,9 @@
 - **로직 고도화 및 체계화**: 단순 복기 서비스에서 '전략 최적화 엔진'으로 서비스 가치를 격상시키기 위한 가중치 채점 알고리즘 및 기여도 대비 효율 정렬 로직 구체화.
 - **수학적 최적화 알고리즘 설계**: AI 모듈 없이 구현 가능한 Brute-force 기반 가중치 재조정 및 MFE/MAE 분석을 통한 손익 구간 최적화 논리 검토 및 수립.
 - **트러블 슈팅 및 디버깅**:
-  - 공공데이터 API의 XML/JSON 응답 혼재 문제 해결을 위한 Raw Response 로깅 전략 제안 및 적용.
-  - `Stock` 정보(종목명 등) 누락 문제 해결을 위한 Dirty Checking 기반 업데이트 로직 수정.
-  - 인증키 인코딩/디코딩 이슈 분석을 통한 `UriComponentsBuilder` 설정 최적화.
+    - 공공데이터 API의 XML/JSON 응답 혼재 문제 해결을 위한 Raw Response 로깅 전략 제안 및 적용.
+    - `Stock` 정보(종목명 등) 누락 문제 해결을 위한 Dirty Checking 기반 업데이트 로직 수정.
+    - 인증키 인코딩/디코딩 이슈 분석을 통한 `UriComponentsBuilder` 설정 최적화.
 
 **완료 기능**
 
@@ -332,12 +330,15 @@
 
 - **프로젝트 구조 분석 및 도메인 확장**: 기존 src 디렉토리 구조를 분석하여 statements(재무제표) 패키지를 신규 설계하고, 전체 프로젝트의 아키텍처 정합성 확인.
 - **기업 재무정보 수집 시스템 구축**: Spring Boot 3.x, Java 21, Gradle, MySQL 연동 및 JPA Auditing 등 기본 서버 환경 구성 완료.
-  - 금융위원회 '기업 재무정보' OpenAPI 연동을 위한 FinancialStatementApiClient 개발.
-  - 재무제표 데이터(FinancialStatement) 저장을 위한 Entity 및 Repository 설계.
-  - 법인등록번호 매핑 로직을 포함한 FinancialStatementService 구현.
+    - 금융위원회 '기업 재무정보' OpenAPI 연동을 위한 FinancialStatementApiClient 개발.
+    - 재무제표 데이터(FinancialStatement) 저장을 위한 Entity 및 Repository 설계.
+    - 법인등록번호 매핑 로직을 포함한 FinancialStatementService 구현.
 - **REST API 엔드포인트 구현**: 외부에서 재무 데이터를 조회하고 DB에 저장할 수 있는 컨트롤러 및 DTO 구조 확립.
-- **환경 설정 및 보안 고도화**: API 쿼리 파라미터 규칙, 데이터 락인(Lock-in) 프로세스 및 High/Low Service 계층 분리 전략 마련. - spring-boot-dotenv 라이브러리를 활용하여 API Key, URL 등 민감 정보를 .env 파일로 분리 관리. - 주식 시세 API와 재무제표 API의 설정(Base URL, Service Key)을 명확히 분리하여 유지보수성 향상.
-  **AI 활용** (필수)
+    
+- **환경 설정 및 보안 고도화**: API 쿼리 파라미터 규칙, 데이터 락인(Lock-in) 프로세스 및 High/Low Service 계층 분리 전략 마련.
+    - spring-boot-dotenv 라이브러리를 활용하여 API Key, URL 등 민감 정보를 .env 파일로 분리 관리.
+    - 주식 시세 API와 재무제표 API의 설정(Base URL, Service Key)을 명확히 분리하여 유지보수성 향상.
+**AI 활용** (필수)
 
 **FE**
 
@@ -349,8 +350,8 @@
 
 - **아키텍처 설계 및 단계별 가이드**: 신규 기능 구현을 위한 8단계 프로세스(패키징부터 설정까지)를 수립하여 개발 방향성 제시.
 - **코드 생성 및 로직 고도화**: AI 모듈 없이 구현 가능한 Brute-force 기반 가중치 재조정 및 MFE/MAE 분석을 통한 손익 구간 최적화 논리 검토 및 수립.
-  - API 명세를 바탕으로 복잡한 JSON 응답 구조를 처리하는 DTO 및 Client 코드를 자동 생성하여 개발 속도 단축.
-  - CompanyNotFoundException 등 전역 예외 처리기와 연동되는 커스텀 예외 로직 설계.
+    - API 명세를 바탕으로 복잡한 JSON 응답 구조를 처리하는 DTO 및 Client 코드를 자동 생성하여 개발 속도 단축.
+    - CompanyNotFoundException 등 전역 예외 처리기와 연동되는 커스텀 예외 로직 설계.
 - **코드 리뷰 및 전략 준수 확인**: coding_strategy.md 가이드라인에 따라 네이밍 규칙, JPA 활용 방식, Optional 처리 등이 적절히 적용되었는지 전수 검토 및 피드백.
 - **환경 변수 최적화**: .env 파일 내 변수 명명 규칙 제안 및 application.yml과의 유연한 연결 로직(Placeholder 활용) 구현.
 
@@ -369,7 +370,7 @@
 
 - 재무제표 데이터 모델링 및 DB 스키마 정의 (FinancialStatement)
 - 공공데이터 OpenAPI 기반 재무제표 수집 로직
-- 재무제표 조회 및 수집 API (/api/statements/\*\*)
+- 재무제표 조회 및 수집 API (/api/statements/**)
 - 보안 강화를 위한 .env 기반 환경 설정 시스템
 - coding_strategy.md 기반의 백엔드 코드 컨벤션 정립
 
@@ -414,15 +415,15 @@
 **다음 주 계획** (필수)
 
 1. 백과 프론트 연결
-   1. 회원가입, 회원 정보 DB
-   2. 주식 정보, 기업 정보 화면에 띄우기
+    1. 회원가입, 회원 정보 DB
+    2. 주식 정보, 기업 정보 화면에 띄우기
 2. 규칙, 시뮬레이션 구현 시작
 3. 백엔드
-   1. 시뮬레이션 알고리즘 구체화
+    1. 시뮬레이션 알고리즘 구체화
 4. 프론트엔드
-   1. 기록(구 계정)페이지 구현
-   2. 분석 페이지 구현
-   3. 백이랑 연결 후 디테일 다듬기
+    1. 기록(구 계정)페이지 구현
+    2. 분석 페이지 구현
+    3. 백이랑 연결 후 디테일 다듬기
 
 ### Week 5 (26.01.19 - 01.25)
 
@@ -963,6 +964,7 @@ feat: SEO 최적화 메타데이터 추가
   - `docs/workflows/prompt-organization.md` 정상 생성 확인
   - 워크플로우 문서가 독립적으로 이해 가능한지 검증 완료
 
+
 **BE**
 
 - **문서 품질 검증**:
@@ -1118,6 +1120,7 @@ refactor: report 응답 방식 개선
 - ai 애널리스트용 llm 프롬프트 고도화
 - 코드 리팩토링
 - 성능 모니터링 및 최적화
+
 
 ## 팀원 소개
 

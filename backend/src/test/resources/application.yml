@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: trademate
+
+  config:
+    import: classpath:stock-codes.yml
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+
+logging:
+  level:
+    root: INFO
+    aib.trademate: DEBUG
+
+# 테스트용 더미 값
+open-api:
+  url: https://test.openapi.example.com
+  service-key: test-service-key
+
+dart-api:
+  url: https://test.dart.example.com
+  api-key: test-api-key
+
+gemini-api:
+  url: https://test.gemini.example.com
+  api-key: test-gemini-api-key
+  model: gemini-2.5-flash
+
+jwt:
+  secret: dGVzdC1zZWNyZXQta2V5LWZvci1qdW5pdC10ZXN0LW11c3QtYmUtbG9uZy1lbm91Z2g=
+  access-token-validity: 1800000
+  refresh-token-validity: 604800000
+  cookie:
+    secure: false

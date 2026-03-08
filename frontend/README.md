@@ -963,6 +963,7 @@ feat: SEO 최적화 메타데이터 추가
   - `docs/workflows/prompt-organization.md` 정상 생성 확인
   - 워크플로우 문서가 독립적으로 이해 가능한지 검증 완료
 
+
 **BE**
 
 - **문서 품질 검증**:
