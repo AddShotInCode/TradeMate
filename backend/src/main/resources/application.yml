@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: trademate
+
+  config:
+    import: classpath:stock-codes.yml  # 종목 코드 설정 파일
+
+  # 존재하지 않는 API 경로 요청 시 NoHandlerFoundException 발생 설정
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false  # 정적 리소스 매핑 비활성화 (API 서버용)
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update # 개발 초기에는 update, 운영 시에는 validate/none 권장
+    properties:
+      hibernate:
+        format_sql: true # 쿼리 가독성 향상
+        default_batch_fetch_size: 100 # N+1 문제 완화를 위한 배치 사이즈 설정
+    # 코딩 전략: LAZY 로딩이 기본이므로, 필요시 쿼리 확인을 위해 열어둡니다.
+    open-in-view: false 
+
+# 코딩 전략: 로깅 레벨 설정 (TRACE > DEBUG > INFO > WARN > ERROR)
+logging:
+  level:
+    root: INFO
+    aib.trademate: DEBUG # 우리 프로젝트의 로그는 자세히(DEBUG) 봄
+    # org.hibernate.SQL: DEBUG # 실행되는 SQL 확인 (필요시 주석 해제)
+    # org.hibernate.orm.jdbc.bind: TRACE # SQL 바인딩 파라미터 값 확인 (필요시 주석 해제)
+
+# OpenAPI (공공데이터포털 - 주식시세)
+open-api:
+  url: ${OPENAPI_URL}
+  service-key: ${OPENAPI_SERVICE_KEY}
+
+# DART OpenAPI (금융감독원 전자공시)
+dart-api:
+  url: ${DART_API_URL}
+  api-key: ${DART_API_KEY}
+
+# Gemini API (AI 애널리스트)
+gemini-api:
+  url: ${GEMINI_API_URL:https://generativelanguage.googleapis.com}
+  api-key: ${GEMINI_API_KEY:}
+  model: gemini-2.5-flash
+
+# JWT 설정
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-validity: 1800000      # 30분 (밀리초)
+  refresh-token-validity: 604800000   # 7일 (밀리초)
+  cookie:
+    secure: false  # 개발 환경: false, 운영 환경(HTTPS): true
