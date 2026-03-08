@@ -3,7 +3,6 @@ package aib.trademate.domain.simulation.service;
 import aib.trademate.domain.simulation.dto.TradeListResponse;
 import aib.trademate.domain.simulation.dto.TradeResponse;
 import aib.trademate.domain.simulation.entity.Simulation;
-import aib.trademate.domain.simulation.entity.SimulationTrade;
 import aib.trademate.domain.simulation.repository.SimulationTradeRepository;
 import aib.trademate.domain.stock.dto.StockPriceResponseDto;
 import aib.trademate.domain.stock.service.StockService;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Gemini AI 분석용 프롬프트 구성기
@@ -72,7 +72,7 @@ public class GeminiPromptBuilder {
      */
     private String loadSystemPrompt() {
         try {
-            return promptResource.getContentAsString(StandardCharsets.UTF_8);
+            return promptResource.getContentAsString(Objects.requireNonNull(StandardCharsets.UTF_8));
         } catch (Exception e) {
             log.error("Failed to load system prompt: {}", e.getMessage());
             throw new RuntimeException("Failed to load analyst prompt template", e);

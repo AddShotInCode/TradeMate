@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Objects;
 
 /**
  * Gemini API 클라이언트
@@ -49,9 +50,15 @@ public class GeminiApiClient {
             return null;
         }
 
+        String url = geminiProperties.getUrl();
+        if (url == null || url.isBlank()) {
+            log.warn("[Gemini API] URL is not configured. Skipping AI analysis.");
+            return null;
+        }
+
         try {
             URI uri = UriComponentsBuilder
-                    .fromUriString(geminiProperties.getUrl())
+                    .fromUriString(url)
                     .path("/v1beta/models/{model}:generateContent")
                     .buildAndExpand(geminiProperties.getModel())
                     .toUri();
@@ -74,7 +81,7 @@ public class GeminiApiClient {
             log.debug("[Gemini API] Prompt:\n{}", prompt);
 
             ResponseEntity<String> response = geminiRestTemplate.exchange(
-                    uri, HttpMethod.POST, entity, String.class);
+                    uri, Objects.requireNonNull(HttpMethod.POST), entity, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 log.debug("[Gemini API] Response body:\n{}", response.getBody());
