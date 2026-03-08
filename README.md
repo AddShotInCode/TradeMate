@@ -1161,6 +1161,63 @@ refactor: report 응답 방식 개선
 - 코드 리팩토링
 - 성능 모니터링 및 최적화
 
+### Week 10 (26.02.23 - 03.01)
+
+**작업 내역** (필수)
+
+- **Null 타입 안전성 경고 해결**: `GeminiApiClient`, `GeminiPromptBuilder`에서 발생하던 3건의 `Null type safety` 컴파일 경고 수정.
+  - `GeminiApiClient` — `geminiProperties.getUrl()` 반환값이 실제로 null일 수 있음을 인지하고, 기존 API 키 검사 직후 URL null/blank 가드를 추가. `fromUriString(url)`의 `@NonNull` 요건 충족.
+  - `GeminiApiClient` — `HttpMethod.POST`를 `Objects.requireNonNull()`로 래핑하여 `exchange()` 호출의 `@NonNull HttpMethod` 파라미터 경고 제거.
+  - `GeminiPromptBuilder` — `StandardCharsets.UTF_8`을 `Objects.requireNonNull()`로 래핑하여 `getContentAsString()`의 `@NonNull Charset` 파라미터 경고 제거.
+  - 두 파일에 `java.util.Objects` import 추가.
+- **`analyst-prompt.txt` 프롬프트 고도화**: Gemini AI 애널리스트용 시스템 프롬프트 강화.
+  - **[Role]**: AI 애널리스트 역할을 TradeMate 매매 코치로 명확히 정의. 뇌동매매 교정 및 원칙 확립 지원 목표 추가.
+  - **[Goal]**: 분석 대상 데이터(Stock Data / Trade Data)를 명시하여 LLM이 컨텍스트를 명확히 인식하도록 개선.
+  - **[Analysis Criteria]**: 원칙 준수(SL/TP 이탈 여부), 수익 성과(리스크 관리/손익비), 매매 메모(논리적 진입 근거 vs. 뇌동매매 흔적) 3개 기준으로 구조화.
+  - **[Requirements]**: 총점 0~100점 정수 산출 및 항목별 200자 내외(총합 600자 내외) 코멘트 길이 제약 명시.
+  - **[Output Format]**: JSON 외 텍스트 금지 및 `\n` 줄바꿈 처리 규칙을 명시하여 파싱 안정성 강화.
+
+**AI 활용** (필수)
+
+- **경고 원인 분석**: 컴파일러 null 안전성 경고 3건의 발생 원인(`@NonNull` 파라미터에 nullable 타입 전달)을 정확히 진단하고 케이스별 수정 전략 제안.
+- **프롬프트 고도화 설계**: 기존 프롬프트의 모호한 지시사항을 역할/목표/기준/요건/출력 형식 5개 섹션으로 재구조화하여 LLM 응답 품질 향상.
+
+**완료 기능**
+
+- `GeminiApiClient` Null 타입 안전성 경고 2건 해결 (URL null 가드, `HttpMethod` requireNonNull)
+- `GeminiPromptBuilder` Null 타입 안전성 경고 1건 해결 (`Charset` requireNonNull)
+- `analyst-prompt.txt` 프롬프트 전면 개편 (역할·목표·기준·요건·출력 형식 5개 섹션)
+
+**커밋 로그**
+
+- feat: analyst-prompt 개선
+- fix: Null type safety 경고 해결 및 Null 가드 추가
+
+**링크**
+
+- [analyst-prompt 개선](https://github.com/AddShotInCode/TradeMate/pull/3)
+- [Null type safety 경고 해결 및 Null 가드 추가](https://github.com/AddShotInCode/TradeMate/pull/4)
+
+**테스트 결과**
+
+- `.\gradlew compileJava` 실행 결과: 3건의 Null type safety 경고 모두 제거 확인.
+- 기존 테스트 스위트 정상 통과 (`BUILD SUCCESSFUL`).
+
+**다음 주 계획** (필수)
+
+- 레포지토리 통합
+- 발표자료 제작
+
+## 대시보드 (Repobeats)
+
+**FE**
+
+![Alt](https://repobeats.axiom.co/api/embed/32117af48efa4669bb502f6c32a7db8d54c75fd8.svg "Repobeats analytics image")
+
+**BE**
+
+![Alt](https://repobeats.axiom.co/api/embed/cadd8e7556762b7d795f0813180159235e39e042.svg "Repobeats analytics image")
+
 ## 팀원 소개
 
 <div align="center">
