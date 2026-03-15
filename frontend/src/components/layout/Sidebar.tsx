@@ -6,43 +6,21 @@ import {
   LayoutDashboard,
   PlayCircle,
   TrendingUp,
-  Gavel,
-  User,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-
-function subscribeToLocalStorage(onStoreChange: () => void) {
-  window.addEventListener("storage", onStoreChange);
-  return () => window.removeEventListener("storage", onStoreChange);
-}
-
-function getUserNameSnapshot() {
-  return localStorage.getItem("tm_userName") ?? "";
-}
-
-function getUserNameServerSnapshot() {
-  return "";
-}
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
 
-  const userName = useSyncExternalStore(
-    subscribeToLocalStorage,
-    getUserNameSnapshot,
-    getUserNameServerSnapshot
-  );
-
   const navItems = [
     { icon: LayoutDashboard, label: "대시보드", href: "/dashboard" },
     { icon: PlayCircle, label: "시뮬레이션", href: "/simulation" },
     { icon: TrendingUp, label: "조회", href: "/inquiry" },
-    { icon: Gavel, label: "원칙", href: "/propensity" },
   ];
 
   const isActive = (href: string) => {
@@ -130,26 +108,6 @@ export default function Sidebar() {
             );
           })}
         </nav>
-
-        {/* Bottom user button */}
-        <div className="mt-auto">
-          <Link
-            href="/account"
-            className={cn(
-              "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors group hover:bg-slate-50 dark:hover:bg-[#283039]",
-              isCollapsed && "justify-center"
-            )}
-            title={userName ? userName : "사용자"}
-            aria-label={userName ? `${userName} 회원정보로 이동` : "회원정보로 이동"}
-          >
-            <User className="w-6 h-6 shrink-0 text-slate-500 dark:text-white group-hover:text-primary transition-colors" />
-            {!isCollapsed && (
-              <p className="text-sm font-medium leading-normal whitespace-nowrap overflow-hidden text-slate-700 dark:text-white group-hover:text-primary transition-colors">
-                {userName ? userName : "사용자"}
-              </p>
-            )}
-          </Link>
-        </div>
       </div>
     </aside>
   );
