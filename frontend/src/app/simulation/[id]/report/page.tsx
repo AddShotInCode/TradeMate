@@ -108,30 +108,7 @@ export default function SimulationReportPage() {
       return "Gemini 분석 요약이 아직 생성되지 않았습니다. 시뮬레이션 종료 후 잠시 뒤 다시 확인해 주세요.";
     }
 
-    const normalized = data.summary.aiComment.replaceAll("\n", " ").replace(/\s+/g, " ").trim();
-    const sentences = normalized
-      .split(/(?<=[.!?。！？])\s+/)
-      .map((sentence) => sentence.trim())
-      .filter(Boolean);
-
-    if (sentences.length <= 2) {
-      return normalized;
-    }
-
-    const selected: string[] = [];
-    let totalLength = 0;
-
-    for (const sentence of sentences) {
-      const nextLength = totalLength + sentence.length + (selected.length > 0 ? 1 : 0);
-      if (selected.length < 3 && nextLength <= 420) {
-        selected.push(sentence);
-        totalLength = nextLength;
-      } else {
-        break;
-      }
-    }
-
-    return selected.length > 0 ? selected.join(" ") : normalized;
+    return data.summary.aiComment;
   }, [data]);
 
   if (isLoading) {
